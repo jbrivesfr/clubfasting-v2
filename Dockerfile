@@ -1,14 +1,26 @@
-# Dockerfile for Cloud Run
-FROM node:20-slim
-
+# Multi-stage Dockerfile for Next.js on Cloud Run
+FROM node:20-slim AS builder
 WORKDIR /app
 
+# Install dependencies
 COPY package.json package-lock.json ./
-RUN npm ci --production
+RUN npm ci
 
-COPY .next/standalone ./
-COPY .next/static ./.next/static
-COPY public ./public
+# Copy source and build
+COPY . .
+ENV NEXT_TELEMETRY_DISABLED=1
+RUN npm run build
+
+# Production image
+FROM node:20-slim AS runner
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
 
 ENV PORT=8080
 EXPOSE 8080
