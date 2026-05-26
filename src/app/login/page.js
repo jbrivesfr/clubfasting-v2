@@ -1,15 +1,13 @@
 'use client'
 
-import { useState, Suspense } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase-browser'
 import Link from 'next/link'
 
-function LoginForm() {
+export default function LoginPage() {
   const router = useRouter()
-  const searchParams = useSearchParams()
-  const isSignup = searchParams.get('signup') === 'true'
-
+  const [isSignup, setIsSignup] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [name, setName] = useState('')
@@ -17,7 +15,11 @@ function LoginForm() {
   const [error, setError] = useState(null)
   const [message, setMessage] = useState(null)
 
-  const supabase = createClient()
+  useEffect(() => {
+    // Check if ?signup=true in URL
+    const params = new URLSearchParams(window.location.search)
+    setIsSignup(params.get('signup') === 'true')
+  }, [])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -26,8 +28,9 @@ function LoginForm() {
     setMessage(null)
 
     try {
+      const supabase = createClient()
       if (isSignup) {
-        const { data, error } = await supabase.auth.signUp({
+        const { error } = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -38,7 +41,7 @@ function LoginForm() {
         if (error) throw error
         setMessage('Compte créé ! Vérifie tes emails pour confirmer.')
       } else {
-        const { data, error } = await supabase.auth.signInWithPassword({
+        const { error } = await supabase.auth.signInWithPassword({
           email,
           password,
         })
@@ -145,13 +148,5 @@ function LoginForm() {
         </form>
       </div>
     </div>
-  )
-}
-
-export default function LoginPage() {
-  return (
-    <Suspense>
-      <LoginForm />
-    </Suspense>
   )
 }
