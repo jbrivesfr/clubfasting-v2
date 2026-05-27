@@ -1,17 +1,10 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@/utils/supabase/client'
 import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
-
-function getSupabase() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  )
-}
 
 export default function LoginPage() {
   const supabaseRef = useRef(null)
@@ -22,16 +15,18 @@ export default function LoginPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!supabaseRef.current) supabaseRef.current = getSupabase()
+    if (!supabaseRef.current) supabaseRef.current = createClient()
     setLoading(true)
     setError(null)
 
     try {
+      const redirectTo = `${window.location.origin}/auth/callback`
+
       const { error } = await supabaseRef.current.auth.signInWithOtp({
         email,
         options: {
           shouldCreateUser: true,
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
+          emailRedirectTo: redirectTo,
         },
       })
 
