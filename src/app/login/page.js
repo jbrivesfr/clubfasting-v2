@@ -41,19 +41,28 @@ export default function LoginPage() {
 
   if (sent) {
     return (
-      <div className="min-h-screen bg-gray-50 text-gray-900 flex items-center justify-center px-4">
-        <div className="max-w-md text-center space-y-6">
-          <div className="text-5xl">📧</div>
-          <h2 className="text-2xl font-bold">Vérifie tes emails</h2>
-          <p className="text-gray-600">
-            Un lien de connexion a été envoyé à <strong className="text-gray-900">{email}</strong>.
+      <div className="min-h-screen bg-zinc-950 text-white flex items-center justify-center px-4 relative overflow-hidden">
+        <div
+          className="absolute inset-0 -z-0 pointer-events-none opacity-60"
+          style={{
+            background:
+              'radial-gradient(50% 50% at 50% 0%, rgba(251,146,60,0.15) 0%, transparent 60%)',
+          }}
+        />
+        <div className="relative max-w-md text-center space-y-6 animate-slide-up">
+          <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-gradient-to-br from-orange-500 to-red-500 shadow-2xl shadow-orange-500/30 text-4xl">
+            📧
+          </div>
+          <h2 className="text-3xl font-bold font-display">Vérifie tes emails</h2>
+          <p className="text-zinc-400">
+            Un lien de connexion a été envoyé à <strong className="text-white">{email}</strong>.
           </p>
-          <p className="text-gray-500 text-sm">
+          <p className="text-zinc-500 text-sm">
             Clique sur le lien dans l&apos;email pour accéder au Club.
           </p>
           <button
             onClick={() => setSent(false)}
-            className="text-sm text-orange-500 hover:text-orange-600 font-medium"
+            className="text-sm text-orange-400 hover:text-orange-300 font-medium transition-colors"
           >
             ← Utiliser un autre email
           </button>
@@ -63,33 +72,43 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900 flex items-center justify-center px-4">
-      <div className="w-full max-w-md space-y-8">
+    <div className="min-h-screen bg-zinc-950 text-white flex items-center justify-center px-4 relative overflow-hidden">
+      <div
+        className="absolute inset-0 -z-0 pointer-events-none opacity-70"
+        style={{
+          background:
+            'radial-gradient(45% 50% at 30% 0%, rgba(251,146,60,0.18) 0%, transparent 60%), radial-gradient(35% 40% at 80% 20%, rgba(239,68,68,0.12) 0%, transparent 60%)',
+        }}
+      />
+      <div className="relative w-full max-w-md space-y-8 animate-slide-up">
         <div className="text-center">
-          <Link href="/" className="text-3xl font-black text-gray-900">
-            Club <span className="text-orange-500">Fasting</span>
+          <Link href="/" className="inline-flex items-center gap-2 text-3xl font-black text-white font-display">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center text-lg shadow-lg shadow-orange-500/30">
+              🔥
+            </div>
+            Club <span className="text-orange-400">Fasting</span>
           </Link>
-          <h2 className="mt-2 text-gray-600">Se connecter</h2>
+          <h2 className="mt-3 text-zinc-400">Connecte-toi à ton espace</h2>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5 bg-white p-8 rounded-2xl border border-gray-200 shadow-sm">
+        <form onSubmit={handleSubmit} className="space-y-5 bg-zinc-900/60 backdrop-blur-xl p-8 rounded-2xl border border-white/[0.08] shadow-2xl">
           <div>
-            <label className="block text-sm text-gray-700 mb-1 font-medium">Ton email</label>
+            <label className="block text-sm text-zinc-300 mb-2 font-medium">Ton email</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-300 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all"
+              className="w-full px-4 py-3 rounded-xl bg-zinc-950/60 border border-white/[0.1] text-white placeholder-zinc-600 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all"
               placeholder="jean@example.com"
             />
-            <p className="text-xs text-gray-500 mt-2">
+            <p className="text-xs text-zinc-500 mt-2">
               On t&apos;envoie un lien magique par email. Pas de mot de passe.
             </p>
           </div>
 
           {error && (
-            <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-600 text-sm">
+            <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 text-sm">
               {error}
             </div>
           )}
@@ -97,13 +116,13 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+            className="w-full py-3.5 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-400 hover:to-red-400 text-white font-semibold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-orange-500/20 hover:shadow-orange-500/40 hover:-translate-y-0.5 disabled:hover:translate-y-0"
           >
             {loading ? 'Envoi...' : 'Envoyer le lien magique'}
           </button>
         </form>
 
-        <p className="text-center text-xs text-gray-400 mt-4">v2.1 · 2026-05-27</p>
+        <p className="text-center text-xs text-zinc-600 mt-4">v2.3 · 2026-05-27</p>
       </div>
     </div>
   )
