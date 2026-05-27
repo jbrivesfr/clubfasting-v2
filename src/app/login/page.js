@@ -1,15 +1,20 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { createClient } from '@supabase/supabase-js'
 import Link from 'next/link'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-)
+export const dynamic = 'force-dynamic'
+
+function getSupabase() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  )
+}
 
 export default function LoginPage() {
+  const supabaseRef = useRef(null)
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [sent, setSent] = useState(false)
@@ -17,11 +22,12 @@ export default function LoginPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    if (!supabaseRef.current) supabaseRef.current = getSupabase()
     setLoading(true)
     setError(null)
 
     try {
-      const { error } = await supabase.auth.signInWithOtp({
+      const { error } = await supabaseRef.current.auth.signInWithOtp({
         email,
         options: {
           shouldCreateUser: true,
