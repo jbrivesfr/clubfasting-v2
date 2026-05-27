@@ -20,7 +20,7 @@ export default function LoginPage() {
     setError(null)
 
     try {
-      const redirectTo = `${window.location.origin}/auth/callback`
+      const redirectTo = `https://app.clubfasting.com/auth/callback`
 
       const { error } = await supabaseRef.current.auth.signInWithOtp({
         email,
