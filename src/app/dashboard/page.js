@@ -17,18 +17,18 @@ const TOOLS = [
   {
     id: 'glycemia',
     title: 'Simulateur de glycémie',
-    desc: 'Visualise l\'impact des aliments sur ta glycémie',
+    desc: "Visualise l'impact des aliments sur ta glycémie",
     icon: '📊',
     url: 'https://clubfasting.com/glucosemaster/',
-    accent: 'from-sky-500 to-cyan-500',
+    accent: 'from-blue-500 to-cyan-600',
   },
   {
     id: 'meal-analyzer',
-    title: 'Montre-moi ton assiette',
-    desc: 'Analyse ton repas avec l\'IA pour optimiser ton métabolisme',
+    title: "Montre-moi ton assiette",
+    desc: "Analyse ton repas avec l'IA pour optimiser ton métabolisme",
     icon: '🍽️',
     url: 'https://analyseur-de-repas-gdv-v1-453490259042.us-west1.run.app',
-    accent: 'from-emerald-500 to-teal-500',
+    accent: 'from-green-500 to-emerald-600',
   },
 ]
 
@@ -51,7 +51,6 @@ function FastingRing({ start, end }) {
   const stroke = 14
   const radius = (size - stroke) / 2
   const circumference = 2 * Math.PI * radius
-  const fastingHours = 24 - (end - start)
   const eatingHours = end - start
 
   const eatingStartAngle = (start / 24) * 360
@@ -62,36 +61,27 @@ function FastingRing({ start, end }) {
     <div className="relative" style={{ width: size, height: size }}>
       <svg width={size} height={size} className="-rotate-90">
         <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          fill="none"
-          stroke="#1f2937"
-          strokeWidth={stroke}
-          strokeLinecap="round"
+          cx={size / 2} cy={size / 2} r={radius}
+          fill="none" stroke="#e5e7eb" strokeWidth={stroke} strokeLinecap="round"
         />
         <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          fill="none"
-          stroke="url(#fastingGradient)"
-          strokeWidth={stroke}
-          strokeLinecap="round"
+          cx={size / 2} cy={size / 2} r={radius}
+          fill="none" stroke="url(#fastingGradient2)"
+          strokeWidth={stroke} strokeLinecap="round"
           strokeDasharray={`${eatingArc} ${gap}`}
           strokeDashoffset={-((eatingStartAngle / 360) * circumference)}
         />
         <defs>
-          <linearGradient id="fastingGradient" x1="0" y1="0" x2="1" y2="1">
+          <linearGradient id="fastingGradient2" x1="0" y1="0" x2="1" y2="1">
             <stop offset="0%" stopColor="#fb923c" />
-            <stop offset="100%" stopColor="#ef4444" />
+            <stop offset="100%" stopColor="#22c55e" />
           </linearGradient>
         </defs>
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-        <span className="text-xs uppercase tracking-wider text-zinc-400">Jeûne</span>
-        <span className="text-4xl font-black text-white leading-none mt-1">{fastingHours}h</span>
-        <span className="text-xs text-zinc-500 mt-1">{eatingHours}h de repas</span>
+        <span className="text-xs text-gray-500 font-medium">Jeûne</span>
+        <span className="text-4xl font-black text-gray-900 leading-none mt-1">{24 - eatingHours}h</span>
+        <span className="text-xs text-gray-400 mt-1">{eatingHours}h de repas</span>
       </div>
     </div>
   )
@@ -108,31 +98,17 @@ export default function DashboardPage() {
 
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data: { session } }) => {
-      if (!session) {
-        router.push('/login')
-        return
-      }
+      if (!session) { router.push('/login'); return }
       setUser(session.user)
 
       const { data: profile } = await supabase
-        .from('users')
-        .select('name')
-        .eq('email', session.user.email)
-        .maybeSingle()
+        .from('users').select('name').eq('email', session.user.email).maybeSingle()
       setDisplayName(profile?.name || session.user.email?.split('@')[0] || 'Membre')
 
       const { data: routineData } = await supabase
-        .from('routines')
-        .select('*')
-        .eq('user_id', session.user.id)
-        .order('updated_at', { ascending: false })
-        .limit(1)
-        .maybeSingle()
-
-      if (routineData) {
-        setRoutine(routineData)
-      }
-
+        .from('routines').select('*').eq('user_id', session.user.id)
+        .order('updated_at', { ascending: false }).limit(1).maybeSingle()
+      if (routineData) setRoutine(routineData)
       setLoading(false)
     })
   }, [])
@@ -144,7 +120,7 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-zinc-950 text-white flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="animate-spin text-4xl">⏳</div>
       </div>
     )
@@ -155,120 +131,88 @@ export default function DashboardPage() {
   const hasWindow = start !== undefined && end !== undefined && end > start
 
   const hour = new Date().getHours()
-  const greeting = hour < 6 ? 'Bonne nuit' : hour < 12 ? 'Bon matin' : hour < 18 ? 'Bel après-midi' : 'Bonne soirée'
+  const greeting = hour < 6 ? 'Bonne nuit' : hour < 12 ? 'Bonjour' : hour < 18 ? "Bel après-midi" : 'Bonsoir'
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white">
-      <div
-        className="absolute inset-x-0 top-0 h-[520px] -z-0 opacity-40 pointer-events-none"
-        style={{
-          background:
-            'radial-gradient(60% 60% at 20% 0%, rgba(251,146,60,0.25) 0%, transparent 60%), radial-gradient(50% 50% at 80% 10%, rgba(239,68,68,0.15) 0%, transparent 60%)',
-        }}
-      />
-
-      <header className="relative z-10 border-b border-white/5 backdrop-blur-sm">
+    <div className="min-h-screen bg-gray-50">
+      <header className="bg-white border-b border-gray-200">
         <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="text-xl font-black tracking-tight">
-            Club <span className="text-orange-400">Fasting</span>
+          <Link href="/" className="text-xl font-black text-gray-900 tracking-tight">
+            Club <span className="text-orange-500">Fasting</span>
           </Link>
           <div className="flex items-center gap-3">
-            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10">
-              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center text-xs font-bold">
+            <div className="flex items-center gap-2 px-3 py-1.5">
+              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center text-xs font-bold text-white">
                 {displayName.charAt(0).toUpperCase()}
               </div>
-              <span className="text-sm text-zinc-300">{displayName}</span>
+              <span className="text-sm text-gray-600 font-medium">{displayName}</span>
             </div>
-            <button
-              onClick={handleSignOut}
-              className="text-sm text-zinc-400 hover:text-white transition-colors"
-            >
+            <button onClick={handleSignOut} className="text-sm text-gray-400 hover:text-gray-600">
               Déconnexion
             </button>
           </div>
         </div>
       </header>
 
-      <main className="relative z-10 max-w-5xl mx-auto px-4 py-10 sm:py-14 space-y-12">
-        <section className="space-y-2">
-          <p className="text-sm uppercase tracking-[0.2em] text-orange-400/80 font-semibold">
-            {greeting}
-          </p>
-          <h1 className="text-4xl sm:text-5xl font-black tracking-tight">
-            Salut {displayName} <span className="inline-block animate-wave">👋</span>
-          </h1>
-          <p className="text-zinc-400 text-lg">
-            Ta routine de jeûne, en un coup d&apos;œil.
-          </p>
+      <main className="max-w-5xl mx-auto px-4 py-10 sm:py-14 space-y-10">
+        {/* Greeting */}
+        <section>
+          <p className="text-sm text-orange-500 font-semibold mb-1">{greeting}</p>
+          <h1 className="text-3xl sm:text-4xl font-black text-gray-900">Salut {displayName} <span className="inline-block">👋</span></h1>
+          <p className="text-gray-500 mt-1">Ta routine de jeûne, en un coup d&apos;œil.</p>
         </section>
 
-        {/* Fasting hero */}
+        {/* Fasting Window */}
         {hasWindow ? (
-          <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-zinc-900 to-zinc-900/40 border border-white/10 p-6 sm:p-10">
-            <div
-              className="absolute inset-0 opacity-30 pointer-events-none"
-              style={{
-                background:
-                  'radial-gradient(40% 60% at 100% 0%, rgba(251,146,60,0.3) 0%, transparent 70%)',
-              }}
-            />
-            <div className="relative grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+          <section className="bg-white rounded-2xl border border-gray-200 p-6 sm:p-10 shadow-sm">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
               <div className="flex justify-center md:justify-start">
                 <FastingRing start={start} end={end} />
               </div>
               <div className="space-y-5">
                 <div>
-                  <p className="text-xs uppercase tracking-wider text-zinc-500 mb-1">
-                    Ta fenêtre de repas
-                  </p>
-                  <p className="text-4xl sm:text-5xl font-black bg-gradient-to-r from-orange-300 to-red-400 bg-clip-text text-transparent">
-                    {start}h <span className="text-zinc-600 font-light">→</span> {end}h
+                  <p className="text-xs text-gray-400 font-medium mb-1">TA FENÊTRE DE REPAS</p>
+                  <p className="text-4xl sm:text-5xl font-black text-gray-900">
+                    {start}h <span className="text-gray-300 font-light">→</span> {end}h
                   </p>
                 </div>
 
                 <div className="flex flex-wrap gap-2">
                   {routine.meals.map((meal, i) => (
-                    <span
-                      key={i}
-                      className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-sm text-zinc-200 flex items-center gap-1.5"
-                    >
+                    <span key={i} className="px-3 py-1.5 rounded-full bg-gray-100 border border-gray-200 text-sm text-gray-700 flex items-center gap-1.5">
                       <span>{MEAL_ICONS[meal.name] || '🍽️'}</span>
                       <span>{meal.name}</span>
-                      <span className="text-zinc-500">·</span>
-                      <span className="text-orange-300 font-medium">{meal.time}h</span>
+                      <span className="text-gray-400">·</span>
+                      <span className="text-orange-500 font-semibold">{meal.time}h</span>
                     </span>
                   ))}
                 </div>
 
                 {routine.drink && DRINK_LABELS[routine.drink] && (
-                  <div className="inline-flex items-center gap-2 text-sm text-zinc-400">
+                  <div className="inline-flex items-center gap-2 text-sm text-gray-500">
                     <span>{DRINK_LABELS[routine.drink].icon}</span>
                     <span>Boisson : {DRINK_LABELS[routine.drink].label}</span>
                   </div>
                 )}
 
                 <div>
-                  <Link
-                    href="/dashboard/planner"
-                    className="inline-flex items-center gap-2 text-sm text-orange-400 hover:text-orange-300 font-medium group"
-                  >
-                    Ajuster ma fenêtre
-                    <span className="transition-transform group-hover:translate-x-1">→</span>
+                  <Link href="/dashboard/planner" className="inline-flex items-center gap-1 text-sm text-orange-500 hover:text-orange-600 font-medium">
+                    Ajuster ma fenêtre <span>→</span>
                   </Link>
                 </div>
               </div>
             </div>
           </section>
         ) : (
-          <section className="rounded-3xl bg-gradient-to-br from-zinc-900 to-zinc-900/40 border border-white/10 p-10 text-center">
+          <section className="bg-white rounded-2xl border border-gray-200 p-10 text-center shadow-sm">
             <div className="text-5xl mb-4">⏰</div>
-            <h2 className="text-2xl font-bold mb-2">Démarre ta routine</h2>
-            <p className="text-zinc-400 mb-6 max-w-sm mx-auto">
+            <h2 className="text-xl font-bold text-gray-900 mb-2">Démarre ta routine</h2>
+            <p className="text-gray-500 mb-6 max-w-sm mx-auto">
               Réponds à quelques questions, on calcule ta fenêtre de jeûne idéale.
             </p>
             <Link
               href="/dashboard/planner"
-              className="inline-block px-6 py-3 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-400 hover:to-red-400 text-white font-semibold rounded-xl transition-all shadow-lg shadow-orange-500/20"
+              className="inline-block px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-xl transition-colors"
             >
               Créer ma routine
             </Link>
@@ -278,8 +222,8 @@ export default function DashboardPage() {
         {/* Tools */}
         <section>
           <div className="flex items-baseline justify-between mb-5">
-            <h2 className="text-xl font-bold">Tes outils</h2>
-            <span className="text-xs text-zinc-500 uppercase tracking-wider">{TOOLS.length} apps</span>
+            <h2 className="text-lg font-bold text-gray-900">Tes outils</h2>
+            <span className="text-xs text-gray-400">{TOOLS.length} apps</span>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {TOOLS.map((tool) => {
@@ -289,26 +233,16 @@ export default function DashboardPage() {
                 ? { href: tool.url }
                 : { href: tool.url, target: '_blank', rel: 'noopener noreferrer' }
               return (
-                <Comp
-                  key={tool.id}
-                  {...props}
-                  className="group relative overflow-hidden rounded-2xl bg-zinc-900/60 border border-white/5 p-5 hover:border-white/15 transition-all hover:-translate-y-0.5"
+                <Comp key={tool.id} {...props}
+                  className="group bg-white rounded-2xl border border-gray-200 p-5 hover:border-orange-300 hover:shadow-md transition-all shadow-sm"
                 >
-                  <div
-                    className={`absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-br ${tool.accent} transition-opacity duration-300`}
-                    style={{ mixBlendMode: 'overlay' }}
-                  />
-                  <div className="relative">
-                    <div
-                      className={`w-12 h-12 rounded-xl bg-gradient-to-br ${tool.accent} flex items-center justify-center text-2xl mb-4 shadow-lg`}
-                    >
-                      {tool.icon}
-                    </div>
-                    <h3 className="font-semibold mb-1.5 text-white">{tool.title}</h3>
-                    <p className="text-sm text-zinc-400 leading-relaxed">{tool.desc}</p>
-                    <div className="mt-4 text-xs text-zinc-500 group-hover:text-zinc-300 transition-colors">
-                      Ouvrir →
-                    </div>
+                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${tool.accent} flex items-center justify-center text-2xl mb-4 shadow-sm`}>
+                    {tool.icon}
+                  </div>
+                  <h3 className="font-semibold mb-1 text-gray-900">{tool.title}</h3>
+                  <p className="text-sm text-gray-500 leading-relaxed">{tool.desc}</p>
+                  <div className="mt-3 text-xs text-orange-500 font-medium">
+                    Ouvrir →
                   </div>
                 </Comp>
               )
@@ -319,8 +253,8 @@ export default function DashboardPage() {
         {/* Stats */}
         <section>
           <div className="flex items-baseline justify-between mb-5">
-            <h2 className="text-xl font-bold">Tes stats</h2>
-            <span className="text-xs text-zinc-500 uppercase tracking-wider">Bientôt</span>
+            <h2 className="text-lg font-bold text-gray-900">Tes stats</h2>
+            <span className="text-xs text-gray-400">Bientôt disponible</span>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[
@@ -329,13 +263,10 @@ export default function DashboardPage() {
               { label: 'Moyenne', value: '—', icon: '📝' },
               { label: 'Série', value: '—', icon: '📈' },
             ].map((stat) => (
-              <div
-                key={stat.label}
-                className="rounded-2xl bg-zinc-900/60 border border-white/5 p-4"
-              >
-                <div className="text-xl mb-2 opacity-60">{stat.icon}</div>
-                <div className="text-2xl font-bold text-zinc-300">{stat.value}</div>
-                <div className="text-xs text-zinc-500 mt-0.5">{stat.label}</div>
+              <div key={stat.label} className="bg-white rounded-xl border border-gray-200 p-4 text-center shadow-sm">
+                <div className="text-2xl mb-1">{stat.icon}</div>
+                <div className="text-2xl font-bold text-gray-400">{stat.value}</div>
+                <div className="text-xs text-gray-500 mt-0.5">{stat.label}</div>
               </div>
             ))}
           </div>
@@ -343,29 +274,17 @@ export default function DashboardPage() {
 
         {/* Newsfeed */}
         <section>
-          <h2 className="text-xl font-bold mb-5">Fil d&apos;actualités</h2>
-          <div className="rounded-2xl bg-zinc-900/60 border border-white/5 p-10 text-center">
-            <div className="text-3xl mb-2 opacity-60">📭</div>
-            <p className="text-zinc-400">Le newsfeed arrive bientôt</p>
+          <h2 className="text-lg font-bold text-gray-900 mb-5">Fil d&apos;actualités</h2>
+          <div className="bg-white rounded-xl border border-gray-200 p-10 text-center shadow-sm">
+            <div className="text-3xl mb-2">📭</div>
+            <p className="text-gray-400">Le newsfeed arrive bientôt</p>
           </div>
         </section>
 
-        <footer className="pt-8 pb-4 text-center text-xs text-zinc-600">
-          Club Fasting · v2.2
+        <footer className="pt-8 pb-4 text-center text-xs text-gray-400">
+          Club Fasting · v2.3
         </footer>
       </main>
-
-      <style jsx>{`
-        @keyframes wave {
-          0%, 100% { transform: rotate(0deg); }
-          25% { transform: rotate(15deg); }
-          75% { transform: rotate(-10deg); }
-        }
-        .animate-wave {
-          animation: wave 1.6s ease-in-out;
-          transform-origin: 70% 70%;
-        }
-      `}</style>
     </div>
   )
 }
