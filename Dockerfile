@@ -2,11 +2,9 @@
 FROM node:20-slim AS builder
 WORKDIR /app
 
-# Install dependencies
 COPY package.json package-lock.json ./
 RUN npm ci
 
-# Copy source and build
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
