@@ -1,54 +1,42 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase-browser'
 import Link from 'next/link'
 
 export default function LoginPage() {
   const router = useRouter()
-  const [isSignup, setIsSignup] = useState(false)
   const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
   const [name, setName] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-  const [message, setMessage] = useState(null)
-
-  useEffect(() => {
-    // Check if ?signup=true in URL
-    const params = new URLSearchParams(window.location.search)
-    setIsSignup(params.get('signup') === 'true')
-  }, [])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
     setError(null)
-    setMessage(null)
 
     try {
-      const supabase = createClient()
-      if (isSignup) {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            data: { full_name: name },
-            emailRedirectTo: `${window.location.origin}/auth/callback`,
-          },
-        })
-        if (error) throw error
-        setMessage('Compte créé ! Vérifie tes emails pour confirmer.')
-      } else {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        })
-        if (error) throw error
-        router.push('/dashboard')
-        router.refresh()
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, name: name || undefined }),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok || data.error) {
+        throw new Error(data.error || 'Erreur de connexion')
       }
+
+      // Store token in localStorage (same format as clubfasting.com)
+      localStorage.setItem('sb-lyyevuyejxrjpsaisaal-auth-token', JSON.stringify({
+        access_token: data.access_token,
+        expires_at: Date.now() + 7 * 24 * 60 * 60 * 1000,
+        user: data.user,
+      }))
+
+      router.push('/dashboard')
     } catch (err) {
       setError(err.message)
     } finally {
@@ -63,28 +51,12 @@ export default function LoginPage() {
           <Link href="/" className="text-3xl font-black">
             Club <span className="text-orange-500">Fasting</span>
           </Link>
-          <h2 className="mt-2 text-gray-400">
-            {isSignup ? 'Créer ton compte' : 'Se connecter'}
-          </h2>
+          <h2 className="mt-2 text-gray-400">Se connecter</h2>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5 bg-gray-900 p-8 rounded-2xl border border-gray-800">
-          {isSignup && (
-            <div>
-              <label className="block text-sm text-gray-400 mb-1">Prénom</label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required={isSignup}
-                className="w-full px-4 py-3 rounded-xl bg-gray-800 border border-gray-700 text-white focus:outline-none focus:border-orange-500 transition-colors"
-                placeholder="Jean"
-              />
-            </div>
-          )}
-
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Email</label>
+            <label className="block text-sm text-gray-400 mb-1">Ton email</label>
             <input
               type="email"
               value={email}
@@ -96,16 +68,19 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Mot de passe</label>
+            <label className="block text-sm text-gray-400 mb-1">
+              Ton prénom <span className="text-gray-600">(optionnel)</span>
+            </label>
             <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={6}
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               className="w-full px-4 py-3 rounded-xl bg-gray-800 border border-gray-700 text-white focus:outline-none focus:border-orange-500 transition-colors"
-              placeholder="••••••"
+              placeholder="Jean"
             />
+            <p className="text-xs text-gray-600 mt-1">
+              Si c&apos;est ta première visite, on crée ton compte automatiquement
+            </p>
           </div>
 
           {error && (
@@ -114,37 +89,17 @@ export default function LoginPage() {
             </div>
           )}
 
-          {message && (
-            <div className="p-3 rounded-xl bg-green-900/50 border border-green-800 text-green-300 text-sm">
-              {message}
-            </div>
-          )}
-
           <button
             type="submit"
             disabled={loading}
             className="w-full py-3 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? 'Chargement...' : isSignup ? 'Créer mon compte' : 'Se connecter'}
+            {loading ? 'Connexion...' : 'Accéder au Club'}
           </button>
 
-          <div className="text-center text-sm text-gray-500">
-            {isSignup ? (
-              <>
-                Déjà membre ?{' '}
-                <Link href="/login" className="text-orange-400 hover:text-orange-300">
-                  Se connecter
-                </Link>
-              </>
-            ) : (
-              <>
-                Pas encore de compte ?{' '}
-                <Link href="/login?signup=true" className="text-orange-400 hover:text-orange-300">
-                  Créer un compte
-                </Link>
-              </>
-            )}
-          </div>
+          <p className="text-center text-xs text-gray-600">
+            Pas de mot de passe. Simple, comme le jeûne.
+          </p>
         </form>
       </div>
     </div>
