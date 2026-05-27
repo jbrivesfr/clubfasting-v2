@@ -9,7 +9,7 @@ steps:
       - '--build-arg'
       - 'NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx5eWV2dXllanhyanBzYWlzYWFsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzg4NjU5MDAsImV4cCI6MjA1NDQ0MTkwMH0.3dVhSi0RbShm4cxtXLoOfEDNsiGQk2Cr_CaXlkXHsqg'
       - '--build-arg'
-      - 'NEXT_PUBLIC_SITE_URL=https://clubfasting-v2-453490259042.us-west1.run.app'
+      - 'NEXT_PUBLIC_SITE_URL=https://app.clubfasting.com'
       - '.'
   - name: 'gcr.io/cloud-builders/docker'
     args:

@@ -1,17 +1,19 @@
 import { NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://app.clubfasting.com'
+
 export async function GET(request) {
-  const { searchParams, origin } = new URL(request.url)
+  const { searchParams } = new URL(request.url)
   const code = searchParams.get('code')
   const next = searchParams.get('next') ?? '/dashboard'
 
   if (!code) {
-    return NextResponse.redirect(`${origin}/login`)
+    return NextResponse.redirect(`${SITE_URL}/login`)
   }
 
-  // Create a response that we'll attach cookies to
-  let response = NextResponse.redirect(`${origin}${next}`)
+  // Create response with cookies baked in
+  let response = NextResponse.redirect(`${SITE_URL}${next}`)
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -29,7 +31,7 @@ export async function GET(request) {
               ...(process.env.COOKIE_DOMAIN ? { domain: process.env.COOKIE_DOMAIN } : {}),
               httpOnly: true,
               sameSite: 'lax',
-              secure: process.env.NODE_ENV === 'production',
+              secure: true,
             })
           })
         },
@@ -39,7 +41,8 @@ export async function GET(request) {
 
   const { error } = await supabase.auth.exchangeCodeForSession(code)
   if (error) {
-    return NextResponse.redirect(`${origin}/login?error=auth`)
+    console.error('Auth callback error:', error)
+    return NextResponse.redirect(`${SITE_URL}/login?error=auth`)
   }
 
   return response
