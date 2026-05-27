@@ -1,6 +1,9 @@
 export const metadata = {
   title: 'Club Fasting V2',
   description: 'Ton métabolisme, tes outils, tes résultats.',
+  other: {
+    'Cache-Control': 'no-cache, no-store, must-revalidate',
+  },
 }
 
 export default function RootLayout({ children }) {

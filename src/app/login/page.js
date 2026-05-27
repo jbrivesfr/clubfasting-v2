@@ -102,6 +102,8 @@ export default function LoginPage() {
             {loading ? 'Envoi...' : 'Envoyer le lien magique'}
           </button>
         </form>
+
+        <p className="text-center text-xs text-gray-600 mt-4">v2.0 · 2026-05-27</p>
       </div>
     </div>
   )
