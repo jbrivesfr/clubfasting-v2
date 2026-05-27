@@ -32,18 +32,26 @@ const TOOLS = [
   },
 ]
 
+const MEAL_LABELS = {
+  'Petit-déjeuner': '🍳 Petit-déj',
+  'Déjeuner': '🥗 Déjeuner',
+  'Dîner': '🍲 Dîner',
+  'Repas': '🍽️ Repas',
+}
+
 export default function DashboardPage() {
   const router = useRouter()
   const [user, setUser] = useState(null)
   const [displayName, setDisplayName] = useState('')
+  const [routine, setRoutine] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-    )
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  )
 
+  useEffect(() => {
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) {
         router.push('/login')
@@ -51,23 +59,32 @@ export default function DashboardPage() {
       }
       setUser(session.user)
 
-      // Try to get display name from users table
-      const { data } = await supabase
+      // Get display name
+      const { data: profile } = await supabase
         .from('users')
         .select('name')
         .eq('email', session.user.email)
         .maybeSingle()
+      setDisplayName(profile?.name || session.user.email?.split('@')[0] || 'Membre')
 
-      setDisplayName(data?.name || session.user.email?.split('@')[0] || 'Membre')
+      // Fetch routine (fasting window)
+      const { data: routineData } = await supabase
+        .from('routines')
+        .select('*')
+        .eq('user_id', session.user.id)
+        .order('updated_at', { ascending: false })
+        .limit(1)
+        .maybeSingle()
+
+      if (routineData) {
+        setRoutine(routineData)
+      }
+
       setLoading(false)
     })
-  }, [router])
+  }, [])
 
   const handleSignOut = async () => {
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-    )
     await supabase.auth.signOut()
     router.push('/')
   }
@@ -79,6 +96,15 @@ export default function DashboardPage() {
       </div>
     )
   }
+
+  // Format fasting window
+  const fastingWindow = routine?.meals?.length >= 2
+    ? `${routine.meals[0].time}h - ${routine.meals[routine.meals.length - 1].time}h`
+    : null
+
+  const fastingDuration = routine?.meals?.length >= 2
+    ? routine.meals[routine.meals.length - 1].time - routine.meals[0].time
+    : null
 
   return (
     <div className="min-h-screen bg-gray-950 text-white">
@@ -103,10 +129,68 @@ export default function DashboardPage() {
         <section>
           <h1 className="text-3xl font-bold">Salut {displayName} 👋</h1>
           <p className="text-gray-400 mt-2">
-            Bienvenue dans ta nouvelle interface Club Fasting.
+            Ta routine de jeûne, tes outils.
           </p>
         </section>
 
+        {/* Fasting Window */}
+        {routine && (
+          <section className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+            <h2 className="text-xl font-semibold mb-4">⏰ Ta fenêtre de jeûne</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-orange-400">
+                  {fastingDuration ? `${fastingDuration}h` : '—'}
+                </div>
+                <div className="text-xs text-gray-500 mt-1">Fenêtre</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold">{fastingWindow || '—'}</div>
+                <div className="text-xs text-gray-500 mt-1">Repas</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold">
+                  {routine.wake_up_time ? `${routine.wake_up_time}h` : '—'}
+                </div>
+                <div className="text-xs text-gray-500 mt-1">Réveil</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold">
+                  {routine.bed_time ? `${routine.bed_time}h` : '—'}
+                </div>
+                <div className="text-xs text-gray-500 mt-1">Coucher</div>
+              </div>
+            </div>
+            {routine.meals && routine.meals.length > 0 && (
+              <div className="mt-4 flex flex-wrap gap-2">
+                {routine.meals.map((meal, i) => (
+                  <span key={i} className="px-3 py-1 bg-gray-800 rounded-full text-sm text-gray-300">
+                    {MEAL_LABELS[meal.name] || meal.name} · {meal.time}h
+                  </span>
+                ))}
+              </div>
+            )}
+            {routine.drink && (
+              <p className="mt-3 text-sm text-gray-500">
+                🥤 Boisson : {routine.drink === 'boost' ? 'Café/Thé ☕' :
+                  routine.drink === 'refreshing' ? 'Frais 🧊' :
+                  routine.drink === 'soothing' ? 'Tisane 🍵' : 'Eau 💧'}
+              </p>
+            )}
+            <div className="mt-4">
+              <a
+                href="https://fasting-challenge-planner-453490259042.us-west1.run.app"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-orange-400 hover:text-orange-300"
+              >
+                Ajuster ma fenêtre →
+              </a>
+            </div>
+          </section>
+        )}
+
+        {/* Stats */}
         <section className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {[
             { label: 'Jeûnes cette semaine', value: 'Bientôt', icon: '🔥' },
@@ -122,6 +206,7 @@ export default function DashboardPage() {
           ))}
         </section>
 
+        {/* Tools */}
         <section>
           <h2 className="text-xl font-semibold mb-4">🛠️ Tes outils</h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -144,6 +229,7 @@ export default function DashboardPage() {
           </div>
         </section>
 
+        {/* Newsfeed */}
         <section>
           <h2 className="text-xl font-semibold mb-4">📰 Fil d&apos;actualités</h2>
           <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 text-center text-gray-500">
