@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { createClient } from '@supabase/supabase-js'
 import Link from 'next/link'
 
 const TOOLS = [
@@ -34,35 +35,40 @@ const TOOLS = [
 export default function DashboardPage() {
   const router = useRouter()
   const [user, setUser] = useState(null)
+  const [displayName, setDisplayName] = useState('')
   const [loading, setLoading] = useState(true)
-  const [newsfeed, setNewsfeed] = useState([])
 
   useEffect(() => {
-    // Check for auth token
-    const stored = localStorage.getItem('sb-lyyevuyejxrjpsaisaal-auth-token')
-    if (!stored) {
-      router.push('/login')
-      return
-    }
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    )
 
-    try {
-      const parsed = JSON.parse(stored)
-      if (parsed.expires_at && Date.now() > parsed.expires_at) {
-        localStorage.removeItem('sb-lyyevuyejxrjpsaisaal-auth-token')
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (!session) {
         router.push('/login')
         return
       }
-      setUser(parsed.user)
-    } catch {
-      router.push('/login')
-      return
-    }
+      setUser(session.user)
 
-    setLoading(false)
+      // Try to get display name from users table
+      const { data } = await supabase
+        .from('users')
+        .select('name')
+        .eq('email', session.user.email)
+        .maybeSingle()
+
+      setDisplayName(data?.name || session.user.email?.split('@')[0] || 'Membre')
+      setLoading(false)
+    })
   }, [router])
 
-  const handleSignOut = () => {
-    localStorage.removeItem('sb-lyyevuyejxrjpsaisaal-auth-token')
+  const handleSignOut = async () => {
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    )
+    await supabase.auth.signOut()
     router.push('/')
   }
 
@@ -74,11 +80,8 @@ export default function DashboardPage() {
     )
   }
 
-  const displayName = user?.name || user?.email?.split('@')[0] || 'Membre'
-
   return (
     <div className="min-h-screen bg-gray-950 text-white">
-      {/* Header */}
       <header className="bg-gray-900 border-b border-gray-800">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
           <Link href="/" className="text-xl font-black">
@@ -97,17 +100,13 @@ export default function DashboardPage() {
       </header>
 
       <main className="max-w-4xl mx-auto px-4 py-10 space-y-10">
-        {/* Welcome */}
         <section>
-          <h1 className="text-3xl font-bold">
-            Salut {displayName} 👋
-          </h1>
+          <h1 className="text-3xl font-bold">Salut {displayName} 👋</h1>
           <p className="text-gray-400 mt-2">
-            Bienvenue dans ta nouvelle interface Club Fasting. Voici tes outils pour optimiser ton jeûne.
+            Bienvenue dans ta nouvelle interface Club Fasting.
           </p>
         </section>
 
-        {/* Stats */}
         <section className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {[
             { label: 'Jeûnes cette semaine', value: 'Bientôt', icon: '🔥' },
@@ -115,10 +114,7 @@ export default function DashboardPage() {
             { label: 'Posts', value: 'Bientôt', icon: '📝' },
             { label: 'Série actuelle', value: 'Bientôt', icon: '📈' },
           ].map((stat) => (
-            <div
-              key={stat.label}
-              className="bg-gray-900 border border-gray-800 rounded-xl p-4 text-center"
-            >
+            <div key={stat.label} className="bg-gray-900 border border-gray-800 rounded-xl p-4 text-center">
               <div className="text-2xl mb-1">{stat.icon}</div>
               <div className="text-lg font-semibold">{stat.value}</div>
               <div className="text-xs text-gray-500">{stat.label}</div>
@@ -126,7 +122,6 @@ export default function DashboardPage() {
           ))}
         </section>
 
-        {/* Tools */}
         <section>
           <h2 className="text-xl font-semibold mb-4">🛠️ Tes outils</h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -149,7 +144,6 @@ export default function DashboardPage() {
           </div>
         </section>
 
-        {/* Newsfeed */}
         <section>
           <h2 className="text-xl font-semibold mb-4">📰 Fil d&apos;actualités</h2>
           <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 text-center text-gray-500">

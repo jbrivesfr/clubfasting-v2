@@ -1,14 +1,18 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { createClient } from '@supabase/supabase-js'
 import Link from 'next/link'
 
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+)
+
 export default function LoginPage() {
-  const router = useRouter()
   const [email, setEmail] = useState('')
-  const [name, setName] = useState('')
   const [loading, setLoading] = useState(false)
+  const [sent, setSent] = useState(false)
   const [error, setError] = useState(null)
 
   const handleSubmit = async (e) => {
@@ -17,31 +21,44 @@ export default function LoginPage() {
     setError(null)
 
     try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, name: name || undefined }),
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          shouldCreateUser: true,
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
       })
 
-      const data = await res.json()
-
-      if (!res.ok || data.error) {
-        throw new Error(data.error || 'Erreur de connexion')
-      }
-
-      // Store token in localStorage (same format as clubfasting.com)
-      localStorage.setItem('sb-lyyevuyejxrjpsaisaal-auth-token', JSON.stringify({
-        access_token: data.access_token,
-        expires_at: Date.now() + 7 * 24 * 60 * 60 * 1000,
-        user: data.user,
-      }))
-
-      router.push('/dashboard')
+      if (error) throw error
+      setSent(true)
     } catch (err) {
       setError(err.message)
     } finally {
       setLoading(false)
     }
+  }
+
+  if (sent) {
+    return (
+      <div className="min-h-screen bg-gray-950 text-white flex items-center justify-center px-4">
+        <div className="max-w-md text-center space-y-6">
+          <div className="text-5xl">📧</div>
+          <h2 className="text-2xl font-bold">Vérifie tes emails</h2>
+          <p className="text-gray-400">
+            Un lien de connexion a été envoyé à <strong className="text-white">{email}</strong>.
+          </p>
+          <p className="text-sm text-gray-600">
+            Clique sur le lien dans l&apos;email pour accéder au Club.
+          </p>
+          <button
+            onClick={() => setSent(false)}
+            className="text-sm text-orange-400 hover:text-orange-300"
+          >
+            ← Utiliser un autre email
+          </button>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -65,21 +82,8 @@ export default function LoginPage() {
               className="w-full px-4 py-3 rounded-xl bg-gray-800 border border-gray-700 text-white focus:outline-none focus:border-orange-500 transition-colors"
               placeholder="jean@example.com"
             />
-          </div>
-
-          <div>
-            <label className="block text-sm text-gray-400 mb-1">
-              Ton prénom <span className="text-gray-600">(optionnel)</span>
-            </label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-gray-800 border border-gray-700 text-white focus:outline-none focus:border-orange-500 transition-colors"
-              placeholder="Jean"
-            />
-            <p className="text-xs text-gray-600 mt-1">
-              Si c&apos;est ta première visite, on crée ton compte automatiquement
+            <p className="text-xs text-gray-600 mt-2">
+              On t&apos;envoie un lien magique par email. Pas de mot de passe.
             </p>
           </div>
 
@@ -94,12 +98,8 @@ export default function LoginPage() {
             disabled={loading}
             className="w-full py-3 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? 'Connexion...' : 'Accéder au Club'}
+            {loading ? 'Envoi...' : 'Envoyer le lien magique'}
           </button>
-
-          <p className="text-center text-xs text-gray-600">
-            Pas de mot de passe. Simple, comme le jeûne.
-          </p>
         </form>
       </div>
     </div>
