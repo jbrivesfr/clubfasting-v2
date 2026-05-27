@@ -1,12 +1,12 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
 
 export const dynamic = 'force-dynamic'
 
-export default function AuthCallbackPage() {
+function CallbackHandler() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [error, setError] = useState(null)
@@ -51,5 +51,17 @@ export default function AuthCallbackPage() {
         <p className="text-gray-400">Connexion en cours...</p>
       </div>
     </div>
+  )
+}
+
+export default function AuthCallbackPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-950 text-white flex items-center justify-center px-4">
+        <div className="animate-spin text-4xl">⏳</div>
+      </div>
+    }>
+      <CallbackHandler />
+    </Suspense>
   )
 }
