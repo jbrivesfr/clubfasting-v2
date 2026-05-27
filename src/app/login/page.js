@@ -45,10 +45,10 @@ export default function LoginPage() {
         <div className="max-w-md text-center space-y-6">
           <div className="text-5xl">📧</div>
           <h2 className="text-2xl font-bold">Vérifie tes emails</h2>
-          <p className="text-gray-400">
+          <p className="text-gray-300">
             Un lien de connexion a été envoyé à <strong className="text-white">{email}</strong>.
           </p>
-          <p className="text-sm text-gray-600">
+          <p className="text-gray-400 text-sm">
             Clique sur le lien dans l&apos;email pour accéder au Club.
           </p>
           <button
@@ -69,27 +69,27 @@ export default function LoginPage() {
           <Link href="/" className="text-3xl font-black">
             Club <span className="text-orange-500">Fasting</span>
           </Link>
-          <h2 className="mt-2 text-gray-400">Se connecter</h2>
+          <h2 className="mt-2 text-gray-300">Se connecter</h2>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5 bg-gray-900 p-8 rounded-2xl border border-gray-800">
+        <form onSubmit={handleSubmit} className="space-y-5 bg-gray-900 p-8 rounded-2xl border border-gray-700">
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Ton email</label>
+            <label className="block text-sm text-gray-200 mb-1 font-medium">Ton email</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-3 rounded-xl bg-gray-800 border border-gray-700 text-white focus:outline-none focus:border-orange-500 transition-colors"
+              className="w-full px-4 py-3 rounded-xl bg-gray-800 border border-gray-600 text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all"
               placeholder="jean@example.com"
             />
-            <p className="text-xs text-gray-600 mt-2">
+            <p className="text-xs text-gray-400 mt-2">
               On t&apos;envoie un lien magique par email. Pas de mot de passe.
             </p>
           </div>
 
           {error && (
-            <div className="p-3 rounded-xl bg-red-900/50 border border-red-800 text-red-300 text-sm">
+            <div className="p-3 rounded-xl bg-red-900/50 border border-red-700 text-red-200 text-sm">
               {error}
             </div>
           )}
