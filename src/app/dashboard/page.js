@@ -11,7 +11,7 @@ const TOOLS = [
     title: 'Fenêtre de jeûne',
     desc: 'Calcule et ajuste ta fenêtre de jeûne optimale',
     icon: '⏰',
-    url: 'https://fasting-challenge-planner-453490259042.us-west1.run.app',
+    url: '/dashboard/planner',
     color: 'from-orange-500 to-red-600',
   },
   {
@@ -178,14 +178,12 @@ export default function DashboardPage() {
               </p>
             )}
             <div className="mt-4">
-              <a
-                href="https://fasting-challenge-planner-453490259042.us-west1.run.app"
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link
+                href="/dashboard/planner"
                 className="text-sm text-orange-400 hover:text-orange-300"
               >
                 Ajuster ma fenêtre →
-              </a>
+              </Link>
             </div>
           </section>
         )}
@@ -210,12 +208,16 @@ export default function DashboardPage() {
         <section>
           <h2 className="text-xl font-semibold mb-4">🛠️ Tes outils</h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {TOOLS.map((tool) => (
-              <a
+            {TOOLS.map((tool) => {
+              const isInternal = tool.url.startsWith('/')
+              const Comp = isInternal ? Link : 'a'
+              const props = isInternal 
+                ? { href: tool.url }
+                : { href: tool.url, target: '_blank', rel: 'noopener noreferrer' }
+              return (
+              <Comp
                 key={tool.id}
-                href={tool.url}
-                target="_blank"
-                rel="noopener noreferrer"
+                {...props}
                 className="group bg-gray-900 border border-gray-800 rounded-xl overflow-hidden hover:border-gray-700 transition-all hover:shadow-lg hover:shadow-orange-500/5"
               >
                 <div className={`h-2 bg-gradient-to-r ${tool.color}`} />
@@ -224,8 +226,9 @@ export default function DashboardPage() {
                   <h3 className="font-semibold mb-1">{tool.title}</h3>
                   <p className="text-sm text-gray-500 leading-relaxed">{tool.desc}</p>
                 </div>
-              </a>
-            ))}
+              </Comp>
+              )
+            })}
           </div>
         </section>
 
