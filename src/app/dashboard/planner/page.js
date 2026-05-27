@@ -54,7 +54,6 @@ function generateMealPlan(answers) {
   const { favoriteMeal, wakeUpTime, bedTime, workHours, drinkHabit } = answers
   const meals = []
 
-  // Generate 2 meals based on favorite
   if (favoriteMeal === 'petit-dejeuner') {
     meals.push({ id: 1, name: 'Petit-déjeuner', time: Math.min(wakeUpTime + 1, 11) })
     meals.push({ id: 2, name: 'Déjeuner', time: Math.min(wakeUpTime + 6, 14) })
@@ -77,25 +76,25 @@ function LifeRhythmStep({ onComplete }) {
   return (
     <div className="space-y-6">
       <div className="flex flex-col items-center gap-4">
-        <label className="text-gray-300">Je me lève vers</label>
+        <label className="text-gray-700 font-medium">Je me lève vers</label>
         <select value={wakeUpTime} onChange={(e) => setWakeUpTime(parseInt(e.target.value))}
-          className="w-full max-w-xs px-4 py-3 rounded-xl bg-gray-800 border border-gray-700 text-white focus:outline-none focus:border-orange-500">
+          className="w-full max-w-xs px-4 py-3 rounded-xl bg-gray-50 border border-gray-300 text-gray-900 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20">
           {Array.from({ length: 24 }, (_, i) => i).map(h => (
             <option key={h} value={h}>{h.toString().padStart(2, '0')}:00</option>
           ))}
         </select>
       </div>
       <div className="flex flex-col items-center gap-4">
-        <label className="text-gray-300">Je me couche vers</label>
+        <label className="text-gray-700 font-medium">Je me couche vers</label>
         <select value={bedTime} onChange={(e) => setBedTime(parseInt(e.target.value))}
-          className="w-full max-w-xs px-4 py-3 rounded-xl bg-gray-800 border border-gray-700 text-white focus:outline-none focus:border-orange-500">
+          className="w-full max-w-xs px-4 py-3 rounded-xl bg-gray-50 border border-gray-300 text-gray-900 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20">
           {Array.from({ length: 24 }, (_, i) => i).map(h => (
             <option key={h} value={h}>{h.toString().padStart(2, '0')}:00</option>
           ))}
         </select>
       </div>
       <div>
-        <p className="text-gray-300 text-center mb-3">Je travaille principalement...</p>
+        <p className="text-gray-700 text-center mb-3 font-medium">Je travaille principalement...</p>
         <div className="grid grid-cols-2 gap-3">
           {[
             { value: 'matin', label: 'Le matin' },
@@ -104,8 +103,8 @@ function LifeRhythmStep({ onComplete }) {
             { value: 'journee', label: 'Toute la journée' },
           ].map(w => (
             <button key={w.value} onClick={() => setWorkHours(w.value)}
-              className={`p-3 rounded-xl transition-colors text-sm ${
-                workHours === w.value ? 'bg-orange-500 text-white' : 'bg-gray-800 hover:bg-gray-700 text-gray-300'
+              className={`p-3 rounded-xl transition-colors text-sm font-medium ${
+                workHours === w.value ? 'bg-orange-500 text-white shadow-sm' : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
               }`}>
               {w.label}
             </button>
@@ -113,7 +112,7 @@ function LifeRhythmStep({ onComplete }) {
         </div>
       </div>
       <button onClick={() => onComplete({ wakeUpTime, bedTime, workHours })}
-        className="w-full py-3 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-xl transition-colors">
+        className="w-full py-3 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-xl transition-colors shadow-sm">
         Suivant
       </button>
     </div>
@@ -139,7 +138,6 @@ export default function PlannerPage() {
       if (!session) { router.push('/login'); return }
       setUser(session.user)
       
-      // Check existing routine
       const { data } = await supabase.from('routines').select('*')
         .eq('user_id', session.user.id)
         .order('updated_at', { ascending: false }).limit(1).maybeSingle()
@@ -173,7 +171,7 @@ export default function PlannerPage() {
       const { data } = await supabase.from('routines').select('*')
         .eq('user_id', user.id).single()
       setRoutine(data)
-      setStep(QUESTIONS.length) // Show results
+      setStep(QUESTIONS.length)
     }
     setSaving(false)
   }
@@ -186,7 +184,7 @@ export default function PlannerPage() {
   }
 
   if (loading) {
-    return <div className="min-h-screen bg-gray-950 text-white flex items-center justify-center">
+    return <div className="min-h-screen bg-gray-50 text-gray-900 flex items-center justify-center">
       <div className="animate-spin text-4xl">⏳</div>
     </div>
   }
@@ -194,36 +192,34 @@ export default function PlannerPage() {
   const currentQ = QUESTIONS[step]
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white">
-      <header className="bg-gray-900 border-b border-gray-800">
+    <div className="min-h-screen bg-gray-50 text-gray-900">
+      <header className="bg-white border-b border-gray-200 shadow-sm">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/dashboard" className="text-sm text-gray-400 hover:text-gray-200">← Dashboard</Link>
+          <Link href="/dashboard" className="text-sm text-gray-500 hover:text-gray-900 font-medium">← Dashboard</Link>
           <span className="text-sm text-gray-500">Fenêtre de jeûne</span>
         </div>
       </header>
 
       <main className="max-w-2xl mx-auto px-4 py-10">
         {routine ? (
-          // Results view
           <section className="space-y-8">
             <div className="text-center">
               <div className="text-5xl mb-4">⏰</div>
-              <h1 className="text-2xl font-bold">Ta fenêtre de jeûne</h1>
+              <h1 className="text-2xl font-bold text-gray-900">Ta fenêtre de jeûne</h1>
               {routine.meals?.length >= 2 && (
-                <p className="text-3xl font-black text-orange-400 mt-4">
+                <p className="text-3xl font-black text-orange-500 mt-4">
                   {routine.meals[0].time}h - {routine.meals[routine.meals.length - 1].time}h
                 </p>
               )}
-              <p className="text-gray-400 mt-1">
+              <p className="text-gray-500 mt-1">
                 Fenêtre de repas : {routine.meals?.length >= 2 ? routine.meals[routine.meals.length - 1].time - routine.meals[0].time : 6}h
               </p>
             </div>
 
-            {/* Timeline visualization */}
-            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
-              <div className="relative h-16 bg-gray-800 rounded-xl overflow-hidden">
+            <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+              <div className="relative h-16 bg-gray-100 rounded-xl overflow-hidden">
                 {routine.meals?.length >= 2 && (
-                  <div className="absolute top-0 bottom-0 bg-gradient-to-r from-orange-500 to-orange-600 rounded-xl flex items-center justify-center text-white text-sm font-semibold"
+                  <div className="absolute top-0 bottom-0 bg-gradient-to-r from-orange-500 to-orange-600 rounded-xl flex items-center justify-center text-white text-sm font-semibold shadow-sm"
                     style={{
                       left: `${(routine.meals[0].time / 24) * 100}%`,
                       width: `${((routine.meals[routine.meals.length - 1].time - routine.meals[0].time) / 24) * 100}%`,
@@ -232,35 +228,34 @@ export default function PlannerPage() {
                   </div>
                 )}
               </div>
-              <div className="flex justify-between mt-2 text-xs text-gray-500">
+              <div className="flex justify-between mt-2 text-xs text-gray-400">
                 {[0, 6, 12, 18, 24].map(h => <span key={h}>{h}h</span>)}
               </div>
             </div>
 
-            {/* Meal details */}
             <div className="grid grid-cols-3 gap-4">
-              <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 text-center">
-                <div className="text-2xl font-bold">{routine.wake_up_time}h</div>
+              <div className="bg-white border border-gray-200 rounded-xl p-4 text-center shadow-sm">
+                <div className="text-2xl font-bold text-gray-900">{routine.wake_up_time}h</div>
                 <div className="text-xs text-gray-500 mt-1">⏰ Réveil</div>
               </div>
               {routine.meals?.map((m, i) => (
-                <div key={i} className="bg-gray-900 border border-gray-800 rounded-xl p-4 text-center">
+                <div key={i} className="bg-white border border-gray-200 rounded-xl p-4 text-center shadow-sm">
                   <div className="text-2xl mb-1">{MEAL_LABELS[m.name]?.split(' ')[0] || '🍽️'}</div>
-                  <div className="font-semibold">{m.time}h</div>
+                  <div className="font-semibold text-gray-900">{m.time}h</div>
                   <div className="text-xs text-gray-500 mt-1">{MEAL_LABELS[m.name]?.split(' ').slice(1).join(' ') || m.name}</div>
                 </div>
               ))}
-              <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 text-center">
-                <div className="text-2xl font-bold">{routine.bed_time}h</div>
+              <div className="bg-white border border-gray-200 rounded-xl p-4 text-center shadow-sm">
+                <div className="text-2xl font-bold text-gray-900">{routine.bed_time}h</div>
                 <div className="text-xs text-gray-500 mt-1">🌙 Coucher</div>
               </div>
             </div>
 
             {routine.drink && (
-              <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 flex items-center gap-3">
+              <div className="bg-white border border-gray-200 rounded-xl p-4 flex items-center gap-3 shadow-sm">
                 <span className="text-xl">🥤</span>
                 <div>
-                  <div className="font-semibold">{DRINK_LABELS[routine.drink] || routine.drink}</div>
+                  <div className="font-semibold text-gray-900">{DRINK_LABELS[routine.drink] || routine.drink}</div>
                   <div className="text-sm text-gray-500">Ta boisson pendant le jeûne</div>
                 </div>
               </div>
@@ -268,11 +263,11 @@ export default function PlannerPage() {
 
             <div className="flex gap-3">
               <button onClick={reset}
-                className="flex-1 py-3 bg-gray-800 hover:bg-gray-700 text-white font-semibold rounded-xl transition-colors">
+                className="flex-1 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-colors">
                 Modifier
               </button>
               <Link href="/dashboard"
-                className="flex-1 py-3 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-xl transition-colors text-center">
+                className="flex-1 py-3 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-xl transition-colors text-center shadow-sm">
                 Retour au dashboard
               </Link>
             </div>
@@ -280,31 +275,29 @@ export default function PlannerPage() {
         ) : saving ? (
           <div className="text-center py-10">
             <div className="animate-spin text-4xl mb-4">⏳</div>
-            <p className="text-gray-400">Création de ta fenêtre...</p>
+            <p className="text-gray-500">Création de ta fenêtre...</p>
           </div>
         ) : (
-          // Wizard
           <section className="space-y-6">
-            {/* Progress */}
             <div className="flex gap-1 mb-6">
               {QUESTIONS.map((_, i) => (
-                <div key={i} className={`h-1 flex-1 rounded-full ${i <= step ? 'bg-orange-500' : 'bg-gray-800'}`} />
+                <div key={i} className={`h-1 flex-1 rounded-full ${i <= step ? 'bg-orange-500' : 'bg-gray-200'}`} />
               ))}
             </div>
 
             <div className="text-center mb-8">
-              <h2 className="text-xl font-bold mb-2">{currentQ.title}</h2>
-              <p className="text-gray-400">{currentQ.question}</p>
+              <h2 className="text-xl font-bold text-gray-900 mb-2">{currentQ.title}</h2>
+              <p className="text-gray-500">{currentQ.question}</p>
             </div>
 
             {currentQ.key === 'lifeRhythm' ? (
               <LifeRhythmStep onComplete={(data) => handleAnswer('wakeUpTime', data.wakeUpTime) || handleAnswer('bedTime', data.bedTime) || handleAnswer('lifeRhythm', data)} />
-            ) : currentQ.key === 'lifeRhythm' ? null : (
+            ) : (
               <div className="space-y-3">
                 {currentQ.options?.map(opt => (
                   <button key={opt.value} onClick={() => handleAnswer(currentQ.key, opt.value)}
-                    className="w-full p-4 bg-gray-900 border border-gray-800 rounded-xl text-left hover:border-orange-500 transition-all group">
-                    <span className="text-lg">{opt.label}</span>
+                    className="w-full p-4 bg-white border border-gray-200 rounded-xl text-left hover:border-orange-400 hover:shadow-sm transition-all group shadow-sm">
+                    <span className="text-lg text-gray-700">{opt.label}</span>
                   </button>
                 ))}
               </div>
