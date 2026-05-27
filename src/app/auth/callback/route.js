@@ -1,10 +1,17 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
 
+function getOrigin(request) {
+  const host = request.headers.get('x-forwarded-host') || request.headers.get('host') || 'app.clubfasting.com'
+  const proto = request.headers.get('x-forwarded-proto') || 'https'
+  return `${proto}://${host}`
+}
+
 export async function GET(request) {
-  const { searchParams, origin } = new URL(request.url)
+  const { searchParams } = new URL(request.url)
   const code = searchParams.get('code')
   const next = searchParams.get('next') ?? '/dashboard'
+  const origin = getOrigin(request)
 
   if (code) {
     const response = NextResponse.redirect(`${origin}${next}`)
