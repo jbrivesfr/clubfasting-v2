@@ -19,11 +19,11 @@ const TOOLS = [
     image: 'https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=900&q=80&auto=format&fit=crop',
   },
   {
-    id: 'glycemia',
+    id: 'glucose',
     title: 'Simulateur de glycémie',
     desc: 'Visualise l\'impact des aliments sur ta glycémie en temps réel.',
     tag: 'Analyse',
-    url: 'https://clubfasting.com/glucosemaster/',
+    url: '/dashboard/glucose',
     accent: 'from-sky-500 to-cyan-500',
     image: 'https://images.unsplash.com/photo-1490818387583-1baba5e638af?w=900&q=80&auto=format&fit=crop',
   },
@@ -32,9 +32,18 @@ const TOOLS = [
     title: 'Montre-moi ton assiette',
     desc: 'L\'IA analyse ton repas et l\'optimise pour ton métabolisme.',
     tag: 'IA',
-    url: 'https://analyseur-de-repas-gdv-v1-453490259042.us-west1.run.app',
+    url: '/dashboard/meal-analyzer',
     accent: 'from-emerald-500 to-teal-500',
     image: 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=900&q=80&auto=format&fit=crop',
+  },
+  {
+    id: 'cart-analyzer',
+    title: 'Analyseur de caddie',
+    desc: 'L\'IA analyse tes courses et te guide vers les meilleurs choix.',
+    tag: 'IA',
+    url: '/dashboard/cart-analyzer',
+    accent: 'from-violet-500 to-purple-500',
+    image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=900&q=80&auto=format&fit=crop',
   },
 ]
 

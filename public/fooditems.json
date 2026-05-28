@@ -1,0 +1,738 @@
+[
+    {
+        "category": "F\u00e9culents",
+        "name": "Pain Blanc",
+        "gi": 70,
+        "gl": 10,
+        "icon": "\ud83c\udf5e",
+        "image": ""
+    },
+    {
+        "category": "F\u00e9culents",
+        "name": "Riz Blanc",
+        "gi": 70,
+        "gl": 20,
+        "icon": "\ud83c\udf5a",
+        "image": ""
+    },
+    {
+        "category": "F\u00e9culents",
+        "name": "P\u00e2tes",
+        "gi": 40,
+        "gl": 8,
+        "icon": "\ud83c\udf5d",
+        "image": ""
+    },
+    {
+        "category": "F\u00e9culents",
+        "name": "Pizza",
+        "gi": 65,
+        "gl": 30,
+        "icon": "\ud83c\udf55",
+        "image": ""
+    },
+    {
+        "category": "F\u00e9culents",
+        "name": "Haricots secs",
+        "gi": 30,
+        "gl": 8,
+        "icon": "\ud83e\uded8",
+        "image": ""
+    },
+    {
+        "category": "F\u00e9culents",
+        "name": "Croissant",
+        "gi": 70,
+        "gl": 12,
+        "icon": "\ud83e\udd50",
+        "image": ""
+    },
+    {
+        "category": "F\u00e9culents",
+        "name": "Baguette",
+        "gi": 90,
+        "gl": 17,
+        "icon": "\ud83e\udd56",
+        "image": ""
+    },
+    {
+        "category": "F\u00e9culents",
+        "name": "Frites",
+        "gi": 60,
+        "gl": 20,
+        "icon": "\ud83c\udf5f",
+        "image": ""
+    },
+    {
+        "category": "F\u00e9culents",
+        "name": "Spaghetti",
+        "gi": 40,
+        "gl": 8,
+        "icon": "\ud83c\udf5d",
+        "image": ""
+    },
+    {
+        "category": "F\u00e9culents",
+        "name": "Pain Complet",
+        "gi": 40,
+        "gl": 11,
+        "icon": "\ud83c\udf5e",
+        "image": ""
+    },
+    {
+        "category": "F\u00e9culents",
+        "name": "Couscous",
+        "gi": 55,
+        "gl": 18,
+        "icon": "\ud83c\udf72",
+        "image": ""
+    },
+    {
+        "category": "F\u00e9culents",
+        "name": "Pommes de Terre",
+        "gi": 45,
+        "gl": 28,
+        "icon": "\ud83e\udd54",
+        "image": ""
+    },
+    {
+        "category": "F\u00e9culents",
+        "name": "Quinoa",
+        "gi": 35,
+        "gl": 9,
+        "icon": "\ud83e\udd58",
+        "image": ""
+    },
+    {
+        "category": "F\u00e9culents",
+        "name": "Patate Douce",
+        "gi": 44,
+        "gl": 12,
+        "icon": "\ud83c\udf60",
+        "image": ""
+    },
+    {
+        "category": "F\u00e9culents",
+        "name": "Orge",
+        "gi": 28,
+        "gl": 8,
+        "icon": "\ud83c\udf3e",
+        "image": ""
+    },
+    {
+        "category": "F\u00e9culents",
+        "name": "Riz Brun",
+        "gi": 50,
+        "gl": 11,
+        "icon": "\ud83c\udf5a",
+        "image": ""
+    },
+    {
+        "category": "F\u00e9culents",
+        "name": "Riz de Chou-fleur",
+        "gi": 15,
+        "gl": 3,
+        "icon": "\ud83e\udd66",
+        "image": ""
+    },
+    {
+        "category": "F\u00e9culents",
+        "name": "Nouilles de Konjac",
+        "gi": 0,
+        "gl": 0,
+        "icon": "\ud83c\udf5c",
+        "image": ""
+    },
+    {
+        "category": "F\u00e9culents",
+        "name": "Boulgour",
+        "gi": 46,
+        "gl": 12,
+        "icon": "\ud83c\udf72",
+        "image": ""
+    },
+    {
+        "category": "F\u00e9culents",
+        "name": "Lentilles",
+        "gi": 32,
+        "gl": 5,
+        "icon": "\ud83c\udf5b",
+        "image": ""
+    },
+    {
+        "category": "F\u00e9culents",
+        "name": "Pois Chiches",
+        "gi": 28,
+        "gl": 8,
+        "icon": "\ud83e\udd59",
+        "image": ""
+    },
+    {
+        "category": "F\u00e9culents",
+        "name": "Pain au Levain",
+        "gi": 48,
+        "gl": 9,
+        "icon": "\ud83c\udf5e",
+        "image": ""
+    },
+    {
+        "category": "Fruits",
+        "name": "Pomme",
+        "gi": 50,
+        "gl": 7,
+        "icon": "\ud83c\udf4e",
+        "image": ""
+    },
+    {
+        "category": "Fruits",
+        "name": "Banane",
+        "gi": 45,
+        "gl": 14,
+        "icon": "\ud83c\udf4c",
+        "image": ""
+    },
+    {
+        "category": "Fruits",
+        "name": "Past\u00e8que",
+        "gi": 75,
+        "gl": 26,
+        "icon": "\ud83c\udf49",
+        "image": ""
+    },
+    {
+        "category": "Fruits",
+        "name": "Raisins",
+        "gi": 55,
+        "gl": 19,
+        "icon": "\ud83c\udf47",
+        "image": ""
+    },
+    {
+        "category": "Fruits",
+        "name": "Poire",
+        "gi": 45,
+        "gl": 13,
+        "icon": "\ud83c\udf50",
+        "image": ""
+    },
+    {
+        "category": "Fruits",
+        "name": "Myrtilles",
+        "gi": 40,
+        "gl": 6,
+        "icon": "\ud83e\uded0",
+        "image": ""
+    },
+    {
+        "category": "Fruits",
+        "name": "Dattes Medjool",
+        "gi": 70,
+        "gl": 23,
+        "icon": "\ud83c\udf34",
+        "image": ""
+    },
+    {
+        "category": "Fruits",
+        "name": "Tomate",
+        "gi": 20,
+        "gl": 4,
+        "icon": "\ud83c\udf45",
+        "image": ""
+    },
+    {
+        "category": "Fruits",
+        "name": "Avocat",
+        "gi": 20,
+        "gl": 4,
+        "icon": "\ud83e\udd51",
+        "image": ""
+    },
+    {
+        "category": "Fruits",
+        "name": "Fraise",
+        "gi": 40,
+        "gl": 6,
+        "icon": "\ud83c\udf53",
+        "image": ""
+    },
+    {
+        "category": "Fruits",
+        "name": "Ananas",
+        "gi": 59,
+        "gl": 13,
+        "icon": "\ud83c\udf4d",
+        "image": ""
+    },
+    {
+        "category": "Fruits",
+        "name": "Mangue",
+        "gi": 55,
+        "gl": 10,
+        "icon": "\ud83e\udd6d",
+        "image": ""
+    },
+    {
+        "category": "Fruits",
+        "name": "Orange",
+        "gi": 42,
+        "gl": 4,
+        "icon": "\ud83c\udf4a",
+        "image": ""
+    },
+    {
+        "category": "Fruits",
+        "name": "Kiwi",
+        "gi": 50,
+        "gl": 7,
+        "icon": "\ud83e\udd5d",
+        "image": ""
+    },
+    {
+        "category": "Fruits",
+        "name": "Cerise",
+        "gi": 22,
+        "gl": 3,
+        "icon": "\ud83c\udf52",
+        "image": ""
+    },
+    {
+        "category": "Fruits",
+        "name": "Melon",
+        "gi": 65,
+        "gl": 11,
+        "icon": "\ud83c\udf48",
+        "image": ""
+    },
+    {
+        "category": "Fruits",
+        "name": "P\u00eache",
+        "gi": 42,
+        "gl": 5,
+        "icon": "\ud83c\udf51",
+        "image": ""
+    },
+    {
+        "category": "Fruits",
+        "name": "Prune",
+        "gi": 39,
+        "gl": 3,
+        "icon": "\ud83c\udf51",
+        "image": ""
+    },
+    {
+        "category": "Fruits",
+        "name": "Pamplemousse",
+        "gi": 25,
+        "gl": 3,
+        "icon": "\ud83c\udf4a",
+        "image": ""
+    },
+    {
+        "category": "Fruits",
+        "name": "Goyave",
+        "gi": 31,
+        "gl": 4,
+        "icon": "\ud83c\udf48",
+        "image": ""
+    },
+    {
+        "category": "Fruits",
+        "name": "Papaye",
+        "gi": 50,
+        "gl": 11,
+        "icon": "\ud83c\udf48",
+        "image": ""
+    },
+    {
+        "category": "Fruits",
+        "name": "Abricot",
+        "gi": 30,
+        "gl": 5,
+        "icon": "\ud83c\udf51",
+        "image": ""
+    },
+    {
+        "category": "Fruits",
+        "name": "Fruit de la passion",
+        "gi": 30,
+        "gl": 5,
+        "icon": "\ud83e\udd6d",
+        "image": ""
+    },
+    {
+        "category": "Fruits",
+        "name": "Grenade",
+        "gi": 35,
+        "gl": 8,
+        "icon": "\ud83c\udf4e",
+        "image": ""
+    },
+    {
+        "category": "Fruits",
+        "name": "Litchi",
+        "gi": 50,
+        "gl": 7,
+        "icon": "\ud83c\udf48",
+        "image": ""
+    },
+    {
+        "category": "Fruits",
+        "name": "Framboise",
+        "gi": 25,
+        "gl": 3,
+        "icon": "\ud83c\udf53",
+        "image": ""
+    },
+    {
+        "category": "Fruits",
+        "name": "Groseille",
+        "gi": 25,
+        "gl": 3,
+        "icon": "\ud83c\udf47",
+        "image": ""
+    },
+    {
+        "category": "Fruits",
+        "name": "Cassis",
+        "gi": 15,
+        "gl": 2,
+        "icon": "\ud83c\udf47",
+        "image": ""
+    },
+    {
+        "category": "Fruits",
+        "name": "M\u00fbre",
+        "gi": 25,
+        "gl": 3,
+        "icon": "\ud83c\udf47",
+        "image": ""
+    },
+    {
+        "category": "Fruits",
+        "name": "Canneberge",
+        "gi": 45,
+        "gl": 6,
+        "icon": "\ud83c\udf52",
+        "image": ""
+    },
+    {
+        "category": "Fruits",
+        "name": "Cl\u00e9mentine",
+        "gi": 30,
+        "gl": 4,
+        "icon": "\ud83c\udf4a",
+        "image": ""
+    },
+    {
+        "category": "Fruits",
+        "name": "Coing",
+        "gi": 35,
+        "gl": 5,
+        "icon": "\ud83c\udf4f",
+        "image": ""
+    },
+    {
+        "category": "Fruits",
+        "name": "Fruit du Dragon",
+        "gi": 48,
+        "gl": 8,
+        "icon": "\ud83d\udc32",
+        "image": ""
+    },
+    {
+        "category": "Fruits",
+        "name": "Noix de Coco",
+        "gi": 45,
+        "gl": 6,
+        "icon": "\ud83e\udd65",
+        "image": ""
+    },
+    {
+        "category": "Id\u00e9es de repas",
+        "name": "\u0152ufs et Avocat",
+        "gi": 15,
+        "gl": 3,
+        "icon": "\ud83e\udd5a\ud83e\udd51",
+        "image": ""
+    },
+    {
+        "category": "Id\u00e9es de repas",
+        "name": "Steak et Pommes de Terre",
+        "gi": 39,
+        "gl": 16,
+        "icon": "\ud83e\udd69\ud83e\udd54",
+        "image": ""
+    },
+    {
+        "category": "Id\u00e9es de repas",
+        "name": "Poulet et Riz",
+        "gi": 50,
+        "gl": 15,
+        "icon": "\ud83c\udf57\ud83c\udf5a",
+        "image": ""
+    },
+    {
+        "category": "Id\u00e9es de repas",
+        "name": "Haricots et Riz",
+        "gi": 40,
+        "gl": 11,
+        "icon": "\ud83e\uded8\ud83c\udf5a",
+        "image": ""
+    },
+    {
+        "category": "Id\u00e9es de repas",
+        "name": "Sandwich Jambon-Fromage",
+        "gi": 35,
+        "gl": 11,
+        "icon": "\ud83e\udd6a",
+        "image": ""
+    },
+    {
+        "category": "Id\u00e9es de repas",
+        "name": "Taboul\u00e9",
+        "gi": 45,
+        "gl": 16,
+        "icon": "\ud83e\udd57",
+        "image": ""
+    },
+    {
+        "category": "Id\u00e9es de repas",
+        "name": "Poulet Grill\u00e9 et Salade",
+        "gi": 30,
+        "gl": 7,
+        "icon": "\ud83e\udd57",
+        "image": ""
+    },
+    {
+        "category": "Id\u00e9es de repas",
+        "name": "Quinoa et L\u00e9gumes",
+        "gi": 50,
+        "gl": 10,
+        "icon": "\ud83e\udd58",
+        "image": ""
+    },
+    {
+        "category": "Id\u00e9es de repas",
+        "name": "Saumon avec Asperges",
+        "gi": 20,
+        "gl": 5,
+        "icon": "\ud83d\udc1f",
+        "image": ""
+    },
+    {
+        "category": "Id\u00e9es de repas",
+        "name": "Wraps de Laitue au Dinde",
+        "gi": 15,
+        "gl": 3,
+        "icon": "\ud83c\udf2f",
+        "image": ""
+    },
+    {
+        "category": "Id\u00e9es de repas",
+        "name": "Saut\u00e9 de L\u00e9gumes",
+        "gi": 45,
+        "gl": 9,
+        "icon": "\ud83e\udd61",
+        "image": ""
+    },
+    {
+        "category": "Id\u00e9es de repas",
+        "name": "Tofu et Brocoli",
+        "gi": 15,
+        "gl": 4,
+        "icon": "\ud83e\udd66",
+        "image": ""
+    },
+    {
+        "category": "Id\u00e9es de repas",
+        "name": "Crevettes Grill\u00e9es avec Nouilles de Courgette",
+        "gi": 25,
+        "gl": 6,
+        "icon": "\ud83c\udf64",
+        "image": ""
+    },
+    {
+        "category": "Id\u00e9es de repas",
+        "name": "Poulet et Riz Brun",
+        "gi": 55,
+        "gl": 13,
+        "icon": "\ud83c\udf57\ud83c\udf5a",
+        "image": ""
+    },
+    {
+        "category": "Id\u00e9es de repas",
+        "name": "Omelette aux L\u00e9gumes",
+        "gi": 30,
+        "gl": 4,
+        "icon": "\ud83c\udf73",
+        "image": ""
+    },
+    {
+        "category": "Id\u00e9es de repas",
+        "name": "Saut\u00e9 de B\u0153uf Maigre",
+        "gi": 40,
+        "gl": 8,
+        "icon": "\ud83e\udd69",
+        "image": ""
+    },
+    {
+        "category": "Id\u00e9es de repas",
+        "name": "Salade Ni\u00e7oise",
+        "gi": 35,
+        "gl": 7,
+        "icon": "\ud83e\udd57",
+        "image": ""
+    },
+    {
+        "category": "Id\u00e9es de repas",
+        "name": "Sushi au Saumon",
+        "gi": 55,
+        "gl": 12,
+        "icon": "\ud83c\udf63",
+        "image": ""
+    },
+    {
+        "category": "Id\u00e9es de repas",
+        "name": "Soupe aux Lentilles",
+        "gi": 35,
+        "gl": 9,
+        "icon": "\ud83e\udd63",
+        "image": ""
+    },
+    {
+        "category": "Id\u00e9es de repas",
+        "name": "Salade de Pois Chiches",
+        "gi": 30,
+        "gl": 6,
+        "icon": "\ud83e\udd57",
+        "image": ""
+    },
+    {
+        "category": "Id\u00e9es de repas",
+        "name": "P\u00e2tes de Bl\u00e9 Entier aux L\u00e9gumes",
+        "gi": 50,
+        "gl": 11,
+        "icon": "\ud83c\udf5d",
+        "image": ""
+    },
+    {
+        "category": "Id\u00e9es de repas",
+        "name": "Buddha Bowl",
+        "gi": 45,
+        "gl": 10,
+        "icon": "\ud83e\udd59",
+        "image": ""
+    },
+    {
+        "category": "Id\u00e9es de repas",
+        "name": "Poivrons Farcis au Quinoa",
+        "gi": 40,
+        "gl": 9,
+        "icon": "\ud83c\udf36\ufe0f",
+        "image": ""
+    },
+    {
+        "category": "Id\u00e9es de repas",
+        "name": "Salade de Kale et Poulet",
+        "gi": 30,
+        "gl": 7,
+        "icon": "\ud83e\udd6c",
+        "image": ""
+    },
+    {
+        "category": "Id\u00e9es de repas",
+        "name": "Saumon Grill\u00e9 et Riz Sauvage",
+        "gi": 50,
+        "gl": 12,
+        "icon": "\ud83d\udc1f\ud83c\udf5a",
+        "image": ""
+    },
+    {
+        "category": "Id\u00e9es de repas",
+        "name": "Wrap V\u00e9gan aux L\u00e9gumes Grill\u00e9s",
+        "gi": 40,
+        "gl": 8,
+        "icon": "\ud83c\udf2f",
+        "image": ""
+    },
+    {
+        "category": "Snacks",
+        "name": "Yaourt",
+        "gi": 35,
+        "gl": 5,
+        "icon": "\ud83e\udd5b",
+        "image": ""
+    },
+    {
+        "category": "Snacks",
+        "name": "Salade de Fruits",
+        "gi": 45,
+        "gl": 10,
+        "icon": "\ud83c\udf53",
+        "image": ""
+    },
+    {
+        "category": "Snacks",
+        "name": "Barre Prot\u00e9in\u00e9e",
+        "gi": 40,
+        "gl": 8,
+        "icon": "\ud83c\udf6b",
+        "image": ""
+    },
+    {
+        "category": "Snacks",
+        "name": "Amandes",
+        "gi": 15,
+        "gl": 2,
+        "icon": "\ud83c\udf30",
+        "image": ""
+    },
+    {
+        "category": "Snacks",
+        "name": "C\u00e9leri au Beurre de Cacahu\u00e8te",
+        "gi": 30,
+        "gl": 6,
+        "icon": "\ud83e\udd5c",
+        "image": ""
+    },
+    {
+        "category": "Snacks",
+        "name": "Houmous et Carottes",
+        "gi": 25,
+        "gl": 5,
+        "icon": "\ud83e\udd55",
+        "image": ""
+    },
+    {
+        "category": "Snacks",
+        "name": "Galettes de Riz",
+        "gi": 99,
+        "gl": 8,
+        "icon": "\ud83c\udf58",
+        "image": ""
+    },
+    {
+        "category": "Snacks",
+        "name": "B\u00e2tonnets de Fromage",
+        "gi": 30,
+        "gl": 4,
+        "icon": "\ud83e\uddc0",
+        "image": ""
+    },
+    {
+        "category": "Snacks",
+        "name": "Pop-corn",
+        "gi": 55,
+        "gl": 8,
+        "icon": "\ud83c\udf7f",
+        "image": ""
+    },
+    {
+        "category": "Snacks",
+        "name": "Barre de C\u00e9r\u00e9ales",
+        "gi": 60,
+        "gl": 12,
+        "icon": "\ud83e\udd63",
+        "image": ""
+    }
+]
