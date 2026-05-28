@@ -4,6 +4,9 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
 import Link from 'next/link'
+import { NewsfeedProvider } from '@/components/newsfeed/NewsfeedProvider'
+import { NewsfeedFeed } from '@/components/newsfeed/NewsfeedFeed'
+import { JourneyTabs } from '@/components/newsfeed/JourneyTabs'
 
 const TOOLS = [
   {
@@ -186,7 +189,8 @@ export default function DashboardPage() {
   const greeting = hour < 6 ? 'Bonne nuit' : hour < 12 ? 'Bon matin' : hour < 18 ? 'Bel après-midi' : 'Bonne soirée'
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white relative overflow-hidden">
+    <NewsfeedProvider>
+      <div className="min-h-screen bg-zinc-950 text-white relative overflow-hidden">
       {/* Ambient glows */}
       <div
         className="fixed inset-x-0 top-0 h-[700px] -z-0 pointer-events-none animate-pulse-glow"
@@ -430,21 +434,8 @@ export default function DashboardPage() {
         {/* Newsfeed */}
         <section className="animate-slide-up">
           <h2 className="text-2xl font-bold mb-6 font-display">Fil d&apos;actualités</h2>
-          <div className="relative overflow-hidden rounded-2xl bg-zinc-900/60 border border-white/[0.06] p-12 text-center">
-            <div
-              className="absolute inset-0 opacity-30"
-              style={{
-                background: 'radial-gradient(circle at 50% 50%, rgba(251,146,60,0.1) 0%, transparent 70%)',
-              }}
-            />
-            <div className="relative">
-              <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-white/[0.04] border border-white/[0.08] text-2xl mb-4">
-                📭
-              </div>
-              <p className="text-zinc-300 font-medium mb-1">Le fil arrive bientôt</p>
-              <p className="text-sm text-zinc-500">Tu y retrouveras tes articles, conseils et nouveautés du Club.</p>
-            </div>
-          </div>
+          <JourneyTabs />
+          <NewsfeedFeed />
         </section>
 
         <footer className="pt-8 pb-4 text-center text-xs text-zinc-600 border-t border-white/[0.04]">
@@ -453,5 +444,6 @@ export default function DashboardPage() {
         </footer>
       </main>
     </div>
+    </NewsfeedProvider>
   )
 }
