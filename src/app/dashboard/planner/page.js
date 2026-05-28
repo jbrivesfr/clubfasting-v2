@@ -51,7 +51,9 @@ const MEAL_LABELS = {
 }
 
 function generateMealPlan(answers) {
-  const { favoriteMeal, wakeUpTime, bedTime, drinkHabit } = answers
+  const { favoriteMeal, lifeRhythm, drinkHabit } = answers
+  const wakeUpTime = lifeRhythm?.wakeUpTime ?? 7
+  const bedTime = lifeRhythm?.bedTime ?? 22
   const meals = []
 
   if (favoriteMeal === 'petit-dejeuner') {

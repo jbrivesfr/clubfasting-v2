@@ -1,8 +1,10 @@
 'use client'
 
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, useEffect } from 'react'
 import Link from 'next/link'
 import ReactMarkdown from 'react-markdown'
+import { createClient } from '@/utils/supabase/client'
+import AnalysisHistory from '@/components/newsfeed/analysis/AnalysisHistory'
 
 function ScoreBadge({ score }) {
   const colors = {
@@ -23,7 +25,36 @@ export default function MealAnalyzer() {
   const [score, setScore] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const [userId, setUserId] = useState(null)
+  const [historyKey, setHistoryKey] = useState(0)
   const fileRef = useRef(null)
+
+  useEffect(() => {
+    const supabase = createClient()
+    supabase.auth.getUser().then(({ data }) => {
+      if (data?.user) setUserId(data.user.id)
+    })
+  }, [])
+
+  // Compress image before sending
+  const compressImage = useCallback((base64) => {
+    return new Promise((resolve) => {
+      const img = new Image()
+      img.onload = () => {
+        const canvas = document.createElement('canvas')
+        const maxW = 800
+        const ratio = Math.min(1, maxW / img.width)
+        canvas.width = img.width * ratio
+        canvas.height = img.height * ratio
+        const ctx = canvas.getContext('2d')
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+        const compressed = canvas.toDataURL('image/jpeg', 0.7)
+        resolve(compressed.split(',')[1])
+      }
+      img.onerror = () => resolve(base64.split(',')[1])
+      img.src = base64.startsWith('data:') ? base64 : `data:image/jpeg;base64,${base64}`
+    })
+  }, [])
 
   const handleFile = useCallback((e) => {
     const file = e.target.files?.[0]
@@ -42,22 +73,23 @@ export default function MealAnalyzer() {
     setLoading(true)
     setError(null)
     try {
-      const base64 = image.split(',')[1]
+      const compressed = await compressImage(image)
       const res = await fetch('/api/analyze-meal', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ imageBase64: base64, type: 'meal' }),
+        body: JSON.stringify({ imageBase64: compressed, type: 'meal' }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Erreur inconnue')
       setAnalysis(data.analysis)
       setScore(data.score)
+      setHistoryKey(k => k + 1)
     } catch (err) {
       setError(err.message)
     } finally {
       setLoading(false)
     }
-  }, [image])
+  }, [image, compressImage])
 
   const reset = useCallback(() => {
     setImage(null)
@@ -178,6 +210,13 @@ export default function MealAnalyzer() {
             <p className="text-xs text-zinc-600 text-center">
               Cette analyse est fournie à titre informatif uniquement. Pour des conseils personnalisés, consultez un professionnel de la santé.
             </p>
+
+            {/* History */}
+            {userId && (
+              <div className="mt-6 border-t border-zinc-800 pt-6">
+                <AnalysisHistory key={historyKey} userId={userId} type="meal" />
+              </div>
+            )}
           </div>
         )}
       </div>

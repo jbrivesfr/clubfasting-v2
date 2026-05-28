@@ -19,6 +19,30 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, T
 
 const TIME_LABELS = Array.from({ length: 181 }, (_, i) => `${i * 5} min`)
 
+// Ported from original glucosemaster script.js
+function calculateGlucoseCurve(gi, gl) {
+  const baseline = Array(181).fill(80)
+  const peakTime = 30 + (gl || 0) * 0.5
+  const peakValue = 80 + (gi || 0) * 0.7 + (gl || 0) * 2
+  const decayRate = 0.02 - (gl || 0) * 0.0005
+  for (let i = 0; i < 181; i++) {
+    const timeEffect = Math.exp(-((i - peakTime) ** 2) / (2 * (20 + (gl || 0)) ** 2))
+    let value = 80 + (peakValue - 80) * timeEffect
+    if (i > peakTime) {
+      value -= (i - peakTime) * decayRate
+    }
+    baseline[i] = Math.max(80, value)
+  }
+  return baseline
+}
+
+function getCurveColor(gi) {
+  if (gi > 60) return '#ef4444'
+  if (gi > 50) return '#f97316'
+  if (gi > 40) return '#eab308'
+  return '#10b981'
+}
+
 export default function GlucoseSimulator() {
   const [foodItems, setFoodItems] = useState([])
   const [categories, setCategories] = useState([])
@@ -56,8 +80,8 @@ export default function GlucoseSimulator() {
     datasets: stackedFoods.length > 0
       ? stackedFoods.map((food, idx) => ({
           label: food.name,
-          data: food.glucose_impact || Array(181).fill(80),
-          borderColor: ['#f97316', '#06b6d4', '#10b981', '#8b5cf6', '#ec4899', '#eab308', '#ef4444', '#6366f1'][idx % 8],
+          data: calculateGlucoseCurve(food.gi, food.gl),
+          borderColor: getCurveColor(food.gi),
           backgroundColor: 'transparent',
           tension: 0.3,
           borderWidth: 2,
@@ -143,7 +167,7 @@ export default function GlucoseSimulator() {
             <div>
               <p className="font-medium text-sm">{selectedFood.name}</p>
               <p className="text-xs text-zinc-400">
-                IG: {selectedFood.glycemic_index || 'N/A'} • Pic: {selectedFood.peak_time ? `${selectedFood.peak_time} min` : 'N/A'}
+                IG: {selectedFood.gi || 'N/A'} • CG: {selectedFood.gl || 'N/A'}
               </p>
             </div>
             {stackedFoods.length > 0 && (
@@ -187,13 +211,13 @@ export default function GlucoseSimulator() {
               >
                 <span className="text-3xl">{food.icon}</span>
                 <span className="text-xs text-zinc-300 text-center leading-tight">{food.name}</span>
-                {food.glycemic_index && (
+                {food.gi && (
                   <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${
-                    food.glycemic_index > 70 ? 'bg-red-500/20 text-red-400' :
-                    food.glycemic_index > 55 ? 'bg-yellow-500/20 text-yellow-400' :
+                    food.gi > 70 ? 'bg-red-500/20 text-red-400' :
+                    food.gi > 55 ? 'bg-yellow-500/20 text-yellow-400' :
                     'bg-green-500/20 text-green-400'
                   }`}>
-                    IG {food.glycemic_index}
+                    IG {food.gi}
                   </span>
                 )}
               </button>

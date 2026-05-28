@@ -68,12 +68,38 @@ export async function analyzeImage(imageBase64, type = 'meal') {
     const supabase = createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (user) {
-      // Fire and forget - don't block response
-      supabase.from('user_analyses').insert({
+      // Upload image to storage
+      let imageUrl = ''
+      try {
+        const buffer = Buffer.from(imageBase64, 'base64')
+        const filename = `${type}-${Date.now()}.jpg`
+        const path = `${user.id}/${filename}`
+        const { error: uploadError } = await supabase.storage
+          .from('meal-analyses')
+          .upload(path, buffer, {
+            contentType: 'image/jpeg',
+            upsert: false,
+          })
+        if (!uploadError) {
+          const { data: urlData } = supabase.storage
+            .from('meal-analyses')
+            .getPublicUrl(path)
+          imageUrl = urlData.publicUrl
+        } else {
+          console.error('Storage upload error:', uploadError)
+        }
+      } catch (storageError) {
+        console.error('Storage error:', storageError)
+      }
+
+      // Save analysis
+      const { error: insertError } = await supabase.from('user_analyses').insert({
         user_id: user.id,
         type,
+        image_url: imageUrl,
         analysis: result,
-      }).then(r => r.error && console.error('Failed to save analysis:', r.error))
+      })
+      if (insertError) console.error('Failed to save analysis:', insertError)
     }
   } catch (dbError) {
     console.error('Failed to save analysis:', dbError)
