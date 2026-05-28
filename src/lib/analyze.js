@@ -43,10 +43,11 @@ export async function analyzeImage(imageBase64, type = 'meal') {
       responseSchema: {
         type: 'OBJECT',
         properties: {
+          title: { type: 'STRING', description: "Un titre court (max 8 mots) qui résume le contenu de la photo (ex: 'Salade de quinoa et avocat', 'Caddie rempli de produits frais')" },
           analysis: { type: 'STRING', description: "L'analyse détaillée en Markdown" },
           score: { type: 'INTEGER', description: 'Note de 1 à 10' },
         },
-        required: ['analysis', 'score'],
+        required: ['title', 'analysis', 'score'],
       },
     },
   })
@@ -68,25 +69,33 @@ export async function analyzeImage(imageBase64, type = 'meal') {
     const supabase = createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (user) {
-      // Upload image to storage
+      // Upload image to storage (needs service key for write access)
       let imageUrl = ''
       try {
-        const buffer = Buffer.from(imageBase64, 'base64')
-        const filename = `${type}-${Date.now()}.jpg`
-        const path = `${user.id}/${filename}`
-        const { error: uploadError } = await supabase.storage
-          .from('meal-analyses')
-          .upload(path, buffer, {
-            contentType: 'image/jpeg',
-            upsert: false,
-          })
-        if (!uploadError) {
-          const { data: urlData } = supabase.storage
+        const serviceKey = process.env.SUPABASE_SERVICE_KEY
+        if (serviceKey) {
+          const { createClient: createServiceClient } = await import('@supabase/supabase-js')
+          const storageClient = createServiceClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL,
+            serviceKey
+          )
+          const buffer = Buffer.from(imageBase64, 'base64')
+          const filename = `${type}-${Date.now()}.jpg`
+          const path = `${user.id}/${filename}`
+          const { error: uploadError } = await storageClient.storage
             .from('meal-analyses')
-            .getPublicUrl(path)
-          imageUrl = urlData.publicUrl
-        } else {
-          console.error('Storage upload error:', uploadError)
+            .upload(path, buffer, {
+              contentType: 'image/jpeg',
+              upsert: false,
+            })
+          if (!uploadError) {
+            const { data: urlData } = storageClient.storage
+              .from('meal-analyses')
+              .getPublicUrl(path)
+            imageUrl = urlData.publicUrl
+          } else {
+            console.error('Storage upload error:', JSON.stringify(uploadError))
+          }
         }
       } catch (storageError) {
         console.error('Storage error:', storageError)

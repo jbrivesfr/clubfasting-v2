@@ -39,6 +39,7 @@ export default function AnalysisHistory({ userId, type = 'all', onSelect }) {
       <h3 className="text-sm font-medium text-zinc-400 mb-3">Historique</h3>
       {analyses.map(a => {
         const score = a.analysis?.score
+        const title = a.analysis?.title
         return (
           <button
             key={a.id}
@@ -54,7 +55,7 @@ export default function AnalysisHistory({ userId, type = 'all', onSelect }) {
             )}
             <div className="flex-1 min-w-0">
               <p className="text-sm text-zinc-300 truncate">
-                {a.type === 'meal' ? 'Analyse de repas' : 'Analyse de caddie'}
+                {title || (a.type === 'meal' ? 'Analyse de repas' : 'Analyse de caddie')}
               </p>
               <p className="text-xs text-zinc-500">
                 {new Date(a.created_at).toLocaleDateString('fr-FR', {
