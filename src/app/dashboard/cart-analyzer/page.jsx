@@ -87,7 +87,6 @@ export default function CartAnalyzer() {
       setLoading(false)
     }
   }, [image, compressImage])
-  }, [image])
 
   const reset = useCallback(() => {
     setImage(null); setAnalysis(null); setScore(null); setError(null)
