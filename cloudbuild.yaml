@@ -2,7 +2,6 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'build'
-      - '--no-cache'
       - '-t'
       - 'us-west1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/clubfasting-v2/app:$COMMIT_SHA'
       - '--build-arg'
