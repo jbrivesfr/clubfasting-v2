@@ -2,11 +2,11 @@
 FROM node:20-slim AS builder
 WORKDIR /app
 
-COPY package.json package-lock.json ./
-RUN npm ci
-
+COPY package.json package-lock.json node_modules ./
 COPY . .
+
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_OPTIONS=--max-old-space-size=4096
 
 ARG NEXT_PUBLIC_SUPABASE_URL
 ENV NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
