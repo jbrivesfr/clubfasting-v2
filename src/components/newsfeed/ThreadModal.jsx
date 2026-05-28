@@ -29,8 +29,25 @@ export function ThreadModal({ item, onClose, userId }) {
     }
   }, [])
 
-  const getAvatarUrl = (avatarPath) => {
-    if (!avatarPath) return getDefaultAvatarUrl(item.author_id)
+  // Safe image URL parsing (handles string, array, JSON string)
+  const safeImageUrls = (raw) => {
+    if (!raw) return []
+    if (Array.isArray(raw)) return raw
+    if (typeof raw === 'string') {
+      try {
+        const parsed = JSON.parse(raw)
+        return Array.isArray(parsed) ? parsed : [raw]
+      } catch {
+        return [raw]
+      }
+    }
+    return []
+  }
+
+  const itemImages = safeImageUrls(item.image_urls)
+
+  const getAvatarUrl = (avatarPath, authorId) => {
+    if (!avatarPath) return getDefaultAvatarUrl(authorId || item.author_id)
     if (avatarPath.startsWith('http')) return avatarPath
     if (avatarPath.startsWith('/')) return `https://clubfasting.com${avatarPath}`
     return avatarPath
@@ -142,7 +159,7 @@ export function ThreadModal({ item, onClose, userId }) {
           <div className="p-5 border-b border-white/[0.04]">
             <div className="flex items-start gap-3">
               <img
-                src={getAvatarUrl(item.author_avatar)}
+                src={getAvatarUrl(item.author_avatar, item.author_id)}
                 alt={item.author_name}
                 className="w-12 h-12 rounded-full object-cover ring-2 ring-white/10 flex-shrink-0"
                 onError={(e) => { e.target.src = getDefaultAvatarUrl(item.author_id) }}
@@ -159,12 +176,12 @@ export function ThreadModal({ item, onClose, userId }) {
                 />
                 
                 {/* Images */}
-                {item.image_urls && item.image_urls.length > 0 && (
+                {itemImages.length > 0 && (
                   <div className="mt-3 grid grid-cols-2 gap-2">
-                    {item.image_urls.map((url, i) => (
+                    {itemImages.map((url, i) => (
                       <img
                         key={i}
-                        src={url}
+                        src={typeof url === 'string' ? url : (url.preview || url.original || '')}
                         alt=""
                         className="w-full rounded-xl object-cover max-h-64"
                         onError={(e) => { e.target.style.display = 'none' }}
@@ -217,7 +234,7 @@ export function ThreadModal({ item, onClose, userId }) {
                 {sortedReplies.map((reply) => (
                   <div key={reply.id} className="flex items-start gap-3">
                     <img
-                      src={getAvatarUrl(reply.author_avatar)}
+                      src={getAvatarUrl(reply.author_avatar || reply.author_custom_avatar_url, reply.author_id)}
                       alt={reply.author_name}
                       className="w-9 h-9 rounded-full object-cover ring-2 ring-white/5 flex-shrink-0"
                       onError={(e) => { e.target.src = getDefaultAvatarUrl(reply.author_id) }}
@@ -232,16 +249,18 @@ export function ThreadModal({ item, onClose, userId }) {
                         className="mt-1 text-sm text-zinc-300 [&_a]:text-orange-400 [&_a:hover]:text-orange-300 [&_a]:underline [&_a]:underline-offset-2"
                         dangerouslySetInnerHTML={{ __html: formatJourneyMessageJS(reply.content) }}
                       />
-                      {reply.image_urls && JSON.parse(reply.image_urls).length > 0 && (
-                        <div className="mt-2">
-                          <img
-                            src={JSON.parse(reply.image_urls)[0]}
+                      {(() => {
+                        const replyImages = safeImageUrls(reply.image_urls)
+                        return replyImages.length > 0 && (
+                          <div className="mt-2">
+                            <img
+                              src={typeof replyImages[0] === 'string' ? replyImages[0] : (replyImages[0].preview || replyImages[0].original || '')}
                             alt=""
                             className="w-full max-w-[200px] rounded-lg object-cover"
                             onError={(e) => { e.target.style.display = 'none' }}
                           />
                         </div>
-                      )}
+                      )})()}
                     </div>
                   </div>
                 ))}

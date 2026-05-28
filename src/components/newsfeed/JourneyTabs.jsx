@@ -9,8 +9,8 @@ export function JourneyTabs() {
   const tabs = [
     { id: null, name: 'Tous' },
     ...journeys.map(j => ({
-      id: j.journey_id,
-      name: j.journey_name
+      id: j.id,
+      name: j.title
     }))
   ]
 
