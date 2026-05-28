@@ -1,32 +1,15 @@
-# Multi-stage Dockerfile for Next.js on Cloud Run
-FROM node:20-slim AS builder
-WORKDIR /app
-
-COPY package.json package-lock.json node_modules ./
-COPY . .
-
-ENV NEXT_TELEMETRY_DISABLED=1
-ENV NODE_OPTIONS=--max-old-space-size=4096
-
-ARG NEXT_PUBLIC_SUPABASE_URL
-ENV NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
-ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
-ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
-ARG NEXT_PUBLIC_SITE_URL
-ENV NEXT_PUBLIC_SITE_URL=${NEXT_PUBLIC_SITE_URL}
-
-RUN npm run build
-
-# Production image
+# Production-only Dockerfile — no build inside Docker
+# Build Next.js natively on host first, then just copy artifacts
 FROM node:20-slim AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
+# Copy standalone output (pre-built natively)
+COPY .next/standalone ./
+COPY .next/static ./.next/static
+COPY public ./public
 
 ENV PORT=8080
 EXPOSE 8080
