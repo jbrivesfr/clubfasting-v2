@@ -45,6 +45,15 @@ const TOOLS = [
     accent: 'from-violet-500 to-purple-500',
     image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=900&q=80&auto=format&fit=crop',
   },
+  {
+    id: 'bilan',
+    title: 'Bilan Métabolique',
+    desc: '9 questions pour comprendre où tu en es et quoi faire ensuite.',
+    tag: 'Quiz',
+    url: '/dashboard/bilan',
+    accent: 'from-emerald-500 to-teal-500',
+    image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=900&q=80&auto=format&fit=crop',
+  },
 ]
 
 const MEAL_ICONS = {

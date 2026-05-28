@@ -65,8 +65,16 @@ export default function GlucoseSimulator() {
   }, [])
 
   const selectFood = useCallback((food) => {
-    setSelectedFood(food)
-    setStackedFoods(prev => [...prev, food].slice(-8))
+    setStackedFoods(prev => {
+      const exists = prev.some(s => s.name === food.name)
+      if (exists) {
+        const next = prev.filter(s => s.name !== food.name)
+        setSelectedFood(next.length > 0 ? next[next.length - 1] : null)
+        return next
+      }
+      setSelectedFood(food)
+      return [...prev, food].slice(-8)
+    })
   }, [])
 
   const clearStack = useCallback(() => {

@@ -165,12 +165,13 @@ export default function CartAnalyzer() {
             <p className="text-xs text-zinc-600 text-center">
               Cette analyse est fournie à titre informatif uniquement.
             </p>
+          </div>
+        )}
 
-            {userId && (
-              <div className="mt-6 border-t border-zinc-800 pt-6">
-                <AnalysisHistory key={historyKey} userId={userId} type="cart" />
-              </div>
-            )}
+        {/* History - always visible */}
+        {userId && (
+          <div className="border-t border-zinc-800 pt-6">
+            <AnalysisHistory key={historyKey} userId={userId} type="cart" />
           </div>
         )}
       </div>

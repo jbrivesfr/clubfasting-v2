@@ -210,13 +210,13 @@ export default function MealAnalyzer() {
             <p className="text-xs text-zinc-600 text-center">
               Cette analyse est fournie à titre informatif uniquement. Pour des conseils personnalisés, consultez un professionnel de la santé.
             </p>
+          </div>
+        )}
 
-            {/* History */}
-            {userId && (
-              <div className="mt-6 border-t border-zinc-800 pt-6">
-                <AnalysisHistory key={historyKey} userId={userId} type="meal" />
-              </div>
-            )}
+        {/* History - always visible */}
+        {userId && (
+          <div className="border-t border-zinc-800 pt-6">
+            <AnalysisHistory key={historyKey} userId={userId} type="meal" />
           </div>
         )}
       </div>
