@@ -191,37 +191,43 @@ function buildFeedItems(data) {
     })
 
   // Process comments (user posts + replies)
-  comments
-    .filter(c => !c.page_url || !c.page_url.includes('trash'))
-    .forEach(comment => {
-      if (comment.parent_id) {
-        // This is a reply to another comment - attach to parent
-        const parentKey = findItemKey(itemMap, comment.parent_id)
-        if (parentKey) {
-          const parent = itemMap.get(parentKey)
-          if (parent) {
-            const replyItem = makeItem(comment)
-            parent.replies = parent.replies || []
-            parent.replies.push(replyItem)
-            parent.replies_count = (parent.replies_count || 0) + 1
-            // Update most recent activity
-            const commentDate = new Date(comment.created_at)
-            const parentDate = new Date(parent.most_recent_activity || parent.created_at)
-            if (commentDate > parentDate) {
-              parent.most_recent_activity = comment.created_at
-            }
-          }
-        }
-      } else {
-        // Top-level comment
-        // Skip if it's a reply to a notification (matched by page_url) unless pinned
-        const isPinned = comment.is_pinned === true || comment.is_pinned === 'true'
-        if (notificationPageUrls.has(comment.page_url) && !isPinned) return
+  // Two passes: first top-level comments (parents), then replies
+  // This ensures parents always exist in itemMap before replies try to attach
+  const filteredComments = comments.filter(c => !c.page_url || !c.page_url.includes('trash'))
 
-        const item = makeItem(comment)
-        itemMap.set(`comment-${item.id}`, item)
+  // Pass 1: top-level comments (no parent_id)
+  const replyComments = []
+  filteredComments.forEach(comment => {
+    if (comment.parent_id) {
+      replyComments.push(comment)
+      return
+    }
+    // Top-level comment
+    const isPinned = comment.is_pinned === true || comment.is_pinned === 'true'
+    if (notificationPageUrls.has(comment.page_url) && !isPinned) return
+
+    const item = makeItem(comment)
+    itemMap.set(`comment-${item.id}`, item)
+  })
+
+  // Pass 2: replies — parents are now guaranteed to be in itemMap
+  replyComments.forEach(comment => {
+    const parentKey = findItemKey(itemMap, comment.parent_id)
+    if (parentKey) {
+      const parent = itemMap.get(parentKey)
+      if (parent) {
+        const replyItem = makeItem(comment)
+        parent.replies = parent.replies || []
+        parent.replies.push(replyItem)
+        // Update most recent activity
+        const commentDate = new Date(comment.created_at)
+        const parentDate = new Date(parent.most_recent_activity || parent.created_at)
+        if (commentDate > parentDate) {
+          parent.most_recent_activity = comment.created_at
+        }
       }
-    })
+    }
+  })
 
   // Attach comments as replies to matching notifications (by page_url)
   itemMap.forEach((item, key) => {
@@ -229,13 +235,17 @@ function buildFeedItems(data) {
       itemMap.forEach((other, otherKey) => {
         if (key !== otherKey && !other.is_notification && other.page_url === item.page_url && !other.parent_id) {
           item.replies.push(other)
-          item.replies_count = (item.replies_count || 0) + 1
           itemMap.delete(otherKey) // Remove from root level
         }
       })
       // Sort replies by date
       item.replies.sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
     }
+  })
+
+  // Sync replies_count from actual replies.length for accuracy
+  itemMap.forEach(item => {
+    item.replies_count = item.replies ? item.replies.length : 0
   })
 
   // Return as array, sorted: featured first, then by most recent activity
