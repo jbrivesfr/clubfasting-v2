@@ -163,58 +163,47 @@ export function NewsfeedCard({ item, onOpenThread, userId }) {
 
       {/* Card content */}
       <div className="px-5 pb-4">
-        <div 
-          className="text-white text-sm leading-relaxed [&_a]:text-orange-400 [&_a:hover]:text-orange-300 [&_a]:underline [&_a]:underline-offset-2"
-          dangerouslySetInnerHTML={{ __html: formatJourneyMessageJS(item.content) }}
-        />
-      </div>
-
-      {/* Image preview */}
-      {item.image_urls && item.image_urls.length > 0 && (
-        <div className="px-5 pb-4">
-          <div className={`grid gap-2 ${item.image_urls.length === 1 ? 'grid-cols-1' : 'grid-cols-2'}`}>
-            {item.image_urls.slice(0, 4).map((url, index) => (
-              <div 
-                key={index} 
-                className="relative aspect-video rounded-xl overflow-hidden bg-zinc-800"
-              >
-                <img
-                  src={url}
-                  alt=""
-                  className="w-full h-full object-cover"
-                  onError={(e) => { e.target.style.display = 'none' }}
-                />
-                {index === 3 && item.image_urls.length > 4 && (
-                  <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                    <span className="text-white font-bold text-lg">+{item.image_urls.length - 4}</span>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Vimeo content preview */}
-      {item.has_vimeo_content && item.vimeo_url && (
-        <div className="px-5 pb-4">
-          <div className="relative aspect-video rounded-xl overflow-hidden bg-zinc-800">
-            <img
-              src={`https://vimeo.com/api/v2/video/${extractVimeoId(item.vimeo_url)}/thumbnail.gif`}
-              alt=""
-              className="w-full h-full object-cover"
-              onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=600&q=80' }}
-            />
-            <div className="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/20 transition-colors">
-              <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className="text-indigo-600 ml-1">
-                  <path d="M8 5v14l11-7z"/>
-                </svg>
+        <div className="feed-comment-body flex gap-4">
+          <div 
+            className="feed-comment-main-content flex-1 min-w-0 text-white text-sm leading-relaxed [&_a]:text-orange-400 [&_a:hover]:text-orange-300 [&_a]:underline [&_a]:underline-offset-2"
+            dangerouslySetInnerHTML={{ __html: formatJourneyMessageJS(item.content) }}
+          />
+          
+          {/* Square image preview on the right */}
+          {(item.image_urls && item.image_urls.length > 0) && (
+            <div className="feed-comment-image-preview flex-shrink-0 w-[180px] aspect-square relative rounded-xl overflow-hidden">
+              <img
+                src={getImageUrl(item.image_urls[0])}
+                alt=""
+                className="w-full h-full object-cover"
+                onError={(e) => { e.target.style.display = 'none' }}
+              />
+              {item.image_urls.length > 1 && (
+                <span className="absolute bottom-2 right-2 bg-black/70 px-2 py-0.5 rounded text-xs text-white font-medium">+{item.image_urls.length - 1}</span>
+              )}
+            </div>
+          )}
+          
+          {/* Vimeo thumbnail on the right */}
+          {item.has_vimeo_content && item.vimeo_url && (
+            <div className="feed-comment-image-preview flex-shrink-0 w-[180px] aspect-square relative rounded-xl overflow-hidden">
+              <img
+                src={`https://vimeo.com/api/v2/video/${extractVimeoId(item.vimeo_url)}/thumbnail.gif`}
+                alt=""
+                className="w-full h-full object-cover"
+                onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=600&q=80' }}
+              />
+              <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="text-indigo-600 ml-0.5">
+                    <path d="M8 5v14l11-7z"/>
+                  </svg>
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
-      )}
+      </div>
 
       {/* Card footer */}
       <div className="relative flex items-center gap-4 px-5 py-4 border-t border-white/[0.04]">
@@ -268,6 +257,28 @@ export function NewsfeedCard({ item, onOpenThread, userId }) {
       </div>
     </div>
   )
+}
+
+// Helper to get image URL from various formats
+function getImageUrl(imageData) {
+  if (!imageData) return null
+  
+  // If already a string URL
+  if (typeof imageData === 'string') {
+    if (imageData.startsWith('http')) return imageData
+    if (imageData.startsWith('/')) return `https://clubfasting.com${imageData}`
+    return imageData
+  }
+  
+  // If array with original/preview
+  if (Array.isArray(imageData) && imageData.length > 0) {
+    const first = imageData[0]
+    if (typeof first === 'string') return first
+    if (first.preview) return first.preview
+    if (first.original) return first.original
+  }
+  
+  return null
 }
 
 // Helper to extract Vimeo video ID

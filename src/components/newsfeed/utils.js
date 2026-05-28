@@ -38,27 +38,59 @@ export function timeAgo(dateString) {
 
 /**
  * Format a journey message with links converted to buttons, <b> tags, and line breaks
+ * Patterns from original:
+ * - `Texto (url)` at start of line -> styled button
+ * - `mots (url)` inline -> clickable link
+ * - `<b>` tags -> preserved for bold
+ * - `\n` -> `<br />`
  */
 export function formatJourneyMessageJS(message) {
   if (!message) return ''
 
-  let formatted = escape(message)
+  // Helper: escape HTML entities only (not tags we want to preserve)
+  const escapeHtml = (str) => {
+    if (typeof str !== 'string') return ''
+    return str
+      .replace(/&/g, '&')
+      .replace(/</g, '<')
+      .replace(/>/g, '>')
+      .replace(/"/g, '"')
+      .replace(/'/g, '&#39;')
+  }
 
-  // Convert [text](url) to clickable buttons
-  formatted = formatted.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, text, url) => {
+  // First, protect <b>...</b> tags by replacing with placeholders
+  const boldPlaceholders = []
+  let processed = message.replace(/<b>(.*?)<\/b>/gi, (match, content) => {
+    const idx = boldPlaceholders.length
+    boldPlaceholders.push(`<b>${content}</b>`)
+    return `__BOLD_${idx}__`
+  })
+
+  // Escape the rest of the content
+  processed = escapeHtml(processed)
+
+  // Pattern: `Texto (url)` at start of line -> styled button
+  const buttonPattern = /^(.+?)\s*\((https?:\/\/[^\)]+)\)$/gm
+  processed = processed.replace(buttonPattern, (_, text, url) => {
     return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.1] text-sm text-orange-300 hover:text-orange-200 transition-all font-medium no-underline">${text}<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>`
   })
 
-  // Convert remaining (url) patterns
-  formatted = formatted.replace(/\((https?:\/\/[^)]+)\)/g, (_, url) => {
+  // Pattern: inline `mots (url)` -> clickable link
+  const inlineLinkPattern = /((?:[^\s<>]+\s+){0,2}[^\s<>]+)\s+\((https?:\/\/[^\s\)]+)\)/g
+  processed = processed.replace(inlineLinkPattern, (_, displayText, url) => {
     const displayUrl = url.length > 40 ? url.substring(0, 37) + '...' : url
     return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="text-orange-400 hover:text-orange-300 underline underline-offset-2">${displayUrl}</a>`
   })
 
-  // Convert line breaks to <br>
-  formatted = formatted.replace(/\n/g, '<br>')
+  // Convert newlines to <br />
+  processed = processed.replace(/\n/g, '<br />')
 
-  return formatted
+  // Restore protected <b> tags
+  boldPlaceholders.forEach((tag, idx) => {
+    processed = processed.replace(`__BOLD_${idx}__`, tag)
+  })
+
+  return processed
 }
 
 /**

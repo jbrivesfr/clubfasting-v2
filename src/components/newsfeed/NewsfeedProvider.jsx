@@ -50,21 +50,12 @@ export function NewsfeedProvider({ children }) {
 
         setSeries(seriesData || [])
 
-        // Fetch user's journeys (only is_space=true)
+        // Fetch user's journeys (only is_space=true, from series table)
         const { data: journeysData } = await supabase
-          .from('user_journey_history')
-          .select(`
-            id,
-            journey_id,
-            journey_name,
-            is_space,
-            started_at,
-            completed_at,
-            progress
-          `)
-          .eq('user_id', session.user.id)
+          .from('series')
+          .select('id, title, code')
           .eq('is_space', true)
-          .order('started_at', { ascending: false })
+          .order('order_index', { ascending: true })
 
         setJourneys(journeysData || [])
       } catch (err) {
