@@ -122,7 +122,7 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <p className="text-center text-xs text-zinc-600 mt-4">v2.3 · 2026-05-27</p>
+        <p className="text-center text-xs text-zinc-600 mt-4">v2.4 · 2026-06-01</p>
       </div>
     </div>
   )
