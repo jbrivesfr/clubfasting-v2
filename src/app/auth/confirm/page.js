@@ -35,7 +35,8 @@ function ConfirmHandler() {
       setStatus('error')
     } else {
       setStatus('success')
-      router.replace(next)
+      // Full page navigation to ensure session cookie is picked up
+      window.location.href = next
     }
   }, [tokenHash, type, next, router])
 
