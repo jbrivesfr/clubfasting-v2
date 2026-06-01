@@ -163,7 +163,7 @@ export default function DashboardPage() {
       const { data: profile } = await supabase
         .from('users')
         .select('name')
-        .eq('email', session.user.email)
+        .eq('id', session.user.id)
         .maybeSingle()
       setDisplayName(profile?.name || session.user.email?.split('@')[0] || 'Membre')
 

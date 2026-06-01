@@ -2,9 +2,12 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { createClient } from '@/utils/supabase/client'
+import { useNewsfeedContext } from './NewsfeedProvider'
 import { timeAgo, formatJourneyMessageJS, getDefaultAvatarUrl, countAllRepliesRecursive } from './utils'
 
 export function ThreadModal({ item, onClose, userId }) {
+  const { userProfile } = useNewsfeedContext()
+  const authorName = userProfile?.name || 'Membre ClubFasting'
   const [replies, setReplies] = useState(item.replies || [])
   const [newReply, setNewReply] = useState('')
   const [submitting, setSubmitting] = useState(false)
@@ -84,6 +87,7 @@ export function ThreadModal({ item, onClose, userId }) {
         .insert({
           content: newReply.trim(),
           author_id: userId,
+          author_name: authorName,
           parent_id: item.id,
           image_urls: imageUrl ? JSON.stringify([imageUrl]) : null,
           journey_id: item.journey_id,
@@ -97,8 +101,8 @@ export function ThreadModal({ item, onClose, userId }) {
       // Add to replies list with author info
       const newReplyWithAuthor = {
         ...newComment,
-        author_name: 'Vous',
-        author_avatar: null
+        author_name: authorName,
+        author_avatar: userProfile?.avatar_url || null
       }
 
       setReplies(prev => [...prev, newReplyWithAuthor])
