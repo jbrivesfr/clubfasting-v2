@@ -10,10 +10,12 @@ function getOrigin(request) {
 export async function GET(request) {
   const { searchParams } = new URL(request.url)
   const code = searchParams.get('code')
+  const token_hash = searchParams.get('token_hash')
+  const type = searchParams.get('type') || 'magiclink'
   const next = searchParams.get('next') ?? '/dashboard'
   const origin = getOrigin(request)
 
-  if (code) {
+  if (code || token_hash) {
     const response = NextResponse.redirect(`${origin}${next}`)
 
     const supabase = createServerClient(
@@ -38,7 +40,9 @@ export async function GET(request) {
       }
     )
 
-    const { error } = await supabase.auth.exchangeCodeForSession(code)
+    const { error } = code
+      ? await supabase.auth.exchangeCodeForSession(code)
+      : await supabase.auth.verifyOtp({ token_hash, type })
 
     if (!error) {
       return response

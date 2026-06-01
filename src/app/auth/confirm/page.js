@@ -1,14 +1,12 @@
 'use client'
 
-import { Suspense, useState, useEffect, useCallback } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { createClient } from '@/utils/supabase/client'
+import { Suspense, useState, useCallback } from 'react'
+import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
 
 function ConfirmHandler() {
-  const router = useRouter()
   const searchParams = useSearchParams()
   const [status, setStatus] = useState('ready') // ready | loading | success | error
   const [errorMsg, setErrorMsg] = useState('')
@@ -17,28 +15,18 @@ function ConfirmHandler() {
   const type = searchParams.get('type') || 'magiclink'
   const next = searchParams.get('next') || '/dashboard'
 
-  const handleConfirm = useCallback(async () => {
+  const handleConfirm = useCallback(() => {
     if (!tokenHash) {
       setErrorMsg('Lien invalide. Redemande un nouveau lien.')
       setStatus('error')
       return
     }
 
+    // Redirect to server-side callback which handles PKCE exchange
+    // (verifier cookie was set by createBrowserClient during signInWithOtp)
     setStatus('loading')
-    const supabase = createClient()
-    const { error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type })
-    
-    if (error) {
-      setErrorMsg(error.message === 'Email link is invalid or has expired'
-        ? 'Le lien a expiré ou a déjà été utilisé. Redemande un nouveau lien.'
-        : error.message)
-      setStatus('error')
-    } else {
-      setStatus('success')
-      // Full page navigation to ensure session cookie is picked up
-      window.location.href = next
-    }
-  }, [tokenHash, type, next, router])
+    window.location.href = `/auth/callback?token_hash=${encodeURIComponent(tokenHash)}&type=${encodeURIComponent(type)}&next=${encodeURIComponent(next)}`
+  }, [tokenHash, type, next])
 
   if (status === 'loading') {
     return (
