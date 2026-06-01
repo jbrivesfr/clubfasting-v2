@@ -4,7 +4,6 @@ steps:
     entrypoint: npm
     args: ['ci']
     env:
-      - 'NODE_ENV=production'
       - 'NEXT_PUBLIC_SUPABASE_URL=https://lyyevuyejxrjpsaisaal.supabase.co'
       - 'NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx5eWV2dXllanhyanBzYWlzYWFsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzg4NjU5MDAsImV4cCI6MjA1NDQ0MTkwMH0.3dVhSi0RbShm4cxtXLoOfEDNsiGQk2Cr_CaXlkXHsqg'
   - name: 'node:20'
