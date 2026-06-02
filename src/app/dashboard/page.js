@@ -153,24 +153,24 @@ export default function DashboardPage() {
   const supabase = createClient()
 
   useEffect(() => {
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      if (!session) {
+    supabase.auth.getUser().then(async ({ data: { user }, error }) => {
+      if (error || !user) {
         router.push('/login')
         return
       }
-      setUser(session.user)
+      setUser(user)
 
       const { data: profile } = await supabase
         .from('users')
         .select('name')
-        .eq('id', session.user.id)
+        .eq('id', user.id)
         .maybeSingle()
-      setDisplayName(profile?.name || session.user.email?.split('@')[0] || 'Membre')
+      setDisplayName(profile?.name || user.email?.split('@')[0] || 'Membre')
 
       const { data: routineData } = await supabase
         .from('routines')
         .select('*')
-        .eq('user_id', session.user.id)
+        .eq('user_id', user.id)
         .order('updated_at', { ascending: false })
         .limit(1)
         .maybeSingle()
@@ -457,7 +457,7 @@ export default function DashboardPage() {
         </section>
 
         <footer className="pt-8 pb-4 text-center text-xs text-zinc-600 border-t border-white/[0.04]">
-          <p className="mb-1">Club Fasting · v2.4</p>
+          <p className="mb-1">Club Fasting · v2.5</p>
           <p className="text-zinc-700">Ton métabolisme, tes outils, tes résultats.</p>
         </footer>
       </main>
