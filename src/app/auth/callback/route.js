@@ -15,8 +15,6 @@ export async function GET(request) {
   const next = searchParams.get('next') ?? '/dashboard'
   const origin = getOrigin(request)
 
-  console.log('[AUTH] Callback called', { hasCode: !!code, hasTokenHash: !!token_hash, type, next, origin })
-
   if (code || token_hash) {
     const response = NextResponse.redirect(`${origin}${next}`)
 
@@ -26,16 +24,12 @@ export async function GET(request) {
       {
         cookies: {
           getAll() {
-            const cookies = request.cookies.getAll()
-            console.log('[AUTH] cookies.getAll', { count: cookies.length, names: cookies.map(c => c.name) })
-            return cookies
+            return request.cookies.getAll()
           },
           setAll(cookiesToSet) {
-            console.log('[AUTH] cookies.setAll', { count: cookiesToSet.length, names: cookiesToSet.map(c => c.name) })
             cookiesToSet.forEach(({ name, value, options }) => {
               response.cookies.set(name, value, {
                 ...options,
-                httpOnly: true,
                 sameSite: 'lax',
                 secure: process.env.NODE_ENV === 'production',
               })
@@ -46,22 +40,17 @@ export async function GET(request) {
     )
 
     if (code) {
-      console.log('[AUTH] exchangeCodeForSession...')
-      const { data, error } = await supabase.auth.exchangeCodeForSession(code)
-      console.log('[AUTH] exchangeCodeForSession result', { hasSession: !!data?.session, error: error?.message })
+      const { error } = await supabase.auth.exchangeCodeForSession(code)
       if (!error) {
         return response
       }
     } else {
-      console.log('[AUTH] verifyOtp...', { token_hash: token_hash?.slice(0, 20), type })
-      const { data, error } = await supabase.auth.verifyOtp({ token_hash, type })
-      console.log('[AUTH] verifyOtp result', { hasSession: !!data?.session, hasUser: !!data?.user, error: error?.message })
+      const { error } = await supabase.auth.verifyOtp({ token_hash, type })
       if (!error) {
         return response
       }
     }
   }
 
-  console.log('[AUTH] FAILED — redirecting to /login')
   return NextResponse.redirect(`${origin}/login?error=auth`)
 }

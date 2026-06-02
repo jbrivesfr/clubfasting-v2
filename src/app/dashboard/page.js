@@ -457,7 +457,7 @@ export default function DashboardPage() {
         </section>
 
         <footer className="pt-8 pb-4 text-center text-xs text-zinc-600 border-t border-white/[0.04]">
-          <p className="mb-1">Club Fasting · v2.5</p>
+          <p className="mb-1">Club Fasting · v2.6</p>
           <p className="text-zinc-700">Ton métabolisme, tes outils, tes résultats.</p>
         </footer>
       </main>

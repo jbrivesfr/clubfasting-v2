@@ -18,7 +18,6 @@ export async function middleware(request) {
             response.cookies.set(name, value, {
               ...options,
               ...(process.env.COOKIE_DOMAIN ? { domain: process.env.COOKIE_DOMAIN } : {}),
-              httpOnly: true,
               sameSite: 'lax',
               secure: process.env.NODE_ENV === 'production',
             })
