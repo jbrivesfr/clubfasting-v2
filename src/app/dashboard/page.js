@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
 import Link from 'next/link'
@@ -245,87 +245,8 @@ const MEAL_TYPE_FROM_HOUR = (h) => {
   return { name: 'Dîner', icon: '🍲' }
 }
 
-function DraggableTime({ hour, onDragEnd, disabled }) {
-  const [dragging, setDragging] = useState(false)
-  const startX = useRef(0)
-  const currentHour = useRef(hour)
-
-  useEffect(() => { currentHour.current = hour }, [hour])
-
-  const handleDown = (clientX) => {
-    if (disabled) return
-    setDragging(true)
-    startX.current = clientX
-    document.body.style.cursor = 'ew-resize'
-    document.body.style.userSelect = 'none'
-  }
-
-  useEffect(() => {
-    if (!dragging) return
-    const threshold = 30 // px per hour step
-
-    const handleMove = (e) => {
-      const clientX = e.touches ? e.touches[0].clientX : e.clientX
-      const delta = clientX - startX.current
-      const steps = Math.round(delta / threshold)
-      let newHour = hour + steps
-      newHour = Math.max(0, Math.min(23, newHour))
-      if (newHour !== currentHour.current) {
-        startX.current = clientX
-        onDragEnd(newHour, false) // preview only
-      }
-    }
-
-    const handleUp = (e) => {
-      setDragging(false)
-      document.body.style.cursor = ''
-      document.body.style.userSelect = ''
-      const clientX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX
-      const delta = clientX - startX.current
-      const steps = Math.round(delta / threshold)
-      let newHour = Math.max(0, Math.min(23, hour + steps))
-      if (newHour !== hour) onDragEnd(newHour, true) // save
-    }
-
-    window.addEventListener('mousemove', handleMove)
-    window.addEventListener('mouseup', handleUp)
-    window.addEventListener('touchmove', handleMove, { passive: true })
-    window.addEventListener('touchend', handleUp)
-
-    return () => {
-      window.removeEventListener('mousemove', handleMove)
-      window.removeEventListener('mouseup', handleUp)
-      window.removeEventListener('touchmove', handleMove)
-      window.removeEventListener('touchend', handleUp)
-    }
-  }, [dragging, hour, onDragEnd])
-
-  const meal = MEAL_TYPE_FROM_HOUR(hour)
-
-  return (
-    <span
-      onMouseDown={(e) => handleDown(e.clientX)}
-      onTouchStart={(e) => handleDown(e.touches[0].clientX)}
-      className={`inline-flex items-center gap-2 cursor-grab active:cursor-ew-resize select-none transition-all ${
-        dragging ? 'scale-110 opacity-100' : 'hover:opacity-80'
-      }`}
-      title={`${meal.name} · glisser pour ajuster`}
-    >
-      <span className="text-3xl sm:text-4xl">{meal.icon}</span>
-      <span className={`${dragging ? 'text-orange-300' : ''}`}>{hour}h</span>
-    </span>
-  )
-}
-
-function FastingHeroCard({ start, end, routine, supabase, user, onRoutineUpdated }) {
+function FastingHeroCard({ start, end, routine }) {
   const [now, setNow] = useState(new Date())
-  const [draftStart, setDraftStart] = useState(start)
-  const [draftEnd, setDraftEnd] = useState(end)
-  const [saving, setSaving] = useState(false)
-
-  // Sync draft when start/end change from parent
-  useEffect(() => { setDraftStart(start) }, [start])
-  useEffect(() => { setDraftEnd(end) }, [end])
 
   useEffect(() => {
     const timer = setInterval(() => setNow(new Date()), 60000)
@@ -333,9 +254,9 @@ function FastingHeroCard({ start, end, routine, supabase, user, onRoutineUpdated
   }, [])
 
   const currentMin = now.getHours() * 60 + now.getMinutes()
-  const eatStartMin = draftStart * 60
-  const eatEndMin = draftEnd * 60
-  const eatingHours = draftEnd - draftStart
+  const eatStartMin = start * 60
+  const eatEndMin = end * 60
+  const eatingHours = end - start
   const fastingHours = 24 - eatingHours
   const isEating = currentMin >= eatStartMin && currentMin < eatEndMin
 
@@ -365,61 +286,6 @@ function FastingHeroCard({ start, end, routine, supabase, user, onRoutineUpdated
 
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || ''
 
-  const handleDragEnd = (isStart) => async (newHour, shouldSave) => {
-    if (isStart) {
-      const clamped = Math.min(newHour, draftEnd - 1)
-      setDraftStart(Math.max(0, clamped))
-      if (shouldSave && clamped >= 0 && clamped < draftEnd) {
-        await saveRoutine(clamped, draftEnd)
-      }
-    } else {
-      const clamped = Math.max(newHour, draftStart + 1)
-      setDraftEnd(Math.min(23, clamped))
-      if (shouldSave && clamped <= 23 && clamped > draftStart) {
-        await saveRoutine(draftStart, clamped)
-      }
-    }
-  }
-
-  const saveRoutine = async (newStart, newEnd) => {
-    if (!supabase || !user || saving) return
-    setSaving(true)
-
-    const startMeal = MEAL_TYPE_FROM_HOUR(newStart)
-    const endMeal = MEAL_TYPE_FROM_HOUR(newEnd)
-    const meals = [
-      { id: 1, name: startMeal.name, time: newStart },
-      { id: 2, name: endMeal.name, time: newEnd },
-    ]
-
-    // Try Supabase directly first (works with Supabase session)
-    const { error } = await supabase.from('routines').upsert({
-      user_id: user.id,
-      meals,
-      drink: routine?.drink || null,
-      wake_up_time: routine?.wake_up_time ?? null,
-      bed_time: routine?.bed_time ?? null,
-      updated_at: new Date().toISOString(),
-    }, { onConflict: 'user_id' })
-
-    // Fallback to API route (for cookie-only auth)
-    if (error) {
-      await fetch('/api/planner', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          meals,
-          drink: routine?.drink || null,
-          wake_up_time: routine?.wake_up_time ?? null,
-          bed_time: routine?.bed_time ?? null,
-        }),
-      })
-    }
-
-    if (onRoutineUpdated) onRoutineUpdated()
-    setSaving(false)
-  }
-
   return (
     <section className="relative overflow-hidden rounded-[2rem] border border-white/[0.08] animate-slide-up">
       <div className="absolute inset-0">
@@ -432,7 +298,7 @@ function FastingHeroCard({ start, end, routine, supabase, user, onRoutineUpdated
 
       <div className="relative grid grid-cols-1 lg:grid-cols-[auto_1fr] gap-10 items-center p-8 sm:p-12">
         <div className="flex justify-center lg:justify-start">
-          <LiveFastingRing start={draftStart} end={draftEnd} />
+          <LiveFastingRing start={start} end={end} />
         </div>
 
         <div className="space-y-5">
@@ -442,16 +308,19 @@ function FastingHeroCard({ start, end, routine, supabase, user, onRoutineUpdated
             </p>
             <div className="flex items-baseline gap-3 text-5xl sm:text-6xl font-black font-display leading-none">
               <span className="bg-gradient-to-r from-orange-300 to-orange-400 bg-clip-text text-transparent">
-                <DraggableTime hour={draftStart} onDragEnd={handleDragEnd(true)} disabled={saving} />
+                <span className="inline-flex items-center gap-2">
+                  <span className="text-3xl sm:text-4xl">{MEAL_TYPE_FROM_HOUR(start).icon}</span>
+                  <span>{start}h</span>
+                </span>
               </span>
               <span className="text-zinc-700 font-light text-3xl sm:text-4xl">→</span>
               <span className="bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">
-                <DraggableTime hour={draftEnd} onDragEnd={handleDragEnd(false)} disabled={saving} />
+                <span className="inline-flex items-center gap-2">
+                  <span className="text-3xl sm:text-4xl">{MEAL_TYPE_FROM_HOUR(end).icon}</span>
+                  <span>{end}h</span>
+                </span>
               </span>
             </div>
-            {saving && (
-              <p className="text-xs text-orange-400/60 mt-1 animate-pulse">Enregistrement...</p>
-            )}
           </div>
 
           {/* Live status */}
@@ -617,17 +486,14 @@ export default function DashboardPage() {
   }, [])
 
   const refreshRoutine = useCallback(async () => {
-    if (!user) return
     try {
       const res = await fetch('/api/planner')
       if (res.ok) {
         const data = await res.json()
         if (data) setRoutine(data)
       }
-    } catch (e) {
-      console.warn('Routine refresh failed:', e)
-    }
-  }, [user])
+    } catch (e) {}
+  }, [])
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()
@@ -718,7 +584,7 @@ export default function DashboardPage() {
 
         {/* Fasting hero card */}
         {hasWindow ? (
-          <FastingHeroCard start={start} end={end} routine={routine} supabase={supabase} user={user} onRoutineUpdated={refreshRoutine} />
+          <FastingHeroCard start={start} end={end} routine={routine} />
         ) : (
           <section className="relative overflow-hidden rounded-[2rem] border border-white/[0.08] animate-slide-up">
             <div className="absolute inset-0">

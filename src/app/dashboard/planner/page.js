@@ -1,8 +1,87 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+
+// Meal type from hour
+const MEAL_TYPE_FROM_HOUR = (h) => {
+  if (h >= 5 && h <= 10) return { name: 'Petit-déjeuner', icon: '🍳' }
+  if (h >= 11 && h <= 14) return { name: 'Déjeuner', icon: '🥗' }
+  return { name: 'Dîner', icon: '🍲' }
+}
+
+function DraggableTime({ hour, onDragEnd, disabled }) {
+  const [dragging, setDragging] = useState(false)
+  const startX = useRef(0)
+  const currentHour = useRef(hour)
+
+  useEffect(() => { currentHour.current = hour }, [hour])
+
+  const handleDown = (clientX) => {
+    if (disabled) return
+    setDragging(true)
+    startX.current = clientX
+    document.body.style.cursor = 'ew-resize'
+    document.body.style.userSelect = 'none'
+  }
+
+  useEffect(() => {
+    if (!dragging) return
+    const threshold = 30
+
+    const handleMove = (e) => {
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX
+      const delta = clientX - startX.current
+      const steps = Math.round(delta / threshold)
+      let newHour = hour + steps
+      newHour = Math.max(0, Math.min(23, newHour))
+      if (newHour !== currentHour.current) {
+        startX.current = clientX
+        onDragEnd(newHour, false)
+      }
+    }
+
+    const handleUp = (e) => {
+      setDragging(false)
+      document.body.style.cursor = ''
+      document.body.style.userSelect = ''
+      const clientX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX
+      const delta = clientX - startX.current
+      const steps = Math.round(delta / threshold)
+      let newHour = Math.max(0, Math.min(23, hour + steps))
+      if (newHour !== hour) onDragEnd(newHour, true)
+    }
+
+    window.addEventListener('mousemove', handleMove)
+    window.addEventListener('mouseup', handleUp)
+    window.addEventListener('touchmove', handleMove, { passive: true })
+    window.addEventListener('touchend', handleUp)
+
+    return () => {
+      window.removeEventListener('mousemove', handleMove)
+      window.removeEventListener('mouseup', handleUp)
+      window.removeEventListener('touchmove', handleMove)
+      window.removeEventListener('touchend', handleUp)
+    }
+  }, [dragging, hour, onDragEnd])
+
+  const meal = MEAL_TYPE_FROM_HOUR(hour)
+
+  return (
+    <span
+      onMouseDown={(e) => handleDown(e.clientX)}
+      onTouchStart={(e) => handleDown(e.touches[0].clientX)}
+      className={`inline-flex items-center gap-2 cursor-grab active:cursor-ew-resize select-none transition-all ${
+        dragging ? 'scale-110 opacity-100' : 'hover:opacity-80'
+      }`}
+      title={`${meal.name} · glisser pour ajuster`}
+    >
+      <span className="text-2xl">{meal.icon}</span>
+      <span className={`${dragging ? 'text-orange-300' : ''}`}>{hour}h</span>
+    </span>
+  )
+}
 
 const QUESTIONS = [
   {
@@ -130,6 +209,54 @@ export default function PlannerPage() {
   const [saving, setSaving] = useState(false)
   const [loading, setLoading] = useState(true)
 
+  // Drag-to-adjust state
+  const [draftStart, setDraftStart] = useState(null)
+  const [draftEnd, setDraftEnd] = useState(null)
+
+  useEffect(() => {
+    if (routine?.meals?.length >= 2) {
+      setDraftStart(routine.meals[0].time)
+      setDraftEnd(routine.meals[routine.meals.length - 1].time)
+    }
+  }, [routine])
+
+  const saveRoutine = async (newStart, newEnd) => {
+    setSaving(true)
+    const startMeal = MEAL_TYPE_FROM_HOUR(newStart)
+    const endMeal = MEAL_TYPE_FROM_HOUR(newEnd)
+    const meals = [
+      { id: 1, name: startMeal.name, time: newStart },
+      { id: 2, name: endMeal.name, time: newEnd },
+    ]
+    await fetch('/api/planner', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        meals,
+        drink: routine?.drink || null,
+        wake_up_time: routine?.wake_up_time ?? null,
+        bed_time: routine?.bed_time ?? null,
+      }),
+    })
+    setSaving(false)
+  }
+
+  const handleDragEnd = (isStart) => async (newHour, shouldSave) => {
+    if (isStart) {
+      const clamped = Math.min(newHour, (draftEnd ?? 18) - 1)
+      setDraftStart(Math.max(0, clamped))
+      if (shouldSave && clamped >= 0 && clamped < (draftEnd ?? 18)) {
+        await saveRoutine(clamped, draftEnd ?? 18)
+      }
+    } else {
+      const clamped = Math.max(newHour, (draftStart ?? 8) + 1)
+      setDraftEnd(Math.min(23, clamped))
+      if (shouldSave && clamped <= 23 && clamped > (draftStart ?? 8)) {
+        await saveRoutine((draftStart ?? 8), clamped)
+      }
+    }
+  }
+
   useEffect(() => {
     // Load routine via API route (supports both cookie & Supabase auth)
     fetch('/api/planner')
@@ -207,24 +334,31 @@ export default function PlannerPage() {
             <div className="text-center">
               <div className="text-5xl mb-4">⏰</div>
               <h1 className="text-2xl font-bold text-gray-900">Ta fenêtre de jeûne</h1>
-              {routine.meals?.length >= 2 && (
-                <p className="text-4xl font-black text-gray-900 mt-4">
-                  {routine.meals[0].time}h <span className="text-gray-300">→</span> {routine.meals[routine.meals.length - 1].time}h
-                </p>
+              {routine.meals?.length >= 2 && draftStart != null && draftEnd != null && (
+                <div className="flex items-center justify-center gap-4 mt-4">
+                  <span className="text-4xl font-black text-gray-900">
+                    <DraggableTime hour={draftStart} onDragEnd={handleDragEnd(true)} disabled={saving} />
+                  </span>
+                  <span className="text-gray-300 text-3xl">→</span>
+                  <span className="text-4xl font-black text-gray-900">
+                    <DraggableTime hour={draftEnd} onDragEnd={handleDragEnd(false)} disabled={saving} />
+                  </span>
+                </div>
               )}
+              {saving && <p className="text-xs text-orange-500 mt-1 animate-pulse">Enregistrement...</p>}
               <p className="text-gray-500 mt-2">
-                Fenêtre de repas : {routine.meals?.length >= 2 ? routine.meals[routine.meals.length - 1].time - routine.meals[0].time : 6}h
+                Fenêtre de repas : {draftStart != null && draftEnd != null ? draftEnd - draftStart : 6}h
               </p>
             </div>
 
             {/* Timeline */}
             <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
               <div className="relative h-16 bg-gray-100 rounded-xl overflow-hidden">
-                {routine.meals?.length >= 2 && (
+                {draftStart != null && draftEnd != null && (
                   <div className="absolute top-0 bottom-0 bg-gradient-to-r from-orange-400 to-orange-600 rounded-xl flex items-center justify-center text-white text-sm font-semibold"
                     style={{
-                      left: `${(routine.meals[0].time / 24) * 100}%`,
-                      width: `${((routine.meals[routine.meals.length - 1].time - routine.meals[0].time) / 24) * 100}%`,
+                      left: `${(draftStart / 24) * 100}%`,
+                      width: `${((draftEnd - draftStart) / 24) * 100}%`,
                     }}>
                     Repas
                   </div>
@@ -242,10 +376,14 @@ export default function PlannerPage() {
                 <div className="text-xs text-gray-500 mt-1">⏰ Réveil</div>
               </div>
               {routine.meals?.map((m, i) => (
-                <div key={i} className="bg-white border border-gray-200 rounded-xl p-4 text-center shadow-sm">
-                  <div className="text-2xl mb-1">{MEAL_LABELS[m.name]?.split(' ')[0] || '🍽️'}</div>
-                  <div className="font-semibold text-gray-900">{m.time}h</div>
-                  <div className="text-xs text-gray-500 mt-1">{MEAL_LABELS[m.name]?.split(' ').slice(1).join(' ') || m.name}</div>
+                <div key={i} className="bg-white border border-2 border-orange-300 rounded-xl p-4 text-center shadow-sm">
+                  <div className="text-2xl mb-1">{MEAL_TYPE_FROM_HOUR(draftStart != null && i === 0 ? draftStart : draftEnd != null && i === routine.meals.length - 1 ? draftEnd : m.time).icon}</div>
+                  <div className="font-semibold text-gray-900">
+                    {draftStart != null && i === 0 ? draftStart : draftEnd != null && i === routine.meals.length - 1 ? draftEnd : m.time}h
+                  </div>
+                  <div className="text-xs text-gray-500 mt-1">
+                    {MEAL_TYPE_FROM_HOUR(i === 0 ? (draftStart ?? m.time) : (draftEnd ?? m.time)).name}
+                  </div>
                 </div>
               ))}
               <div className="bg-white border border-gray-200 rounded-xl p-4 text-center shadow-sm">
