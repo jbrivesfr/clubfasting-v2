@@ -15,22 +15,22 @@ export default function LoginPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!supabaseRef.current) supabaseRef.current = createClient()
     setLoading(true)
     setError(null)
 
     try {
-      const redirectTo = `https://app.clubfasting.com/auth/callback`
-
-      const { error } = await supabaseRef.current.auth.signInWithOtp({
-        email,
-        options: {
-          shouldCreateUser: true,
-          emailRedirectTo: redirectTo,
-        },
+      const res = await fetch('/api/auth/send-link', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.trim().toLowerCase() }),
       })
 
-      if (error) throw error
+      const data = await res.json()
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Une erreur est survenue.')
+      }
+
       setSent(true)
     } catch (err) {
       setError(err.message)

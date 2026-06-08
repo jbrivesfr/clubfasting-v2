@@ -2,8 +2,16 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
 
 const THIRTY_DAYS = 30 * 24 * 60 * 60
+const PUBLIC_PATHS = ['/login', '/auth/callback', '/auth/confirm', '/', '/favicon.ico']
+
+function isPublicPath(pathname) {
+  return PUBLIC_PATHS.some(
+    (p) => pathname === p || pathname.startsWith('/_next') || pathname.startsWith('/api/auth')
+  )
+}
 
 export async function middleware(request) {
+  const { pathname } = request.nextUrl
   let response = NextResponse.next()
 
   const supabase = createServerClient(
@@ -11,16 +19,13 @@ export async function middleware(request) {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     {
       cookies: {
-        getAll() {
-          return request.cookies.getAll()
-        },
+        getAll() { return request.cookies.getAll() },
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value, options }) => {
             request.cookies.set(name, value)
             response.cookies.set(name, value, {
               ...options,
               maxAge: options.maxAge || THIRTY_DAYS,
-              ...(process.env.COOKIE_DOMAIN ? { domain: process.env.COOKIE_DOMAIN } : {}),
               sameSite: 'lax',
               secure: process.env.NODE_ENV === 'production',
             })
@@ -30,8 +35,35 @@ export async function middleware(request) {
     }
   )
 
-  // Refresh session if needed (keeps user logged in)
-  await supabase.auth.getUser()
+  // Check for Supabase session
+  const { data: { user } } = await supabase.auth.getUser()
+
+  // Check for V1-style cookie auth
+  const logemailCookie = request.cookies.get('logemail')
+
+  // If no auth at all and not a public path, redirect to login
+  if (!user && !logemailCookie && !isPublicPath(pathname)) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/login'
+    return NextResponse.redirect(url)
+  }
+
+  // If has cookie auth but no Supabase session, try to refresh/create session
+  if (logemailCookie && !user && !isPublicPath(pathname)) {
+    // Refresh Supabase session if possible
+    try {
+      await supabase.auth.getUser()
+    } catch {
+      // Cookie auth is sufficient — continue
+    }
+  }
+
+  // Auto-redirect logged-in users away from login page
+  if ((user || logemailCookie) && pathname === '/login') {
+    const url = request.nextUrl.clone()
+    url.pathname = '/dashboard'
+    return NextResponse.redirect(url)
+  }
 
   return response
 }

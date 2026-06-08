@@ -522,6 +522,7 @@ function FastingHeroCard({ start, end, routine, supabase, user, onRoutineUpdated
 export default function DashboardPage() {
   const router = useRouter()
   const [user, setUser] = useState(null)
+  const [userId, setUserId] = useState(null)
   const [displayName, setDisplayName] = useState('')
   const [routine, setRoutine] = useState(null)
   const [recaps, setRecaps] = useState([])
@@ -530,24 +531,45 @@ export default function DashboardPage() {
   const supabase = createClient()
 
   useEffect(() => {
-    supabase.auth.getUser().then(async ({ data: { user }, error }) => {
-      if (error || !user) {
+    // Try Supabase session first, fall back to cookie auth
+    supabase.auth.getUser().then(async ({ data: { user: authUser }, error }) => {
+      let effectiveUser = authUser
+      let effectiveEmail = authUser?.email
+
+      // Fallback: V1-style cookie auth
+      if ((error || !authUser) && typeof document !== 'undefined') {
+        const cookies = document.cookie.split(';').reduce((acc, c) => {
+          const [k, v] = c.trim().split('=')
+          acc[k] = v
+          return acc
+        }, {})
+        if (cookies.logemail) {
+          effectiveEmail = decodeURIComponent(cookies.logemail)
+          effectiveUser = { email: effectiveEmail, id: effectiveEmail, user_metadata: {} }
+        }
+      }
+
+      if (!effectiveUser) {
         router.push('/login')
         return
       }
-      setUser(user)
+      setUser(effectiveUser)
 
       const { data: profile } = await supabase
         .from('users')
-        .select('name')
-        .eq('id', user.id)
+        .select('id, name')
+        .eq('email', effectiveEmail)
         .maybeSingle()
-      setDisplayName(profile?.name || user.email?.split('@')[0] || 'Membre')
+
+      const resolvedId = profile?.id || effectiveUser?.id
+      setUserId(resolvedId)
+      setUser({ ...effectiveUser, id: resolvedId })
+      setDisplayName(profile?.name || effectiveEmail?.split('@')[0] || 'Membre')
 
       const { data: routineData } = await supabase
         .from('routines')
         .select('*')
-        .eq('user_id', user.id)
+        .eq('user_id', userId)
         .order('updated_at', { ascending: false })
         .limit(1)
         .maybeSingle()
@@ -563,7 +585,7 @@ export default function DashboardPage() {
       const { data: lastWeight } = await supabase
         .from('weight_entries')
         .select('*')
-        .eq('email', user.email)
+        .eq('email', effectiveEmail)
         .order('date', { ascending: false })
         .limit(1)
         .maybeSingle()
@@ -599,7 +621,11 @@ export default function DashboardPage() {
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()
-    router.push('/')
+    // Clear V1 cookies
+    document.cookie = 'logemail=; path=/; max-age=0'
+    document.cookie = 'username=; path=/; max-age=0'
+    document.cookie = 'description=; path=/; max-age=0'
+    router.push('/login')
   }
 
   if (loading) {
