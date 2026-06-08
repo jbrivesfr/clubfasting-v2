@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
 import Link from 'next/link'
@@ -238,38 +238,118 @@ function LiveFastingRing({ start, end }) {
   )
 }
 
-function FastingHeroCard({ start, end, routine }) {
+// Meal type from hour
+const MEAL_TYPE_FROM_HOUR = (h) => {
+  if (h >= 5 && h <= 10) return { name: 'Petit-déjeuner', icon: '🍳' }
+  if (h >= 11 && h <= 14) return { name: 'Déjeuner', icon: '🥗' }
+  return { name: 'Dîner', icon: '🍲' }
+}
+
+function DraggableTime({ hour, onDragEnd, disabled }) {
+  const [dragging, setDragging] = useState(false)
+  const startX = useRef(0)
+  const currentHour = useRef(hour)
+
+  useEffect(() => { currentHour.current = hour }, [hour])
+
+  const handleDown = (clientX) => {
+    if (disabled) return
+    setDragging(true)
+    startX.current = clientX
+    document.body.style.cursor = 'ew-resize'
+    document.body.style.userSelect = 'none'
+  }
+
+  useEffect(() => {
+    if (!dragging) return
+    const threshold = 30 // px per hour step
+
+    const handleMove = (e) => {
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX
+      const delta = clientX - startX.current
+      const steps = Math.round(delta / threshold)
+      let newHour = hour + steps
+      newHour = Math.max(0, Math.min(23, newHour))
+      if (newHour !== currentHour.current) {
+        startX.current = clientX
+        onDragEnd(newHour, false) // preview only
+      }
+    }
+
+    const handleUp = (e) => {
+      setDragging(false)
+      document.body.style.cursor = ''
+      document.body.style.userSelect = ''
+      const clientX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX
+      const delta = clientX - startX.current
+      const steps = Math.round(delta / threshold)
+      let newHour = Math.max(0, Math.min(23, hour + steps))
+      if (newHour !== hour) onDragEnd(newHour, true) // save
+    }
+
+    window.addEventListener('mousemove', handleMove)
+    window.addEventListener('mouseup', handleUp)
+    window.addEventListener('touchmove', handleMove, { passive: true })
+    window.addEventListener('touchend', handleUp)
+
+    return () => {
+      window.removeEventListener('mousemove', handleMove)
+      window.removeEventListener('mouseup', handleUp)
+      window.removeEventListener('touchmove', handleMove)
+      window.removeEventListener('touchend', handleUp)
+    }
+  }, [dragging, hour, onDragEnd])
+
+  const meal = MEAL_TYPE_FROM_HOUR(hour)
+
+  return (
+    <span
+      onMouseDown={(e) => handleDown(e.clientX)}
+      onTouchStart={(e) => handleDown(e.touches[0].clientX)}
+      className={`inline-flex items-center gap-2 cursor-grab active:cursor-ew-resize select-none transition-all ${
+        dragging ? 'scale-110 opacity-100' : 'hover:opacity-80'
+      }`}
+      title={`${meal.name} · glisser pour ajuster`}
+    >
+      <span className="text-3xl sm:text-4xl">{meal.icon}</span>
+      <span className={`${dragging ? 'text-orange-300' : ''}`}>{hour}h</span>
+    </span>
+  )
+}
+
+function FastingHeroCard({ start, end, routine, supabase, user, onRoutineUpdated }) {
   const [now, setNow] = useState(new Date())
+  const [draftStart, setDraftStart] = useState(start)
+  const [draftEnd, setDraftEnd] = useState(end)
+  const [saving, setSaving] = useState(false)
+
+  // Sync draft when start/end change from parent
+  useEffect(() => { setDraftStart(start) }, [start])
+  useEffect(() => { setDraftEnd(end) }, [end])
 
   useEffect(() => {
     const timer = setInterval(() => setNow(new Date()), 60000)
     return () => clearInterval(timer)
   }, [])
 
-  const currentMinutes = now.getHours() * 60 + now.getMinutes()
-  const eatStartMin = start * 60
-  const eatEndMin = end * 60
-  const eatingHours = end - start
+  const currentMin = now.getHours() * 60 + now.getMinutes()
+  const eatStartMin = draftStart * 60
+  const eatEndMin = draftEnd * 60
+  const eatingHours = draftEnd - draftStart
   const fastingHours = 24 - eatingHours
-  const isEating = currentMinutes >= eatStartMin && currentMinutes < eatEndMin
+  const isEating = currentMin >= eatStartMin && currentMin < eatEndMin
 
   let fastingDisplayH, fastingDisplayM, statusLabel, subStatusLabel, bodyStateData = null, phasePercent
 
   if (isEating) {
-    const minsLeft = eatEndMin - currentMinutes
+    const minsLeft = eatEndMin - currentMin
     fastingDisplayH = Math.floor(minsLeft / 60)
     fastingDisplayM = minsLeft % 60
     statusLabel = 'Repas en cours'
     subStatusLabel = 'Prochain jeûne dans'
-    bodyStateData = null
-    phasePercent = ((currentMinutes - eatStartMin) / (eatingHours * 60)) * 100
+    phasePercent = ((currentMin - eatStartMin) / (eatingHours * 60)) * 100
   } else {
-    let fastingMins
-    if (currentMinutes >= eatEndMin) {
-      fastingMins = currentMinutes - eatEndMin
-    } else {
-      fastingMins = (24 * 60 - eatEndMin) + currentMinutes
-    }
+    let fastingMins = currentMin >= eatEndMin ? currentMin - eatEndMin : (24 * 60 - eatEndMin) + currentMin
     const fastingH = fastingMins / 60
     bodyStateData = getBodyState(fastingH)
     fastingDisplayH = Math.floor(fastingH)
@@ -285,15 +365,50 @@ function FastingHeroCard({ start, end, routine }) {
 
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || ''
 
+  const handleDragEnd = (isStart) => async (newHour, shouldSave) => {
+    if (isStart) {
+      const clamped = Math.min(newHour, draftEnd - 1)
+      setDraftStart(Math.max(0, clamped))
+      if (shouldSave && clamped >= 0 && clamped < draftEnd) {
+        await saveRoutine(clamped, draftEnd)
+      }
+    } else {
+      const clamped = Math.max(newHour, draftStart + 1)
+      setDraftEnd(Math.min(23, clamped))
+      if (shouldSave && clamped <= 23 && clamped > draftStart) {
+        await saveRoutine(draftStart, clamped)
+      }
+    }
+  }
+
+  const saveRoutine = async (newStart, newEnd) => {
+    if (!supabase || !user || saving) return
+    setSaving(true)
+
+    const startMeal = MEAL_TYPE_FROM_HOUR(newStart)
+    const endMeal = MEAL_TYPE_FROM_HOUR(newEnd)
+    const meals = [
+      { id: 1, name: startMeal.name, time: newStart },
+      { id: 2, name: endMeal.name, time: newEnd },
+    ]
+
+    const { error } = await supabase.from('routines').upsert({
+      user_id: user.id,
+      meals,
+      drink: routine?.drink || null,
+      wake_up_time: routine?.wake_up_time ?? null,
+      bed_time: routine?.bed_time ?? null,
+      updated_at: new Date().toISOString(),
+    }, { onConflict: 'user_id' })
+
+    if (!error && onRoutineUpdated) onRoutineUpdated()
+    setSaving(false)
+  }
+
   return (
     <section className="relative overflow-hidden rounded-[2rem] border border-white/[0.08] animate-slide-up">
-      {/* BG image */}
       <div className="absolute inset-0">
-        <img
-          src={HERO_IMAGE}
-          alt=""
-          className="w-full h-full object-cover opacity-25"
-        />
+        <img src={HERO_IMAGE} alt="" className="w-full h-full object-cover opacity-25" />
         <div className="absolute inset-0 bg-gradient-to-br from-zinc-950 via-zinc-950/85 to-zinc-900/70" />
         <div className="absolute inset-0" style={{
           background: 'radial-gradient(60% 80% at 100% 0%, rgba(251,146,60,0.25) 0%, transparent 60%)',
@@ -302,7 +417,7 @@ function FastingHeroCard({ start, end, routine }) {
 
       <div className="relative grid grid-cols-1 lg:grid-cols-[auto_1fr] gap-10 items-center p-8 sm:p-12">
         <div className="flex justify-center lg:justify-start">
-          <LiveFastingRing start={start} end={end} />
+          <LiveFastingRing start={draftStart} end={draftEnd} />
         </div>
 
         <div className="space-y-5">
@@ -310,9 +425,18 @@ function FastingHeroCard({ start, end, routine }) {
             <p className="text-xs uppercase tracking-[0.2em] text-zinc-500 mb-2 font-medium">
               {isEating ? 'Fenêtre de repas' : 'Fenêtre de jeûne'}
             </p>
-            <p className="text-5xl sm:text-6xl font-black bg-gradient-to-r from-orange-300 via-orange-400 to-red-400 bg-clip-text text-transparent font-display leading-none">
-              {start}h <span className="text-zinc-700 font-light">→</span> {end}h
-            </p>
+            <div className="flex items-baseline gap-3 text-5xl sm:text-6xl font-black font-display leading-none">
+              <span className="bg-gradient-to-r from-orange-300 to-orange-400 bg-clip-text text-transparent">
+                <DraggableTime hour={draftStart} onDragEnd={handleDragEnd(true)} disabled={saving} />
+              </span>
+              <span className="text-zinc-700 font-light text-3xl sm:text-4xl">→</span>
+              <span className="bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">
+                <DraggableTime hour={draftEnd} onDragEnd={handleDragEnd(false)} disabled={saving} />
+              </span>
+            </div>
+            {saving && (
+              <p className="text-xs text-orange-400/60 mt-1 animate-pulse">Enregistrement...</p>
+            )}
           </div>
 
           {/* Live status */}
@@ -336,7 +460,6 @@ function FastingHeroCard({ start, end, routine }) {
               <p className="text-4xl sm:text-5xl font-black text-white font-display leading-none">{timeDisplay}</p>
               <p className="text-sm text-zinc-500">{subStatusLabel}</p>
             </div>
-            {/* Phase progress bar */}
             <div className="w-full h-2 bg-white/[0.06] rounded-full overflow-hidden mt-1">
               <div
                 className="h-full rounded-full transition-all duration-1000 ease-linear"
@@ -353,33 +476,33 @@ function FastingHeroCard({ start, end, routine }) {
           </div>
 
           <div className="flex flex-wrap gap-2">
-            {routine.meals.map((meal, i) => (
-              <span
-                key={i}
-                className="px-4 py-2 rounded-full bg-white/[0.05] border border-white/[0.08] text-sm text-zinc-200 flex items-center gap-2 backdrop-blur-sm"
-              >
-                <span className="text-base">{MEAL_ICONS[meal.name] || '🍽️'}</span>
-                <span className="font-medium">{meal.name}</span>
-                <span className="text-zinc-600">·</span>
-                <span className="text-orange-300 font-semibold">{meal.time}h</span>
-              </span>
-            ))}
+            {[draftStart, draftEnd].map((h, i) => {
+              const m = MEAL_TYPE_FROM_HOUR(h)
+              return (
+                <span key={i} className="px-4 py-2 rounded-full bg-white/[0.05] border border-white/[0.08] text-sm text-zinc-200 flex items-center gap-2 backdrop-blur-sm">
+                  <span className="text-base">{m.icon}</span>
+                  <span className="font-medium">{m.name}</span>
+                  <span className="text-zinc-600">·</span>
+                  <span className="text-orange-300 font-semibold">{h}h</span>
+                </span>
+              )
+            })}
           </div>
 
           <div className="flex items-center gap-6 pt-1">
-            {routine.drink && DRINK_LABELS[routine.drink] && (
+            {routine?.drink && DRINK_LABELS[routine.drink] && (
               <div className="flex items-center gap-2 text-sm text-zinc-400">
                 <span className="text-lg">{DRINK_LABELS[routine.drink].icon}</span>
                 <span>{DRINK_LABELS[routine.drink].label}</span>
               </div>
             )}
-            {routine.wake_up_time !== null && routine.wake_up_time !== undefined && (
+            {routine?.wake_up_time !== null && routine?.wake_up_time !== undefined && (
               <div className="flex items-center gap-2 text-sm text-zinc-400">
                 <span className="text-lg">🌅</span>
                 <span>Réveil {routine.wake_up_time}h</span>
               </div>
             )}
-            {routine.bed_time !== null && routine.bed_time !== undefined && (
+            {routine?.bed_time !== null && routine?.bed_time !== undefined && (
               <div className="flex items-center gap-2 text-sm text-zinc-400">
                 <span className="text-lg">🌙</span>
                 <span>Coucher {routine.bed_time}h</span>
@@ -388,13 +511,6 @@ function FastingHeroCard({ start, end, routine }) {
           </div>
 
           <div className="flex items-center gap-4">
-            <Link
-              href="/dashboard/planner"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.1] text-sm text-white font-medium transition-all group"
-            >
-              Ajuster ma fenêtre
-              <span className="transition-transform group-hover:translate-x-1">→</span>
-            </Link>
             <span className="text-[10px] text-zinc-600">{timezone}</span>
           </div>
         </div>
@@ -442,6 +558,18 @@ export default function DashboardPage() {
       setLoading(false)
     })
   }, [])
+
+  const refreshRoutine = useCallback(async () => {
+    if (!user) return
+    const { data } = await supabase
+      .from('routines')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('updated_at', { ascending: false })
+      .limit(1)
+      .maybeSingle()
+    if (data) setRoutine(data)
+  }, [user])
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()
@@ -528,7 +656,7 @@ export default function DashboardPage() {
 
         {/* Fasting hero card */}
         {hasWindow ? (
-          <FastingHeroCard start={start} end={end} routine={routine} />
+          <FastingHeroCard start={start} end={end} routine={routine} supabase={supabase} user={user} onRoutineUpdated={refreshRoutine} />
         ) : (
           <section className="relative overflow-hidden rounded-[2rem] border border-white/[0.08] animate-slide-up">
             <div className="absolute inset-0">
