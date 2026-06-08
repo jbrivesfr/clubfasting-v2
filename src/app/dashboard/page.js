@@ -72,49 +72,124 @@ const DRINK_LABELS = {
 
 const HERO_IMAGE = 'https://images.unsplash.com/photo-1502301197179-65228ab57f78?w=1600&q=80&auto=format&fit=crop'
 
-function FastingRing({ start, end }) {
+// Body states during fasting (French, with threshold hours)
+const BODY_STATES = [
+  { maxHours: 4,   id: 'digestion',       label: 'Digestion',           emoji: '🍽️', color: '#8BB4F8' },
+  { maxHours: 8,   id: 'burning-sugar',    label: 'Glycogène',          emoji: '🔥', color: '#FFD54F' },
+  { maxHours: 14,  id: 'autophagy',        label: 'Autophagie',         emoji: '🧬', color: '#FFB74D' },
+  { maxHours: 18,  id: 'burning-fat',      label: 'Burning Fat (14h+)', emoji: '💪', color: '#F76F20' },
+  { maxHours: 999, id: 'deep-autophagy',   label: 'Deep Autophagy',     emoji: '⚡', color: '#F87171' },
+]
+
+function getBodyState(fastingHours) {
+  for (const s of BODY_STATES) {
+    if (fastingHours < s.maxHours) return s
+  }
+  return BODY_STATES[BODY_STATES.length - 1]
+}
+
+function LiveFastingRing({ start, end }) {
+  const [now, setNow] = useState(new Date())
+
+  useEffect(() => {
+    const timer = setInterval(() => setNow(new Date()), 60000)
+    return () => clearInterval(timer)
+  }, [])
+
   const size = 220
   const stroke = 16
   const radius = (size - stroke) / 2
   const circumference = 2 * Math.PI * radius
-  const fastingHours = 24 - (end - start)
   const eatingHours = end - start
+  const fastingHours = 24 - eatingHours
 
   const eatingStartAngle = (start / 24) * 360
   const eatingArc = (eatingHours / 24) * circumference
   const gap = circumference - eatingArc
 
+  // Current time in minutes
+  const currentMinutes = now.getHours() * 60 + now.getMinutes()
+  const eatStartMin = start * 60
+  const eatEndMin = end * 60
+
+  // Determine if in eating or fasting window
+  const isEating = currentMinutes >= eatStartMin && currentMinutes < eatEndMin
+
+  let statusText, bigText, subText, bodyState = null, phasePercent = 0
+
+  if (isEating) {
+    const minsRemaining = eatEndMin - currentMinutes
+    const h = Math.floor(minsRemaining / 60)
+    const m = minsRemaining % 60
+    bigText = h > 0 ? `${h}h${m > 0 ? ' ' + m + 'm' : ''}` : `${m}m`
+    statusText = 'Repas en cours'
+    subText = 'avant le prochain jeûne'
+    phasePercent = ((currentMinutes - eatStartMin) / (eatingHours * 60)) * 100
+  } else {
+    let fastingMins
+    if (currentMinutes >= eatEndMin) {
+      fastingMins = currentMinutes - eatEndMin
+    } else {
+      fastingMins = (24 * 60 - eatEndMin) + currentMinutes
+    }
+    const fastingH = fastingMins / 60
+    bodyState = getBodyState(fastingH)
+    const h = Math.floor(fastingH)
+    const m = Math.floor((fastingH - h) * 60)
+    bigText = h > 0 ? `${h}h${m > 0 ? ' ' + m + 'm' : ''}` : `${m}m`
+    statusText = 'En jeûne depuis'
+    subText = bodyState.emoji + ' ' + bodyState.label
+    phasePercent = (fastingMins / (fastingHours * 60)) * 100
+  }
+
+  // Current time dot angle (0 = top = 0:00, clockwise)
+  const currentAngleDeg = (currentMinutes / (24 * 60)) * 360 - 90
+  const currentAngleRad = (currentAngleDeg * Math.PI) / 180
+  const dotR = radius
+  const dotX = size / 2 + dotR * Math.cos(currentAngleRad)
+  const dotY = size / 2 + dotR * Math.sin(currentAngleRad)
+
   return (
     <div className="relative" style={{ width: size, height: size }}>
       <svg width={size} height={size} className="-rotate-90 drop-shadow-2xl">
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          fill="none"
-          stroke="rgba(255,255,255,0.08)"
-          strokeWidth={stroke}
-          strokeLinecap="round"
-        />
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          fill="none"
-          stroke="url(#ringGradient)"
-          strokeWidth={stroke}
-          strokeLinecap="round"
-          strokeDasharray={`${eatingArc} ${gap}`}
-          strokeDashoffset={-((eatingStartAngle / 360) * circumference)}
-          style={{ filter: 'drop-shadow(0 0 12px rgba(251,146,60,0.5))' }}
-        />
         <defs>
           <linearGradient id="ringGradient" x1="0" y1="0" x2="1" y2="1">
             <stop offset="0%" stopColor="#fbbf24" />
             <stop offset="50%" stopColor="#fb923c" />
             <stop offset="100%" stopColor="#ef4444" />
           </linearGradient>
+          <linearGradient id="fastingGradient" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="#f97316" />
+            <stop offset="100%" stopColor="#dc2626" />
+          </linearGradient>
         </defs>
+        {/* Background ring */}
+        <circle
+          cx={size / 2} cy={size / 2} r={radius}
+          fill="none" stroke="rgba(255,255,255,0.08)"
+          strokeWidth={stroke} strokeLinecap="round"
+        />
+        {/* Eating window arc */}
+        <circle
+          cx={size / 2} cy={size / 2} r={radius}
+          fill="none" stroke="url(#ringGradient)"
+          strokeWidth={stroke} strokeLinecap="round"
+          strokeDasharray={`${eatingArc} ${gap}`}
+          strokeDashoffset={-((eatingStartAngle / 360) * circumference)}
+          style={{ filter: 'drop-shadow(0 0 12px rgba(251,146,60,0.5))' }}
+        />
+        {/* Fasting progress arc (only during fasting) */}
+        {!isEating && (
+          <circle
+            cx={size / 2} cy={size / 2} r={radius}
+            fill="none" stroke="url(#fastingGradient)"
+            strokeWidth={stroke} strokeLinecap="round"
+            strokeDasharray={`${(phasePercent / 100) * gap} ${circumference}`}
+            strokeDashoffset={-((eatingStartAngle / 360) * circumference) - eatingArc}
+            style={{ filter: 'drop-shadow(0 0 8px rgba(249,115,22,0.4))' }}
+          />
+        )}
+        {/* Hour markers */}
         {Array.from({ length: 24 }).map((_, i) => {
           const angle = (i / 24) * 2 * Math.PI
           const x1 = size / 2 + (radius + stroke / 2 + 4) * Math.cos(angle)
@@ -130,16 +205,192 @@ function FastingRing({ start, end }) {
             />
           )
         })}
+        {/* Current time dot */}
+        <circle
+          cx={dotX} cy={dotY} r={5}
+          fill="white"
+          stroke={bodyState ? bodyState.color : '#4ADE80'}
+          strokeWidth={2.5}
+          style={{ filter: 'drop-shadow(0 0 6px rgba(255,255,255,0.6))' }}
+        />
       </svg>
+      {/* Center text */}
       <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-        <span className="text-[11px] uppercase tracking-[0.3em] text-zinc-500 font-medium">Jeûne</span>
-        <span className="text-6xl font-black text-white leading-none mt-2 font-display">{fastingHours}</span>
-        <span className="text-xs text-zinc-400 mt-2">heures par jour</span>
-        <span className="text-[10px] uppercase tracking-wider text-orange-400/80 mt-3">
+        <span className="text-[10px] uppercase tracking-[0.3em] text-zinc-500 font-medium">
+          {isEating ? 'Repas' : 'Jeûne'}
+        </span>
+        <span className="text-5xl font-black text-white leading-none mt-2 font-display">{bigText}</span>
+        <span className="text-[10px] text-zinc-400 mt-2">{statusText}</span>
+        <span className="text-[10px] uppercase tracking-wider text-orange-400/80 mt-1.5">
           {eatingHours}h de repas
         </span>
       </div>
     </div>
+  )
+}
+
+function FastingHeroCard({ start, end, routine }) {
+  const [now, setNow] = useState(new Date())
+
+  useEffect(() => {
+    const timer = setInterval(() => setNow(new Date()), 60000)
+    return () => clearInterval(timer)
+  }, [])
+
+  const currentMinutes = now.getHours() * 60 + now.getMinutes()
+  const eatStartMin = start * 60
+  const eatEndMin = end * 60
+  const eatingHours = end - start
+  const fastingHours = 24 - eatingHours
+  const isEating = currentMinutes >= eatStartMin && currentMinutes < eatEndMin
+
+  let fastingDisplayH, fastingDisplayM, statusLabel, subStatusLabel, bodyStateData = null, phasePercent
+
+  if (isEating) {
+    const minsLeft = eatEndMin - currentMinutes
+    fastingDisplayH = Math.floor(minsLeft / 60)
+    fastingDisplayM = minsLeft % 60
+    statusLabel = 'Repas en cours'
+    subStatusLabel = 'Prochain jeûne dans'
+    bodyStateData = null
+    phasePercent = ((currentMinutes - eatStartMin) / (eatingHours * 60)) * 100
+  } else {
+    let fastingMins
+    if (currentMinutes >= eatEndMin) {
+      fastingMins = currentMinutes - eatEndMin
+    } else {
+      fastingMins = (24 * 60 - eatEndMin) + currentMinutes
+    }
+    const fastingH = fastingMins / 60
+    bodyStateData = getBodyState(fastingH)
+    fastingDisplayH = Math.floor(fastingH)
+    fastingDisplayM = Math.floor((fastingH - fastingDisplayH) * 60)
+    statusLabel = 'En jeûne'
+    subStatusLabel = bodyStateData.emoji + ' ' + bodyStateData.label
+    phasePercent = (fastingMins / (fastingHours * 60)) * 100
+  }
+
+  const timeDisplay = fastingDisplayH > 0
+    ? `${fastingDisplayH}h${fastingDisplayM > 0 ? ' ' + fastingDisplayM + 'm' : ''}`
+    : `${fastingDisplayM}m`
+
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || ''
+
+  return (
+    <section className="relative overflow-hidden rounded-[2rem] border border-white/[0.08] animate-slide-up">
+      {/* BG image */}
+      <div className="absolute inset-0">
+        <img
+          src={HERO_IMAGE}
+          alt=""
+          className="w-full h-full object-cover opacity-25"
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-zinc-950 via-zinc-950/85 to-zinc-900/70" />
+        <div className="absolute inset-0" style={{
+          background: 'radial-gradient(60% 80% at 100% 0%, rgba(251,146,60,0.25) 0%, transparent 60%)',
+        }} />
+      </div>
+
+      <div className="relative grid grid-cols-1 lg:grid-cols-[auto_1fr] gap-10 items-center p-8 sm:p-12">
+        <div className="flex justify-center lg:justify-start">
+          <LiveFastingRing start={start} end={end} />
+        </div>
+
+        <div className="space-y-5">
+          <div>
+            <p className="text-xs uppercase tracking-[0.2em] text-zinc-500 mb-2 font-medium">
+              {isEating ? 'Fenêtre de repas' : 'Fenêtre de jeûne'}
+            </p>
+            <p className="text-5xl sm:text-6xl font-black bg-gradient-to-r from-orange-300 via-orange-400 to-red-400 bg-clip-text text-transparent font-display leading-none">
+              {start}h <span className="text-zinc-700 font-light">→</span> {end}h
+            </p>
+          </div>
+
+          {/* Live status */}
+          <div className="space-y-2">
+            <div className="flex items-center gap-3">
+              <p className="text-sm uppercase tracking-[0.15em] text-zinc-400 font-medium">{statusLabel}</p>
+              {bodyStateData && (
+                <span
+                  className="px-3 py-1 rounded-full text-xs font-semibold border"
+                  style={{
+                    color: bodyStateData.color,
+                    borderColor: bodyStateData.color + '40',
+                    backgroundColor: bodyStateData.color + '15',
+                  }}
+                >
+                  {bodyStateData.label}
+                </span>
+              )}
+            </div>
+            <div className="flex items-baseline gap-3">
+              <p className="text-4xl sm:text-5xl font-black text-white font-display leading-none">{timeDisplay}</p>
+              <p className="text-sm text-zinc-500">{subStatusLabel}</p>
+            </div>
+            {/* Phase progress bar */}
+            <div className="w-full h-2 bg-white/[0.06] rounded-full overflow-hidden mt-1">
+              <div
+                className="h-full rounded-full transition-all duration-1000 ease-linear"
+                style={{
+                  width: `${Math.min(phasePercent, 100)}%`,
+                  background: isEating
+                    ? 'linear-gradient(90deg, #4ADE80, #22C55E)'
+                    : bodyStateData
+                      ? `linear-gradient(90deg, ${bodyStateData.color}, ${bodyStateData.color}dd)`
+                      : 'linear-gradient(90deg, #F76F20, #DC2626)',
+                }}
+              />
+            </div>
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            {routine.meals.map((meal, i) => (
+              <span
+                key={i}
+                className="px-4 py-2 rounded-full bg-white/[0.05] border border-white/[0.08] text-sm text-zinc-200 flex items-center gap-2 backdrop-blur-sm"
+              >
+                <span className="text-base">{MEAL_ICONS[meal.name] || '🍽️'}</span>
+                <span className="font-medium">{meal.name}</span>
+                <span className="text-zinc-600">·</span>
+                <span className="text-orange-300 font-semibold">{meal.time}h</span>
+              </span>
+            ))}
+          </div>
+
+          <div className="flex items-center gap-6 pt-1">
+            {routine.drink && DRINK_LABELS[routine.drink] && (
+              <div className="flex items-center gap-2 text-sm text-zinc-400">
+                <span className="text-lg">{DRINK_LABELS[routine.drink].icon}</span>
+                <span>{DRINK_LABELS[routine.drink].label}</span>
+              </div>
+            )}
+            {routine.wake_up_time !== null && routine.wake_up_time !== undefined && (
+              <div className="flex items-center gap-2 text-sm text-zinc-400">
+                <span className="text-lg">🌅</span>
+                <span>Réveil {routine.wake_up_time}h</span>
+              </div>
+            )}
+            {routine.bed_time !== null && routine.bed_time !== undefined && (
+              <div className="flex items-center gap-2 text-sm text-zinc-400">
+                <span className="text-lg">🌙</span>
+                <span>Coucher {routine.bed_time}h</span>
+              </div>
+            )}
+          </div>
+
+          <div className="flex items-center gap-4">
+            <Link
+              href="/dashboard/planner"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.1] text-sm text-white font-medium transition-all group"
+            >
+              Ajuster ma fenêtre
+              <span className="transition-transform group-hover:translate-x-1">→</span>
+            </Link>
+            <span className="text-[10px] text-zinc-600">{timezone}</span>
+          </div>
+        </div>
+      </div>
+    </section>
   )
 }
 
@@ -268,80 +519,7 @@ export default function DashboardPage() {
 
         {/* Fasting hero card */}
         {hasWindow ? (
-          <section className="relative overflow-hidden rounded-[2rem] border border-white/[0.08] animate-slide-up">
-            {/* BG image */}
-            <div className="absolute inset-0">
-              <img
-                src={HERO_IMAGE}
-                alt=""
-                className="w-full h-full object-cover opacity-25"
-              />
-              <div className="absolute inset-0 bg-gradient-to-br from-zinc-950 via-zinc-950/85 to-zinc-900/70" />
-              <div className="absolute inset-0" style={{
-                background: 'radial-gradient(60% 80% at 100% 0%, rgba(251,146,60,0.25) 0%, transparent 60%)',
-              }} />
-            </div>
-
-            <div className="relative grid grid-cols-1 lg:grid-cols-[auto_1fr] gap-10 items-center p-8 sm:p-12">
-              <div className="flex justify-center lg:justify-start">
-                <FastingRing start={start} end={end} />
-              </div>
-
-              <div className="space-y-6">
-                <div>
-                  <p className="text-xs uppercase tracking-[0.2em] text-zinc-500 mb-3 font-medium">
-                    Ta fenêtre de repas
-                  </p>
-                  <p className="text-5xl sm:text-6xl font-black bg-gradient-to-r from-orange-300 via-orange-400 to-red-400 bg-clip-text text-transparent font-display leading-none">
-                    {start}h <span className="text-zinc-700 font-light">→</span> {end}h
-                  </p>
-                </div>
-
-                <div className="flex flex-wrap gap-2">
-                  {routine.meals.map((meal, i) => (
-                    <span
-                      key={i}
-                      className="px-4 py-2 rounded-full bg-white/[0.05] border border-white/[0.08] text-sm text-zinc-200 flex items-center gap-2 backdrop-blur-sm"
-                    >
-                      <span className="text-base">{MEAL_ICONS[meal.name] || '🍽️'}</span>
-                      <span className="font-medium">{meal.name}</span>
-                      <span className="text-zinc-600">·</span>
-                      <span className="text-orange-300 font-semibold">{meal.time}h</span>
-                    </span>
-                  ))}
-                </div>
-
-                <div className="flex items-center gap-6 pt-2">
-                  {routine.drink && DRINK_LABELS[routine.drink] && (
-                    <div className="flex items-center gap-2 text-sm text-zinc-400">
-                      <span className="text-lg">{DRINK_LABELS[routine.drink].icon}</span>
-                      <span>{DRINK_LABELS[routine.drink].label}</span>
-                    </div>
-                  )}
-                  {routine.wake_up_time !== null && routine.wake_up_time !== undefined && (
-                    <div className="flex items-center gap-2 text-sm text-zinc-400">
-                      <span className="text-lg">🌅</span>
-                      <span>Réveil {routine.wake_up_time}h</span>
-                    </div>
-                  )}
-                  {routine.bed_time !== null && routine.bed_time !== undefined && (
-                    <div className="flex items-center gap-2 text-sm text-zinc-400">
-                      <span className="text-lg">🌙</span>
-                      <span>Coucher {routine.bed_time}h</span>
-                    </div>
-                  )}
-                </div>
-
-                <Link
-                  href="/dashboard/planner"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.1] text-sm text-white font-medium transition-all group"
-                >
-                  Ajuster ma fenêtre
-                  <span className="transition-transform group-hover:translate-x-1">→</span>
-                </Link>
-              </div>
-            </div>
-          </section>
+          <FastingHeroCard start={start} end={end} routine={routine} />
         ) : (
           <section className="relative overflow-hidden rounded-[2rem] border border-white/[0.08] animate-slide-up">
             <div className="absolute inset-0">
