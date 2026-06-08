@@ -54,6 +54,15 @@ const TOOLS = [
     accent: 'from-emerald-500 to-teal-500',
     image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=900&q=80&auto=format&fit=crop',
   },
+  {
+    id: 'weight-tracker',
+    title: 'Suivi de poids',
+    desc: 'Enregistre ton poids, visualise ta courbe et tes progrès.',
+    tag: 'Suivi',
+    url: '/dashboard/weight',
+    accent: 'from-amber-500 to-orange-500',
+    image: 'https://images.unsplash.com/photo-1576678927484-cc907957088c?w=900&q=80&auto=format&fit=crop',
+  },
 ]
 
 const MEAL_ICONS = {
