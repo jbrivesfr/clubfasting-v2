@@ -1,6 +1,8 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
 
+const THIRTY_DAYS = 30 * 24 * 60 * 60 // 30 days in seconds
+
 function getOrigin(request) {
   const host = request.headers.get('x-forwarded-host') || request.headers.get('host') || 'app.clubfasting.com'
   const proto = request.headers.get('x-forwarded-proto') || 'https'
@@ -30,6 +32,7 @@ export async function GET(request) {
             cookiesToSet.forEach(({ name, value, options }) => {
               response.cookies.set(name, value, {
                 ...options,
+                maxAge: options.maxAge || THIRTY_DAYS,
                 sameSite: 'lax',
                 secure: process.env.NODE_ENV === 'production',
               })

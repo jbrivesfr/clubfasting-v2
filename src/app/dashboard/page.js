@@ -524,6 +524,7 @@ export default function DashboardPage() {
   const [user, setUser] = useState(null)
   const [displayName, setDisplayName] = useState('')
   const [routine, setRoutine] = useState(null)
+  const [recaps, setRecaps] = useState([])
   const [loading, setLoading] = useState(true)
 
   const supabase = createClient()
@@ -555,6 +556,31 @@ export default function DashboardPage() {
         setRoutine(routineData)
       }
 
+      // Fetch tool recaps
+      const recapsData = []
+      
+      // Weight tracker
+      const { data: lastWeight } = await supabase
+        .from('weight_entries')
+        .select('*')
+        .eq('email', user.email)
+        .order('date', { ascending: false })
+        .limit(1)
+        .maybeSingle()
+      
+      if (lastWeight) {
+        recapsData.push({
+          toolId: 'weight-tracker',
+          title: 'Poids',
+          icon: '⚖️',
+          value: lastWeight.weight.toFixed(1) + ' kg',
+          date: new Date(lastWeight.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }),
+          url: '/dashboard/weight',
+          accent: 'from-amber-500/20 to-orange-500/10',
+        })
+      }
+
+      setRecaps(recapsData)
       setLoading(false)
     })
   }, [])
@@ -730,6 +756,41 @@ export default function DashboardPage() {
             })}
           </div>
         </section>
+
+        {/* Recaps — cards for tools with user data */}
+        {recaps.length > 0 && (
+          <section className="animate-slide-up">
+            <div className="flex items-baseline justify-between mb-6">
+              <div>
+                <h2 className="text-2xl font-bold font-display">Tes récaps</h2>
+                <p className="text-sm text-zinc-500 mt-1">Dernières données de tes outils</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {recaps.map((recap) => (
+                <Link
+                  key={recap.toolId}
+                  href={recap.url}
+                  className="group relative overflow-hidden rounded-2xl bg-zinc-900/60 border border-white/[0.06] hover:border-white/[0.12] transition-all hover:-translate-y-1 p-5"
+                >
+                  <div className={`absolute inset-0 bg-gradient-to-br ${recap.accent} opacity-30 group-hover:opacity-50 transition-opacity`} />
+                  <div className="relative">
+                    <div className="text-2xl mb-3 opacity-80">{recap.icon}</div>
+                    <div className="text-2xl font-black text-white font-display">{recap.value}</div>
+                    <div className="flex items-center justify-between mt-2">
+                      <span className="text-xs text-zinc-500 font-medium">{recap.title}</span>
+                      <span className="text-xs text-zinc-600">{recap.date}</span>
+                    </div>
+                    <div className="mt-3 flex items-center gap-1.5 text-xs text-zinc-600 group-hover:text-orange-400 transition-colors font-medium">
+                      <span>Ouvrir</span>
+                      <span className="transition-transform group-hover:translate-x-0.5">→</span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Stats */}
         <section className="animate-slide-up">

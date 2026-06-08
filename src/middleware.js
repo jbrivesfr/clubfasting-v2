@@ -1,6 +1,8 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
 
+const THIRTY_DAYS = 30 * 24 * 60 * 60
+
 export async function middleware(request) {
   let response = NextResponse.next()
 
@@ -17,6 +19,7 @@ export async function middleware(request) {
             request.cookies.set(name, value)
             response.cookies.set(name, value, {
               ...options,
+              maxAge: options.maxAge || THIRTY_DAYS,
               ...(process.env.COOKIE_DOMAIN ? { domain: process.env.COOKIE_DOMAIN } : {}),
               sameSite: 'lax',
               secure: process.env.NODE_ENV === 'production',
