@@ -33,9 +33,23 @@ export default function WeightTrackerPage() {
   const [deleteIdx, setDeleteIdx] = useState(null)
 
   useEffect(() => {
-    supabase.auth.getUser().then(async ({ data: { user }, error }) => {
-      if (error || !user) { router.push('/login'); return }
-      setUser(user)
+    supabase.auth.getUser().then(async ({ data: { user: authUser }, error }) => {
+      let effectiveUser = authUser
+
+      // Fallback: V1-style cookie auth
+      if ((error || !authUser) && typeof document !== 'undefined') {
+        const cookies = document.cookie.split(';').reduce((acc, c) => {
+          const [k, v] = c.trim().split('=')
+          acc[k] = v
+          return acc
+        }, {})
+        if (cookies.logemail) {
+          effectiveUser = { email: decodeURIComponent(cookies.logemail) }
+        }
+      }
+
+      if (!effectiveUser) { router.push('/login'); return }
+      setUser(effectiveUser)
       setLoading(false)
     })
   }, [])

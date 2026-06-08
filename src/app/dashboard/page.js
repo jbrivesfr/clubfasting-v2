@@ -569,7 +569,7 @@ export default function DashboardPage() {
       const { data: routineData } = await supabase
         .from('routines')
         .select('*')
-        .eq('user_id', userId)
+        .eq('user_id', resolvedId)
         .order('updated_at', { ascending: false })
         .limit(1)
         .maybeSingle()

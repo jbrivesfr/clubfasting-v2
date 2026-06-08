@@ -135,11 +135,39 @@ export default function PlannerPage() {
   const supabase = createClient()
 
   useEffect(() => {
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      if (!session) { router.push('/login'); return }
-      setUser(session.user)
+    supabase.auth.getUser().then(async ({ data: { user: authUser }, error }) => {
+      let effectiveUser = authUser
+      let effectiveEmail = authUser?.email
+      let resolvedId = authUser?.id
+
+      // Fallback: V1-style cookie auth
+      if ((error || !authUser) && typeof document !== 'undefined') {
+        const cookies = document.cookie.split(';').reduce((acc, c) => {
+          const [k, v] = c.trim().split('=')
+          acc[k] = v
+          return acc
+        }, {})
+        if (cookies.logemail) {
+          effectiveEmail = decodeURIComponent(cookies.logemail)
+          effectiveUser = { email: effectiveEmail }
+          
+          // Look up the UUID from users table
+          const { data: profile } = await supabase
+            .from('users')
+            .select('id')
+            .eq('email', effectiveEmail)
+            .maybeSingle()
+          resolvedId = profile?.id
+        }
+      }
+
+      if (!effectiveUser || !resolvedId) { router.push('/login'); return }
+      
+      const finalUser = { ...effectiveUser, id: resolvedId }
+      setUser(finalUser)
+      
       const { data } = await supabase.from('routines').select('*')
-        .eq('user_id', session.user.id)
+        .eq('user_id', resolvedId)
         .order('updated_at', { ascending: false }).limit(1).maybeSingle()
       if (data) setRoutine(data)
       setLoading(false)
