@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/utils/supabase/client'
 import Link from 'next/link'
 
 const QUESTIONS = [
@@ -125,53 +124,21 @@ function LifeRhythmStep({ onComplete }) {
 
 export default function PlannerPage() {
   const router = useRouter()
-  const [user, setUser] = useState(null)
   const [step, setStep] = useState(0)
   const [answers, setAnswers] = useState({})
   const [routine, setRoutine] = useState(null)
   const [saving, setSaving] = useState(false)
   const [loading, setLoading] = useState(true)
 
-  const supabase = createClient()
-
   useEffect(() => {
-    supabase.auth.getUser().then(async ({ data: { user: authUser }, error }) => {
-      let effectiveUser = authUser
-      let effectiveEmail = authUser?.email
-      let resolvedId = authUser?.id
-
-      // Fallback: V1-style cookie auth
-      if ((error || !authUser) && typeof document !== 'undefined') {
-        const cookies = document.cookie.split(';').reduce((acc, c) => {
-          const [k, v] = c.trim().split('=')
-          acc[k] = v
-          return acc
-        }, {})
-        if (cookies.logemail) {
-          effectiveEmail = decodeURIComponent(cookies.logemail)
-          effectiveUser = { email: effectiveEmail }
-          
-          // Look up the UUID from users table
-          const { data: profile } = await supabase
-            .from('users')
-            .select('id')
-            .eq('email', effectiveEmail)
-            .maybeSingle()
-          resolvedId = profile?.id
-        }
-      }
-
-      if (!effectiveUser || !resolvedId) { router.push('/login'); return }
-      
-      const finalUser = { ...effectiveUser, id: resolvedId }
-      setUser(finalUser)
-      
-      const { data } = await supabase.from('routines').select('*')
-        .eq('user_id', resolvedId)
-        .order('updated_at', { ascending: false }).limit(1).maybeSingle()
-      if (data) setRoutine(data)
-      setLoading(false)
-    })
+    // Load routine via API route (supports both cookie & Supabase auth)
+    fetch('/api/planner')
+      .then(r => r.ok ? r.json() : null)
+      .then(data => {
+        if (data) setRoutine(data)
+        setLoading(false)
+      })
+      .catch(() => setLoading(false))
   }, [])
 
   const handleAnswer = (key, value) => {
@@ -187,25 +154,29 @@ export default function PlannerPage() {
   const completePlanner = async (finalAnswers) => {
     setSaving(true)
     const plan = generateMealPlan(finalAnswers)
-    const { error } = await supabase.from('routines').upsert({
-      user_id: user.id,
-      meals: plan.meals,
-      drink: plan.drink,
-      wake_up_time: plan.wake_up_time,
-      bed_time: plan.bed_time,
-      updated_at: new Date().toISOString(),
-    }, { onConflict: 'user_id' })
-    if (!error) {
-      const { data } = await supabase.from('routines').select('*')
-        .eq('user_id', user.id).single()
-      setRoutine(data)
-      setStep(QUESTIONS.length)
+    const res = await fetch('/api/planner', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        meals: plan.meals,
+        drink: plan.drink,
+        wake_up_time: plan.wake_up_time,
+        bed_time: plan.bed_time,
+      }),
+    })
+    if (res.ok) {
+      const data = await res.json()
+      if (data.success) {
+        setStep(QUESTIONS.length)
+      }
+    } else {
+      console.error('Planner save failed:', await res.text())
     }
     setSaving(false)
   }
 
   const reset = async () => {
-    await supabase.from('routines').delete().eq('user_id', user.id)
+    await fetch('/api/planner', { method: 'DELETE' })
     setRoutine(null)
     setStep(0)
     setAnswers({})

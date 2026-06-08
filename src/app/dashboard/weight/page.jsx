@@ -1,8 +1,6 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { useRouter } from 'next/navigation'
-import { createClient } from '@/utils/supabase/client'
 import { Line } from 'react-chartjs-2'
 import {
   Chart as ChartJS,
@@ -20,10 +18,6 @@ import Link from 'next/link'
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler)
 
 export default function WeightTrackerPage() {
-  const router = useRouter()
-  const supabase = createClient()
-
-  const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
   const [weightData, setWeightData] = useState([])
   const [weightInput, setWeightInput] = useState('')
@@ -32,39 +26,15 @@ export default function WeightTrackerPage() {
   const [message, setMessage] = useState(null)
   const [deleteIdx, setDeleteIdx] = useState(null)
 
-  useEffect(() => {
-    supabase.auth.getUser().then(async ({ data: { user: authUser }, error }) => {
-      let effectiveUser = authUser
-
-      // Fallback: V1-style cookie auth
-      if ((error || !authUser) && typeof document !== 'undefined') {
-        const cookies = document.cookie.split(';').reduce((acc, c) => {
-          const [k, v] = c.trim().split('=')
-          acc[k] = v
-          return acc
-        }, {})
-        if (cookies.logemail) {
-          effectiveUser = { email: decodeURIComponent(cookies.logemail) }
-        }
-      }
-
-      if (!effectiveUser) { router.push('/login'); return }
-      setUser(effectiveUser)
-      setLoading(false)
-    })
+  const loadWeightData = useCallback(async () => {
+    const res = await fetch('/api/weight')
+    if (res.ok) {
+      const data = await res.json()
+      if (data) setWeightData(data)
+    }
   }, [])
 
-  const loadWeightData = useCallback(async () => {
-    if (!user) return
-    const { data, error } = await supabase
-      .from('weight_entries')
-      .select('*')
-      .eq('email', user.email)
-      .order('date', { ascending: true })
-    if (!error && data) setWeightData(data)
-  }, [user])
-
-  useEffect(() => { if (user) loadWeightData() }, [user, loadWeightData])
+  useEffect(() => { loadWeightData().then(() => setLoading(false)) }, [loadWeightData])
 
   const formatDate = (d) => new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: '2-digit' })
 
@@ -176,18 +146,20 @@ export default function WeightTrackerPage() {
     const weight = parseFloat(weightInput)
     if (isNaN(weight) || weight <= 0) { setMessage({ type: 'error', text: 'Poids invalide.' }); return }
     if (!dateInput) { setMessage({ type: 'error', text: 'Date requise.' }); return }
-    if (!user) { setMessage({ type: 'error', text: 'Connectez-vous.' }); return }
-
+    
     setSaving(true)
     const selectedDate = new Date(dateInput).toISOString().split('T')[0]
     const existing = weightData.find(e => new Date(e.date).toISOString().split('T')[0] === selectedDate)
 
-    const { error } = existing
-      ? await supabase.from('weight_entries').update({ weight }).eq('id', existing.id)
-      : await supabase.from('weight_entries').insert([{ email: user.email, weight, date: selectedDate }])
+    const res = await fetch('/api/weight', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ weight, date: selectedDate }),
+    })
 
-    if (error) {
-      setMessage({ type: 'error', text: 'Erreur: ' + error.message })
+    if (!res.ok) {
+      const err = await res.json()
+      setMessage({ type: 'error', text: 'Erreur: ' + (err.error || 'Échec') })
     } else {
       setMessage({ type: 'success', text: existing ? 'Poids mis à jour !' : 'Poids enregistré !' })
       setWeightInput('')
@@ -200,8 +172,12 @@ export default function WeightTrackerPage() {
   const handleDelete = async () => {
     if (deleteIdx === null) return
     const entry = weightData[deleteIdx]
-    const { error } = await supabase.from('weight_entries').delete().eq('id', entry.id)
-    if (!error) {
+    const res = await fetch('/api/weight', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ date: entry.date }),
+    })
+    if (res.ok) {
       setMessage({ type: 'success', text: 'Entrée supprimée.' })
       setDeleteIdx(null)
       await loadWeightData()

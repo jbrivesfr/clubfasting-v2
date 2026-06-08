@@ -392,6 +392,7 @@ function FastingHeroCard({ start, end, routine, supabase, user, onRoutineUpdated
       { id: 2, name: endMeal.name, time: newEnd },
     ]
 
+    // Try Supabase directly first (works with Supabase session)
     const { error } = await supabase.from('routines').upsert({
       user_id: user.id,
       meals,
@@ -401,7 +402,21 @@ function FastingHeroCard({ start, end, routine, supabase, user, onRoutineUpdated
       updated_at: new Date().toISOString(),
     }, { onConflict: 'user_id' })
 
-    if (!error && onRoutineUpdated) onRoutineUpdated()
+    // Fallback to API route (for cookie-only auth)
+    if (error) {
+      await fetch('/api/planner', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          meals,
+          drink: routine?.drink || null,
+          wake_up_time: routine?.wake_up_time ?? null,
+          bed_time: routine?.bed_time ?? null,
+        }),
+      })
+    }
+
+    if (onRoutineUpdated) onRoutineUpdated()
     setSaving(false)
   }
 
@@ -554,69 +569,59 @@ export default function DashboardPage() {
         return
       }
       setUser(effectiveUser)
+      setUserId(effectiveUser.id)
+      setDisplayName(effectiveEmail?.split('@')[0] || 'Membre')
 
-      const { data: profile } = await supabase
-        .from('users')
-        .select('id, name')
-        .eq('email', effectiveEmail)
-        .maybeSingle()
-
-      const resolvedId = profile?.id || effectiveUser?.id
-      setUserId(resolvedId)
-      setUser({ ...effectiveUser, id: resolvedId })
-      setDisplayName(profile?.name || effectiveEmail?.split('@')[0] || 'Membre')
-
-      const { data: routineData } = await supabase
-        .from('routines')
-        .select('*')
-        .eq('user_id', resolvedId)
-        .order('updated_at', { ascending: false })
-        .limit(1)
-        .maybeSingle()
-
-      if (routineData) {
-        setRoutine(routineData)
+      // Load routine via API
+      try {
+        const plannerRes = await fetch('/api/planner')
+        if (plannerRes.ok) {
+          const routineData = await plannerRes.json()
+          if (routineData) setRoutine(routineData)
+        }
+      } catch (e) {
+        console.warn('Routine load failed:', e)
       }
 
-      // Fetch tool recaps
-      const recapsData = []
-      
-      // Weight tracker
-      const { data: lastWeight } = await supabase
-        .from('weight_entries')
-        .select('*')
-        .eq('email', effectiveEmail)
-        .order('date', { ascending: false })
-        .limit(1)
-        .maybeSingle()
-      
-      if (lastWeight) {
-        recapsData.push({
-          toolId: 'weight-tracker',
-          title: 'Poids',
-          icon: '⚖️',
-          value: lastWeight.weight.toFixed(1) + ' kg',
-          date: new Date(lastWeight.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }),
-          url: '/dashboard/weight',
-          accent: 'from-amber-500/20 to-orange-500/10',
-        })
+      // Load weight recap via API
+      try {
+        const weightRes = await fetch('/api/weight')
+        if (weightRes.ok) {
+          const weightData = await weightRes.json()
+          const recapsData = []
+          if (weightData && weightData.length > 0) {
+            const lastWeight = weightData[weightData.length - 1]
+            recapsData.push({
+              toolId: 'weight-tracker',
+              title: 'Poids',
+              icon: '⚖️',
+              value: lastWeight.weight.toFixed(1) + ' kg',
+              date: new Date(lastWeight.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }),
+              url: '/dashboard/weight',
+              accent: 'from-amber-500/20 to-orange-500/10',
+            })
+          }
+          setRecaps(recapsData)
+        }
+      } catch (e) {
+        console.warn('Weight load failed:', e)
       }
 
-      setRecaps(recapsData)
       setLoading(false)
     })
   }, [])
 
   const refreshRoutine = useCallback(async () => {
     if (!user) return
-    const { data } = await supabase
-      .from('routines')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('updated_at', { ascending: false })
-      .limit(1)
-      .maybeSingle()
-    if (data) setRoutine(data)
+    try {
+      const res = await fetch('/api/planner')
+      if (res.ok) {
+        const data = await res.json()
+        if (data) setRoutine(data)
+      }
+    } catch (e) {
+      console.warn('Routine refresh failed:', e)
+    }
   }, [user])
 
   const handleSignOut = async () => {
