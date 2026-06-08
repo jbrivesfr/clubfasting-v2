@@ -26,12 +26,20 @@ async function getEmail(request) {
 }
 
 async function resolveUserId(supabaseAdmin, email) {
-  const { data: user } = await supabaseAdmin
+  // Look up auth.users first (routines FK references auth.users.id)
+  const { data: authData } = await supabaseAdmin.auth.admin.listUsers()
+  const authUser = authData?.users?.find(
+    u => u.email?.toLowerCase() === email.toLowerCase()
+  )
+  if (authUser?.id) return authUser.id
+
+  // Fallback: public.users
+  const { data: publicUser } = await supabaseAdmin
     .from('users')
     .select('id')
     .eq('email', email.toLowerCase().trim())
     .maybeSingle()
-  return user?.id
+  return publicUser?.id || null
 }
 
 export async function GET(request) {

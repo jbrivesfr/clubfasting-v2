@@ -94,6 +94,47 @@ export async function GET(request) {
       })
     }
 
+    // Also create a Supabase session programmatically
+    // This allows all RLS-protected tables to work for cookie-based users
+    try {
+      // 1. Generate admin magic link (NOT sent to user — we consume it here)
+      const { data: magicLink } = await supabaseAdmin.auth.admin.generateLink({
+        type: 'magiclink',
+        email,
+        options: { redirectTo: `${origin}/dashboard` },
+      })
+
+      if (magicLink?.properties?.hashed_token) {
+        // 2. Verify OTP to create a Supabase session (sets session cookies)
+        const supabaseServer = createServerClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL,
+          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+          {
+            cookies: {
+              getAll() { return request.cookies.getAll() },
+              setAll(cookiesToSet) {
+                cookiesToSet.forEach(({ name, value, options }) => {
+                  response.cookies.set(name, value, {
+                    ...options,
+                    maxAge: options.maxAge || THIRTY_DAYS,
+                    sameSite: 'lax',
+                    secure: isProd,
+                  })
+                })
+              },
+            },
+          }
+        )
+
+        await supabaseServer.auth.verifyOtp({
+          token_hash: magicLink.properties.hashed_token,
+          type: 'email',
+        })
+      }
+    } catch (e) {
+      console.error('Session creation failed (non-fatal):', e)
+    }
+
     // Also create/update Supabase auth user for future compatibility
     try {
       const { data: authUsers } = await supabaseAdmin.auth.admin.listUsers()

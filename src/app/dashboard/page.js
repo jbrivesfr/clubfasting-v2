@@ -561,6 +561,11 @@ export default function DashboardPage() {
         if (cookies.logemail) {
           effectiveEmail = decodeURIComponent(cookies.logemail)
           effectiveUser = { email: effectiveEmail, id: effectiveEmail, user_metadata: {} }
+
+          // Bootstrap a Supabase session in background so RLS tables work
+          fetch('/api/auth/refresh-session', { method: 'POST' })
+            .then(() => console.log('Session refreshed'))
+            .catch(() => {})
         }
       }
 
