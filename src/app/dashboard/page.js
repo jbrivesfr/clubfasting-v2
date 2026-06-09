@@ -360,7 +360,7 @@ function FastingHeroCard({ start, end, routine }) {
           </div>
 
           <div className="flex flex-wrap gap-2">
-            {[draftStart, draftEnd].map((h, i) => {
+            {[start, end].map((h, i) => {
               const m = MEAL_TYPE_FROM_HOUR(h)
               return (
                 <span key={i} className="px-4 py-2 rounded-full bg-white/[0.05] border border-white/[0.08] text-sm text-zinc-200 flex items-center gap-2 backdrop-blur-sm">
