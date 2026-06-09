@@ -19,18 +19,43 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, T
 
 const TIME_LABELS = Array.from({ length: 181 }, (_, i) => `${i * 5} min`)
 
-// Ported from original glucosemaster script.js
-function calculateGlucoseCurve(gi, gl) {
+// Derive carbs per serving from GI + GL: GL = (GI × carbs) / 100 → carbs = (GL × 100) / GI
+function getCarbs(gi, gl) {
+  if (!gi || !gl || gi <= 0) return 0
+  return Math.round((gl * 100) / gi)
+}
+
+// Physiology-based glucose curve model:
+//   - GI drives peak HEIGHT (how fast glucose enters blood)
+//   - Carbs drive peak WIDTH (how long body takes to clear glucose)
+//   - Peak timing delayed for lower GI (slower absorption)
+function calculateGlucoseCurve(gi, carbs) {
   const baseline = Array(181).fill(80)
-  const peakTime = 30 + (gl || 0) * 0.5
-  const peakValue = 80 + (gi || 0) * 0.7 + (gl || 0) * 2
-  const decayRate = 0.02 - (gl || 0) * 0.0005
+  const c = Math.min(carbs || 0, 75)  // cap at 75g for sanity
+
+  // Peak time: inversely proportional to GI (faster entry = earlier peak)
+  // GI 100 → ~20min, GI 25 → ~50min
+  const peakTime = 20 + ((100 - (gi || 50)) / 70) * 30
+
+  // Peak height: GI is the main driver (rate of entry), carbs add area
+  // GI 100 + 60g → ~170, GI 30 + 10g → ~116
+  const peakValue = 80 + (gi || 0) * 0.60 + c * 0.45
+
+  // Spread (std dev of the Gaussian): width grows with carbs
+  // 10g → spread ~20, 50g → spread ~40
+  const spread = 15 + c * 0.50 + ((100 - (gi || 50)) / 80) * 6
+
   for (let i = 0; i < 181; i++) {
-    const timeEffect = Math.exp(-((i - peakTime) ** 2) / (2 * (20 + (gl || 0)) ** 2))
+    const timeEffect = Math.exp(-((i - peakTime) ** 2) / (2 * spread ** 2))
     let value = 80 + (peakValue - 80) * timeEffect
+
+    // Post-peak linear decay: faster for high GI (insulin spike → crash)
+    // and for high carbs (more insulin response)
     if (i > peakTime) {
-      value -= (i - peakTime) * decayRate
+      const decay = 0.005 + (gi || 50) / 100 * 0.012 + c * 0.00025
+      value -= (i - peakTime) * decay
     }
+
     baseline[i] = Math.max(80, value)
   }
   return baseline
@@ -55,8 +80,12 @@ export default function GlucoseSimulator() {
     fetch('/fooditems.json')
       .then(r => r.json())
       .then(data => {
-        setFoodItems(data)
-        const cats = [...new Set(data.map(f => f.category))]
+        const enriched = data.map(f => ({
+          ...f,
+          carbs: getCarbs(f.gi, f.gl),
+        }))
+        setFoodItems(enriched)
+        const cats = [...new Set(enriched.map(f => f.category))]
         setCategories(cats)
         setActiveCategory(cats[0])
       })
@@ -88,7 +117,7 @@ export default function GlucoseSimulator() {
     datasets: stackedFoods.length > 0
       ? stackedFoods.map((food, idx) => ({
           label: food.name,
-          data: calculateGlucoseCurve(food.gi, food.gl),
+          data: calculateGlucoseCurve(food.gi, food.carbs),
           borderColor: getCurveColor(food.gi),
           backgroundColor: 'transparent',
           tension: 0.3,
@@ -175,7 +204,7 @@ export default function GlucoseSimulator() {
             <div>
               <p className="font-medium text-sm">{selectedFood.name}</p>
               <p className="text-xs text-zinc-400">
-                IG: {selectedFood.gi || 'N/A'} • CG: {selectedFood.gl || 'N/A'}
+                IG: {selectedFood.gi || 'N/A'} · Glucides: {selectedFood.carbs || 'N/A'}g/portion
               </p>
             </div>
             {stackedFoods.length > 0 && (
@@ -219,13 +248,13 @@ export default function GlucoseSimulator() {
               >
                 <span className="text-3xl">{food.icon}</span>
                 <span className="text-xs text-zinc-300 text-center leading-tight">{food.name}</span>
-                {food.gi && (
+                {food.carbs > 0 && (
                   <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${
                     food.gi > 70 ? 'bg-red-500/20 text-red-400' :
                     food.gi > 55 ? 'bg-yellow-500/20 text-yellow-400' :
                     'bg-green-500/20 text-green-400'
                   }`}>
-                    IG {food.gi}
+                    IG {food.gi} · {food.carbs}g
                   </span>
                 )}
               </button>
