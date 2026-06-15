@@ -497,10 +497,8 @@ export default function DashboardPage() {
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()
-    // Clear V1 cookies
-    document.cookie = 'logemail=; path=/; max-age=0'
-    document.cookie = 'username=; path=/; max-age=0'
-    document.cookie = 'description=; path=/; max-age=0'
+    // Clear cookies via server endpoint (httpOnly cookies need server-side clear)
+    await fetch('/api/auth/logout', { method: 'POST' })
     router.push('/login')
   }
 
