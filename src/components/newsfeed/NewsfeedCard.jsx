@@ -184,8 +184,8 @@ export function NewsfeedCard({ item, onOpenThread, userId }) {
             </div>
           )}
           
-          {/* Vimeo thumbnail on the right */}
-          {item.has_vimeo_content && item.vimeo_id && (
+          {/* Vimeo thumbnail on the right (only if no image_urls — avoid duplicate thumbnails) */}
+          {item.has_vimeo_content && item.vimeo_id && (!item.image_urls || item.image_urls.length === 0) && (
             <div className="feed-comment-image-preview flex-shrink-0 w-[180px] aspect-square relative rounded-xl overflow-hidden">
               <img
                 src={`https://vimeo.com/api/v2/video/${item.vimeo_id}/thumbnail.gif`}

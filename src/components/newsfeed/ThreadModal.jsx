@@ -56,7 +56,7 @@ export function ThreadModal({ item, onClose, userId }) {
   const itemImages = safeImageUrls(item.image_urls)
 
   const getAvatarUrl = (avatarPath, authorId) => {
-    if (!avatarPath) return getDefaultAvatarUrl(authorId || item.author_id)
+    if (!avatarPath) return getDefaultAvatarUrl(authorId || item.id)
     if (avatarPath.startsWith('http')) return avatarPath
     if (avatarPath.startsWith('/')) return `https://clubfasting.com${avatarPath}`
     return avatarPath
