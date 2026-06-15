@@ -5,6 +5,12 @@ import { createClient } from '@/utils/supabase/client'
 import { useNewsfeedContext } from './NewsfeedProvider'
 import { timeAgo, formatJourneyMessageJS, getDefaultAvatarUrl, countAllRepliesRecursive } from './utils'
 
+function extractVimeoId(url) {
+  if (!url) return ''
+  const match = url.match(/vimeo\.com\/(\d+)/)
+  return match ? match[1] : ''
+}
+
 export function ThreadModal({ item, onClose, userId }) {
   const { userProfile } = useNewsfeedContext()
   const authorName = userProfile?.name || 'Membre ClubFasting'
@@ -191,6 +197,18 @@ export function ThreadModal({ item, onClose, userId }) {
                         onError={(e) => { e.target.style.display = 'none' }}
                       />
                     ))}
+                  </div>
+                )}
+
+                {/* Vimeo video embed */}
+                {item.vimeo_url && (
+                  <div className="mt-3 aspect-video rounded-xl overflow-hidden bg-black">
+                    <iframe
+                      src={`https://player.vimeo.com/video/${extractVimeoId(item.vimeo_url)}?autoplay=0&title=0&byline=0&portrait=0`}
+                      className="w-full h-full"
+                      allow="autoplay; fullscreen; picture-in-picture"
+                      allowFullScreen
+                    />
                   </div>
                 )}
               </div>

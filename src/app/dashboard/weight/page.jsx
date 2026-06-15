@@ -63,7 +63,7 @@ export default function WeightTrackerPage() {
   const labels = weightData.map(e => formatDate(e.date))
   const values = weightData.map(e => e.weight)
 
-  // 30-day projection
+  // 30-day projection (show ~20% of chart width)
   const projLabels = []
   const projValues = []
   if (weightData.length >= 2) {
@@ -79,13 +79,17 @@ export default function WeightTrackerPage() {
       projValues.push(last.weight + dailyRate * i)
     }
   }
+  // 80/20 split: limit projection points to ~20% of total chart width
+  const maxProjPoints = Math.max(3, Math.round(labels.length * 0.25))
+  const visibleProjLabels = projLabels.slice(0, maxProjPoints)
+  const visibleProjValues = projValues.slice(0, maxProjPoints)
 
   const chartData = {
-    labels: [...labels, ...projLabels],
+    labels: [...labels, ...visibleProjLabels],
     datasets: [
       {
         label: 'Poids (kg)',
-        data: [...values, ...Array(projValues.length).fill(null)],
+        data: [...values, ...Array(visibleProjValues.length).fill(null)],
         borderColor: '#F76F20',
         backgroundColor: 'rgba(247,111,32,0.15)',
         borderWidth: 2.5,
@@ -98,7 +102,7 @@ export default function WeightTrackerPage() {
       },
       {
         label: 'Projection 30j',
-        data: [...Array(values.length).fill(null), ...projValues],
+        data: [...Array(values.length).fill(null), ...visibleProjValues],
         borderColor: 'rgba(247,111,32,0.35)',
         backgroundColor: 'rgba(247,111,32,0.04)',
         borderWidth: 1.5,

@@ -46,13 +46,17 @@ export default function AnalysisHistory({ userId, type = 'all', onSelect }) {
             onClick={() => { setSelected(a); onSelect?.(a) }}
             className="w-full flex items-center gap-3 p-3 bg-zinc-900/40 border border-zinc-800 rounded-xl hover:bg-zinc-800/40 transition-colors text-left"
           >
-            {a.image_url ? (
-              <img src={a.image_url} alt="" className="w-12 h-12 rounded-lg object-cover flex-shrink-0" />
-            ) : (
-              <div className="w-12 h-12 rounded-lg bg-zinc-800 flex items-center justify-center text-lg flex-shrink-0">
-                {a.type === 'meal' ? '🍽️' : '🛒'}
-              </div>
-            )}
+            <div className="w-12 h-12 rounded-lg bg-zinc-800 flex items-center justify-center text-lg flex-shrink-0 relative overflow-hidden">
+              {a.image_url && (
+                <img
+                  src={a.image_url}
+                  alt=""
+                  className="absolute inset-0 w-full h-full object-cover"
+                  onError={(e) => { e.target.style.display = 'none' }}
+                />
+              )}
+              <span className="relative z-10">{a.type === 'meal' ? '🍽️' : '🛒'}</span>
+            </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm text-zinc-300 truncate">
                 {title || (a.type === 'meal' ? 'Analyse de repas' : 'Analyse de caddie')}
