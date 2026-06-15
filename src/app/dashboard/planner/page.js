@@ -433,7 +433,7 @@ export default function PlannerPage() {
             </div>
 
             {currentQ.key === 'lifeRhythm' ? (
-              <LifeRhythmStep onComplete={(data) => handleAnswer('wakeUpTime', data.wakeUpTime) || handleAnswer('bedTime', data.bedTime) || handleAnswer('lifeRhythm', data)} />
+              <LifeRhythmStep onComplete={(data) => handleAnswer('lifeRhythm', data)} />
             ) : (
               <div className="space-y-3">
                 {currentQ.options?.map(opt => (

@@ -185,10 +185,10 @@ export function NewsfeedCard({ item, onOpenThread, userId }) {
           )}
           
           {/* Vimeo thumbnail on the right */}
-          {item.has_vimeo_content && item.vimeo_url && (
+          {item.has_vimeo_content && item.vimeo_id && (
             <div className="feed-comment-image-preview flex-shrink-0 w-[180px] aspect-square relative rounded-xl overflow-hidden">
               <img
-                src={`https://vimeo.com/api/v2/video/${extractVimeoId(item.vimeo_url)}/thumbnail.gif`}
+                src={`https://vimeo.com/api/v2/video/${item.vimeo_id}/thumbnail.gif`}
                 alt=""
                 className="w-full h-full object-cover"
                 onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=600&q=80' }}
@@ -281,9 +281,3 @@ function getImageUrl(imageData) {
   return null
 }
 
-// Helper to extract Vimeo video ID
-function extractVimeoId(url) {
-  if (!url) return ''
-  const match = url.match(/vimeo\.com\/(\d+)/)
-  return match ? match[1] : ''
-}

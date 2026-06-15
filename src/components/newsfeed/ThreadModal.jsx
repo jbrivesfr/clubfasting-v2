@@ -201,10 +201,10 @@ export function ThreadModal({ item, onClose, userId }) {
                 )}
 
                 {/* Vimeo video embed */}
-                {item.vimeo_url && (
+                {item.vimeo_id && (
                   <div className="mt-3 aspect-video rounded-xl overflow-hidden bg-black">
                     <iframe
-                      src={`https://player.vimeo.com/video/${extractVimeoId(item.vimeo_url)}?autoplay=0&title=0&byline=0&portrait=0`}
+                      src={`https://player.vimeo.com/video/${item.vimeo_id}?autoplay=0&title=0&byline=0&portrait=0`}
                       className="w-full h-full"
                       allow="autoplay; fullscreen; picture-in-picture"
                       allowFullScreen
