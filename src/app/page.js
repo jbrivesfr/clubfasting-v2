@@ -2,15 +2,14 @@ import Link from 'next/link'
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900 flex flex-col items-center justify-center px-4">
+    <div className="min-h-screen bg-[#faf6ec] text-gray-900 flex flex-col items-center justify-center px-4">
       <div className="max-w-lg text-center space-y-8">
         <div className="space-y-4">
-          <h1 className="text-5xl font-black tracking-tight text-gray-900">
-            Club <span className="text-orange-500">Fasting</span>
-          </h1>
-          <p className="text-lg text-gray-600 leading-relaxed">
-            Ton métabolisme, tes outils, tes résultats.
-          </p>
+          <img
+            src="/club-fasting-logo.png"
+            alt="Club Fasting"
+            className="mx-auto w-64 max-w-full h-auto"
+          />
         </div>
 
         <div className="grid grid-cols-3 gap-3 text-sm">
@@ -36,7 +35,7 @@ export default function HomePage() {
         </Link>
 
         <p className="text-sm text-gray-500">
-          Pas de mot de passe. Juste ton email.
+          Une nouvelle version pour mieux jeûner
         </p>
       </div>
     </div>

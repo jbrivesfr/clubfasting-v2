@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { NewsfeedProvider } from '@/components/newsfeed/NewsfeedProvider'
 import { NewsfeedFeed } from '@/components/newsfeed/NewsfeedFeed'
 import { JourneyTabs } from '@/components/newsfeed/JourneyTabs'
+import { ThemeToggle } from '@/components/ThemeToggle'
 
 const TOOLS = [
   {
@@ -504,7 +505,7 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-zinc-950 text-white flex items-center justify-center">
+      <div className="min-h-screen bg-[#faf6ec] text-zinc-900 dark:bg-zinc-950 dark:text-white flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 rounded-full border-2 border-orange-500/20 border-t-orange-500 animate-spin" />
           <p className="text-zinc-500 text-sm">Chargement...</p>
@@ -522,7 +523,7 @@ export default function DashboardPage() {
 
   return (
     <NewsfeedProvider>
-      <div className="min-h-screen bg-zinc-950 text-white relative overflow-hidden">
+      <div className="min-h-screen bg-[#faf6ec] text-zinc-900 dark:bg-zinc-950 dark:text-white relative overflow-hidden">
       {/* Ambient glows */}
       <div
         className="fixed inset-x-0 top-0 h-[700px] -z-0 pointer-events-none animate-pulse-glow"
@@ -540,24 +541,25 @@ export default function DashboardPage() {
       />
 
       {/* Header */}
-      <header className="relative z-20 border-b border-white/[0.06] backdrop-blur-xl bg-zinc-950/40 sticky top-0">
+      <header className="relative z-20 border-b border-[#e2d9c3] dark:border-white/[0.06] backdrop-blur-xl bg-[#faf6ec]/70 dark:bg-zinc-950/40 sticky top-0">
         <div className="max-w-6xl mx-auto px-5 sm:px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="text-xl font-black tracking-tight font-display flex items-center gap-2">
+          <Link href="/" className="text-xl font-black tracking-tight font-display flex items-center gap-2 text-zinc-900 dark:text-white">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center text-sm shadow-lg shadow-orange-500/30">
               🔥
             </div>
-            Club <span className="text-orange-400">Fasting</span>
+            Club <span className="text-orange-500 dark:text-orange-400">Fasting</span>
           </Link>
           <div className="flex items-center gap-3">
-            <div className="hidden sm:flex items-center gap-2.5 pl-1 pr-3 py-1 rounded-full bg-white/[0.04] border border-white/[0.08] hover:bg-white/[0.08] transition-colors">
-              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center text-xs font-bold shadow-md">
+            <ThemeToggle />
+            <div className="hidden sm:flex items-center gap-2.5 pl-1 pr-3 py-1 rounded-full bg-black/[0.03] dark:bg-white/[0.04] border border-[#e2d9c3] dark:border-white/[0.08] hover:bg-black/[0.06] dark:hover:bg-white/[0.08] transition-colors">
+              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center text-xs font-bold text-white shadow-md">
                 {displayName.charAt(0).toUpperCase()}
               </div>
-              <span className="text-sm text-zinc-200 font-medium">{displayName}</span>
+              <span className="text-sm text-zinc-700 dark:text-zinc-200 font-medium">{displayName}</span>
             </div>
             <button
               onClick={handleSignOut}
-              className="text-sm text-zinc-500 hover:text-white transition-colors px-3 py-1.5 rounded-full hover:bg-white/[0.04]"
+              className="text-sm text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors px-3 py-1.5 rounded-full hover:bg-black/[0.04] dark:hover:bg-white/[0.04]"
             >
               Déconnexion
             </button>
@@ -575,7 +577,7 @@ export default function DashboardPage() {
             Salut {displayName}{' '}
             <span className="inline-block animate-wave origin-bottom-right">👋</span>
           </h1>
-          <p className="text-zinc-400 text-lg max-w-xl">
+          <p className="text-zinc-600 dark:text-zinc-400 text-lg max-w-xl">
             Voici ta routine de jeûne et tous tes outils pour avancer aujourd&apos;hui.
           </p>
         </section>
@@ -584,16 +586,16 @@ export default function DashboardPage() {
         {hasWindow ? (
           <FastingHeroCard start={start} end={end} routine={routine} />
         ) : (
-          <section className="relative overflow-hidden rounded-[2rem] border border-white/[0.08] animate-slide-up">
+          <section className="relative overflow-hidden rounded-[2rem] border border-white/[0.08] dark:border-white/[0.08] animate-slide-up">
             <div className="absolute inset-0">
-              <img src={HERO_IMAGE} alt="" className="w-full h-full object-cover opacity-30" />
+              <img src={HERO_IMAGE} alt="" className="w-full h-full object-cover opacity-25" />
               <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/80 to-zinc-950/50" />
             </div>
             <div className="relative p-12 text-center">
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 mb-5 shadow-lg shadow-orange-500/30 text-3xl">
                 ⏰
               </div>
-              <h2 className="text-3xl font-bold mb-3 font-display">Démarre ta routine</h2>
+              <h2 className="text-3xl font-bold mb-3 font-display text-white">Démarre ta routine</h2>
               <p className="text-zinc-400 mb-7 max-w-md mx-auto">
                 Réponds à quelques questions, on calcule ta fenêtre de jeûne idéale.
               </p>
@@ -629,7 +631,7 @@ export default function DashboardPage() {
                 <Comp
                   key={tool.id}
                   {...props}
-                  className="card-glow group relative overflow-hidden rounded-2xl bg-zinc-900/60 border border-white/[0.06] hover:border-white/[0.12] transition-all hover:-translate-y-1 flex flex-col"
+                  className="card-glow group relative overflow-hidden rounded-2xl bg-white dark:bg-zinc-900/60 border border-[#e2d9c3] dark:border-white/[0.06] shadow-sm dark:shadow-none hover:border-gray-300 dark:hover:border-white/[0.12] transition-all hover:-translate-y-1 flex flex-col"
                 >
                   <div className="relative h-44 overflow-hidden">
                     <img
@@ -644,8 +646,8 @@ export default function DashboardPage() {
                     </span>
                   </div>
                   <div className="relative p-5 flex-1 flex flex-col">
-                    <h3 className="font-bold text-lg text-white mb-1.5 font-display">{tool.title}</h3>
-                    <p className="text-sm text-zinc-400 leading-relaxed flex-1">{tool.desc}</p>
+                    <h3 className="font-bold text-lg text-zinc-900 dark:text-white mb-1.5 font-display">{tool.title}</h3>
+                    <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed flex-1">{tool.desc}</p>
                     <div className="mt-4 flex items-center gap-2 text-sm text-zinc-500 group-hover:text-orange-300 transition-colors font-medium">
                       <span>Ouvrir</span>
                       <span className="transition-transform group-hover:translate-x-1">→</span>
@@ -671,12 +673,12 @@ export default function DashboardPage() {
                 <Link
                   key={recap.toolId}
                   href={recap.url}
-                  className="group relative overflow-hidden rounded-2xl bg-zinc-900/60 border border-white/[0.06] hover:border-white/[0.12] transition-all hover:-translate-y-1 p-5"
+                  className="group relative overflow-hidden rounded-2xl bg-white dark:bg-zinc-900/60 border border-[#e2d9c3] dark:border-white/[0.06] shadow-sm dark:shadow-none hover:border-gray-300 dark:hover:border-white/[0.12] transition-all hover:-translate-y-1 p-5"
                 >
                   <div className={`absolute inset-0 bg-gradient-to-br ${recap.accent} opacity-30 group-hover:opacity-50 transition-opacity`} />
                   <div className="relative">
                     <div className="text-2xl mb-3 opacity-80">{recap.icon}</div>
-                    <div className="text-2xl font-black text-white font-display">{recap.value}</div>
+                    <div className="text-2xl font-black text-zinc-900 dark:text-white font-display">{recap.value}</div>
                     <div className="flex items-center justify-between mt-2">
                       <span className="text-xs text-zinc-500 font-medium">{recap.title}</span>
                       <span className="text-xs text-zinc-600">{recap.date}</span>
@@ -712,13 +714,13 @@ export default function DashboardPage() {
             ].map((stat) => (
               <div
                 key={stat.label}
-                className="relative overflow-hidden rounded-2xl bg-zinc-900/60 border border-white/[0.06] p-5 hover:border-white/[0.12] transition-all"
+                className="relative overflow-hidden rounded-2xl bg-white dark:bg-zinc-900/60 border border-[#e2d9c3] dark:border-white/[0.06] p-5 hover:border-gray-300 dark:hover:border-white/[0.12] transition-all"
               >
-                <div className={`absolute inset-0 bg-gradient-to-br ${stat.color} opacity-50`} />
+                <div className={`absolute inset-0 bg-gradient-to-br ${stat.color} opacity-30 dark:opacity-50`} />
                 <div className="relative">
                   <div className="text-2xl mb-3 opacity-70">{stat.icon}</div>
-                  <div className="text-3xl font-black text-white font-display">{stat.value}</div>
-                  <div className="text-xs text-zinc-500 mt-1.5 font-medium">{stat.label}</div>
+                  <div className="text-3xl font-black text-gray-900 dark:text-white font-display">{stat.value}</div>
+                  <div className="text-xs text-gray-500 dark:text-zinc-500 mt-1.5 font-medium">{stat.label}</div>
                 </div>
               </div>
             ))}
@@ -732,9 +734,8 @@ export default function DashboardPage() {
           <NewsfeedFeed />
         </section>
 
-        <footer className="pt-8 pb-4 text-center text-xs text-zinc-600 border-t border-white/[0.04]">
-          <p className="mb-1">Club Fasting · v2.6</p>
-          <p className="text-zinc-700">Ton métabolisme, tes outils, tes résultats.</p>
+        <footer className="pt-8 pb-4 text-center text-xs text-gray-500 border-t border-[#e2d9c3] dark:border-white/[0.04]">
+          <p>Club Fasting · v2.6</p>
         </footer>
       </main>
     </div>

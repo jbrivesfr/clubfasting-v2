@@ -93,17 +93,17 @@ export default function CartAnalyzer() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white">
-      <div className="border-b border-zinc-800">
+    <div className="min-h-screen bg-[#faf6ec] text-gray-900 dark:bg-zinc-950 dark:text-white">
+      <div className="border-b border-[#e2d9c3] dark:border-zinc-800">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center gap-4">
-          <Link href="/dashboard" className="text-zinc-400 hover:text-white transition-colors">
+          <Link href="/dashboard" className="text-gray-500 hover:text-gray-900 dark:text-zinc-400 dark:hover:text-white transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
             </svg>
           </Link>
           <div>
             <h1 className="text-lg font-bold font-display">Analyseur de caddie</h1>
-            <p className="text-xs text-zinc-500">L&apos;IA analyse tes courses et les optimise</p>
+            <p className="text-xs text-gray-500 dark:text-zinc-500">L&apos;IA analyse tes courses et les optimise</p>
           </div>
         </div>
       </div>
@@ -113,8 +113,8 @@ export default function CartAnalyzer() {
           <div className="text-center space-y-6">
             <div className="text-6xl">🛒</div>
             <div>
-              <h2 className="text-xl font-semibold text-zinc-300 mb-2">Analysez votre caddie</h2>
-              <p className="text-zinc-500 text-sm">
+              <h2 className="text-xl font-semibold text-gray-700 dark:text-zinc-300 mb-2">Analysez votre caddie</h2>
+              <p className="text-gray-500 text-sm">
                 Prenez une photo de vos courses et je vous dirai quoi garder, quoi éviter pour votre métabolisme.
               </p>
             </div>
@@ -131,7 +131,7 @@ export default function CartAnalyzer() {
           </div>
         ) : (
           <div className="space-y-6">
-            <div className="relative rounded-xl overflow-hidden border border-zinc-800">
+            <div className="relative rounded-xl overflow-hidden border border-[#e2d9c3] dark:border-zinc-800">
               <img src={image} alt="Vos courses" className={`w-full object-cover transition-all ${analysis ? 'max-h-48' : 'max-h-96'}`} />
             </div>
             <div className="flex gap-3">
@@ -146,23 +146,23 @@ export default function CartAnalyzer() {
                   <><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09ZM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456ZM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423Z" /></svg> Évaluer le caddie</>
                 )}
               </button>
-              <button onClick={reset} disabled={loading} className="px-4 py-3 bg-zinc-800 hover:bg-zinc-700 text-zinc-400 rounded-xl transition-colors disabled:opacity-50">
+              <button onClick={reset} disabled={loading} className="px-4 py-3 bg-white hover:bg-gray-100 text-gray-700 rounded-xl transition-colors disabled:opacity-50 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:text-zinc-400">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" /></svg>
               </button>
             </div>
             {error && <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-sm">{error}</div>}
             {analysis && !loading && (
-              <div className="bg-zinc-900/80 border border-zinc-800 rounded-xl p-6 space-y-4">
+              <div className="bg-white dark:bg-zinc-900/80 border border-[#e2d9c3] dark:border-zinc-800 rounded-xl p-6 space-y-4">
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-semibold text-sky-400">Résultat de l&apos;analyse</h3>
                   {score && <ScoreBadge score={score} />}
                 </div>
-                <div className="prose prose-sm prose-invert max-w-none [&_h1]:text-sky-400 [&_h2]:text-sky-400 [&_strong]:text-zinc-200">
+                <div className="prose prose-sm max-w-none dark:prose-invert [&_h1]:text-sky-400 [&_h2]:text-sky-400 [&_strong]:text-gray-900 dark:[&_strong]:text-zinc-200">
                   <ReactMarkdown>{analysis}</ReactMarkdown>
                 </div>
               </div>
             )}
-            <p className="text-xs text-zinc-600 text-center">
+            <p className="text-xs text-gray-500 dark:text-zinc-600 text-center">
               Cette analyse est fournie à titre informatif uniquement.
             </p>
           </div>
@@ -170,7 +170,7 @@ export default function CartAnalyzer() {
 
         {/* History - always visible */}
         {userId && (
-          <div className="border-t border-zinc-800 pt-6">
+          <div className="border-t border-[#e2d9c3] dark:border-zinc-800 pt-6">
             <AnalysisHistory key={historyKey} userId={userId} type="cart" />
           </div>
         )}

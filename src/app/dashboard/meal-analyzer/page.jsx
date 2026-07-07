@@ -99,18 +99,18 @@ export default function MealAnalyzer() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white">
+    <div className="min-h-screen bg-[#faf6ec] text-gray-900 dark:bg-zinc-950 dark:text-white">
       {/* Header */}
-      <div className="border-b border-zinc-800">
+      <div className="border-b border-[#e2d9c3] dark:border-zinc-800">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center gap-4">
-          <Link href="/dashboard" className="text-zinc-400 hover:text-white transition-colors">
+          <Link href="/dashboard" className="text-gray-500 hover:text-gray-900 dark:text-zinc-400 dark:hover:text-white transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
             </svg>
           </Link>
           <div>
             <h1 className="text-lg font-bold font-display">Montre-moi ton assiette</h1>
-            <p className="text-xs text-zinc-500">L&apos;IA analyse ton repas et l&apos;optimise pour ton métabolisme</p>
+            <p className="text-xs text-gray-500 dark:text-zinc-500">L&apos;IA analyse ton repas et l&apos;optimise pour ton métabolisme</p>
           </div>
         </div>
       </div>
@@ -121,8 +121,8 @@ export default function MealAnalyzer() {
           <div className="text-center space-y-6">
             <div className="text-6xl">🍽️</div>
             <div>
-              <h2 className="text-xl font-semibold text-zinc-300 mb-2">Analysez votre repas</h2>
-              <p className="text-zinc-500 text-sm">
+              <h2 className="text-xl font-semibold text-gray-700 dark:text-zinc-300 mb-2">Analysez votre repas</h2>
+              <p className="text-gray-500 text-sm">
                 Prenez une photo de votre assiette et je vous dirai comment l&apos;améliorer pour optimiser votre métabolisme.
               </p>
             </div>
@@ -148,7 +148,7 @@ export default function MealAnalyzer() {
           /* Analysis state */
           <div className="space-y-6">
             {/* Image preview */}
-            <div className="relative rounded-xl overflow-hidden border border-zinc-800">
+            <div className="relative rounded-xl overflow-hidden border border-[#e2d9c3] dark:border-zinc-800">
               <img
                 src={image}
                 alt="Votre repas"
@@ -180,7 +180,7 @@ export default function MealAnalyzer() {
               <button
                 onClick={reset}
                 disabled={loading}
-                className="px-4 py-3 bg-zinc-800 hover:bg-zinc-700 text-zinc-400 rounded-xl transition-colors disabled:opacity-50"
+                className="px-4 py-3 bg-white hover:bg-gray-100 text-gray-700 rounded-xl transition-colors disabled:opacity-50 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:text-zinc-400"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
@@ -195,19 +195,19 @@ export default function MealAnalyzer() {
 
             {/* Result */}
             {analysis && !loading && (
-              <div className="bg-zinc-900/80 border border-zinc-800 rounded-xl p-6 space-y-4">
+              <div className="bg-white dark:bg-zinc-900/80 border border-[#e2d9c3] dark:border-zinc-800 rounded-xl p-6 space-y-4">
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-semibold text-emerald-400">Résultat de l&apos;analyse</h3>
                   {score && <ScoreBadge score={score} />}
                 </div>
-                <div className="prose prose-sm prose-invert max-w-none [&_h1]:text-emerald-400 [&_h2]:text-emerald-400 [&_h3]:text-emerald-400 [&_strong]:text-zinc-200">
+                <div className="prose prose-sm max-w-none dark:prose-invert [&_h1]:text-emerald-400 [&_h2]:text-emerald-400 [&_h3]:text-emerald-400 [&_strong]:text-gray-900 dark:[&_strong]:text-zinc-200">
                   <ReactMarkdown>{analysis}</ReactMarkdown>
                 </div>
               </div>
             )}
 
             {/* Disclaimer */}
-            <p className="text-xs text-zinc-600 text-center">
+            <p className="text-xs text-gray-500 dark:text-zinc-600 text-center">
               Cette analyse est fournie à titre informatif uniquement. Pour des conseils personnalisés, consultez un professionnel de la santé.
             </p>
           </div>
@@ -215,7 +215,7 @@ export default function MealAnalyzer() {
 
         {/* History - always visible */}
         {userId && (
-          <div className="border-t border-zinc-800 pt-6">
+          <div className="border-t border-[#e2d9c3] dark:border-zinc-800 pt-6">
             <AnalysisHistory key={historyKey} userId={userId} type="meal" />
           </div>
         )}

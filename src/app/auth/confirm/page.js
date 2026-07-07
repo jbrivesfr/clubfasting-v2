@@ -42,7 +42,7 @@ function ConfirmHandler() {
     return (
       <div className="flex flex-col items-center gap-4">
         <div className="w-12 h-12 rounded-full border-2 border-orange-500/20 border-t-orange-500 animate-spin" />
-        <p className="text-zinc-400">Connexion en cours...</p>
+        <p className="text-gray-500">Connexion en cours...</p>
       </div>
     )
   }
@@ -50,13 +50,13 @@ function ConfirmHandler() {
   if (status === 'error') {
     return (
       <div className="text-center space-y-5 max-w-sm animate-slide-up">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-red-500/10 border border-red-500/20 text-3xl">
+        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-red-50 border border-red-200 text-3xl">
           😕
         </div>
-        <p className="text-zinc-300">{errorMsg}</p>
+        <p className="text-gray-700">{errorMsg}</p>
         <Link
           href="/login"
-          className="inline-block px-6 py-2.5 bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.1] text-white rounded-full text-sm font-medium transition-colors"
+          className="inline-block px-6 py-2.5 bg-white border border-[#e2d9c3] text-gray-700 rounded-full text-sm font-medium transition-colors hover:bg-gray-50"
         >
           Redemander un lien
         </Link>
@@ -70,8 +70,8 @@ function ConfirmHandler() {
         👋
       </div>
       <div>
-        <h2 className="text-3xl font-bold text-white font-display">Bienvenue au Club</h2>
-        <p className="text-zinc-400 mt-2">Un dernier clic pour finaliser ta connexion.</p>
+        <h2 className="text-3xl font-bold text-gray-900 font-display">Bienvenue au Club</h2>
+        <p className="text-gray-500 mt-2">Un dernier clic pour finaliser ta connexion.</p>
       </div>
       <button
         onClick={handleConfirm}
@@ -85,14 +85,7 @@ function ConfirmHandler() {
 
 export default function ConfirmPage() {
   return (
-    <div className="min-h-screen bg-zinc-950 text-white flex items-center justify-center px-4 relative overflow-hidden">
-      <div
-        className="absolute inset-0 -z-0 pointer-events-none opacity-70"
-        style={{
-          background:
-            'radial-gradient(50% 50% at 50% 0%, rgba(251,146,60,0.18) 0%, transparent 60%)',
-        }}
-      />
+    <div className="min-h-screen bg-[#faf6ec] text-gray-900 flex items-center justify-center px-4">
       <Suspense fallback={
         <div className="w-12 h-12 rounded-full border-2 border-orange-500/20 border-t-orange-500 animate-spin" />
       }>

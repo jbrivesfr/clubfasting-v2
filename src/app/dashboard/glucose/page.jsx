@@ -168,47 +168,47 @@ export default function GlucoseSimulator() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-zinc-950 text-white flex items-center justify-center">
+      <div className="min-h-screen bg-[#faf6ec] text-gray-900 dark:bg-zinc-950 dark:text-white flex items-center justify-center">
         <div className="animate-spin w-8 h-8 border-2 border-t-orange-500 border-zinc-700 rounded-full" />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white">
+    <div className="min-h-screen bg-[#faf6ec] text-gray-900 dark:bg-zinc-950 dark:text-white">
       {/* Header */}
-      <div className="border-b border-zinc-800">
+      <div className="border-b border-[#e2d9c3] dark:border-zinc-800">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center gap-4">
-          <Link href="/dashboard" className="text-zinc-400 hover:text-white transition-colors">
+          <Link href="/dashboard" className="text-gray-500 hover:text-gray-900 dark:text-zinc-400 dark:hover:text-white transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
             </svg>
           </Link>
           <div>
             <h1 className="text-lg font-bold font-display">Simulateur de glycémie</h1>
-            <p className="text-xs text-zinc-500">Visualise l&apos;impact des aliments sur ta glycémie</p>
+            <p className="text-xs text-gray-500 dark:text-zinc-500">Visualise l&apos;impact des aliments sur ta glycémie</p>
           </div>
         </div>
       </div>
 
       <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
         {/* Chart */}
-        <div className="bg-zinc-900/80 border border-zinc-800 rounded-xl p-4 h-[400px]">
+        <div className="bg-white dark:bg-zinc-900/80 border border-[#e2d9c3] dark:border-zinc-800 rounded-xl p-4 h-[400px]">
           <Line data={chartData} options={chartOptions} />
         </div>
 
         {/* Selected food info */}
         {selectedFood && (
-          <div className="flex items-center gap-3 bg-zinc-900/60 border border-zinc-800 rounded-lg px-4 py-2">
+          <div className="flex items-center gap-3 bg-white dark:bg-zinc-900/60 border border-[#e2d9c3] dark:border-zinc-800 rounded-lg px-4 py-2">
             <span className="text-2xl">{selectedFood.icon}</span>
             <div>
               <p className="font-medium text-sm">{selectedFood.name}</p>
-              <p className="text-xs text-zinc-400">
+              <p className="text-xs text-gray-500 dark:text-zinc-400">
                 IG: {selectedFood.gi || 'N/A'} · Glucides: {selectedFood.carbs || 'N/A'}g/portion
               </p>
             </div>
             {stackedFoods.length > 0 && (
-              <button onClick={clearStack} className="ml-auto text-xs text-zinc-500 hover:text-red-400 transition-colors">
+              <button onClick={clearStack} className="ml-auto text-xs text-gray-500 hover:text-red-400 dark:text-zinc-500 dark:hover:text-red-400 transition-colors">
                 Effacer ({stackedFoods.length})
               </button>
             )}
@@ -224,7 +224,7 @@ export default function GlucoseSimulator() {
               className={`px-4 py-1.5 rounded-full text-sm whitespace-nowrap transition-colors ${
                 activeCategory === cat
                   ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30'
-                  : 'bg-zinc-800 text-zinc-400 hover:text-white border border-zinc-700'
+                  : 'bg-white text-gray-700 border border-[#e2d9c3] hover:text-gray-900 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:text-white dark:border-zinc-700'
               }`}
             >
               {cat}
@@ -243,11 +243,11 @@ export default function GlucoseSimulator() {
                 className={`flex flex-col items-center gap-1.5 p-3 rounded-xl transition-all ${
                   stackedFoods.some(s => s.name === food.name)
                     ? 'bg-orange-500/10 border border-orange-500/30'
-                    : 'bg-zinc-900/60 border border-zinc-800 hover:border-zinc-600 hover:bg-zinc-800/60'
+                    : 'bg-white border border-[#e2d9c3] hover:border-gray-400 hover:bg-gray-50 dark:bg-zinc-900/60 dark:border-zinc-800 dark:hover:border-zinc-600 dark:hover:bg-zinc-800/60'
                 }`}
               >
                 <span className="text-3xl">{food.icon}</span>
-                <span className="text-xs text-zinc-300 text-center leading-tight">{food.name}</span>
+                <span className="text-xs text-gray-700 dark:text-zinc-300 text-center leading-tight">{food.name}</span>
                 {food.carbs > 0 && (
                   <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${
                     food.gi > 70 ? 'bg-red-500/20 text-red-400' :

@@ -176,13 +176,13 @@ export default function BilanPage() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white">
-      <header className="border-b border-white/[0.06] backdrop-blur-xl bg-zinc-950/40 sticky top-0 z-10">
+    <div className="min-h-screen bg-[#faf6ec] text-gray-900 dark:bg-zinc-950 dark:text-white">
+      <header className="border-b border-[#e2d9c3] dark:border-white/[0.06] backdrop-blur-xl bg-[#faf6ec]/70 dark:bg-zinc-950/40 sticky top-0 z-10">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/dashboard" className="text-sm text-zinc-500 hover:text-white font-medium">
+          <Link href="/dashboard" className="text-sm text-gray-500 hover:text-gray-900 font-medium dark:text-zinc-500 dark:hover:text-white">
             ← Dashboard
           </Link>
-          <span className="text-sm text-zinc-400">Bilan Métabolique</span>
+          <span className="text-sm text-gray-500 dark:text-zinc-400">Bilan Métabolique</span>
         </div>
       </header>
 
@@ -193,16 +193,16 @@ export default function BilanPage() {
             <div className="text-center space-y-3">
               <div className="text-5xl">📊</div>
               <h1 className="text-3xl font-black font-display">Votre Bilan Métabolique</h1>
-              <p className="text-zinc-400 text-lg">{result.intro}</p>
+              <p className="text-gray-500 dark:text-zinc-400 text-lg">{result.intro}</p>
             </div>
 
             <div className="space-y-4">
               {result.advice.map((a, i) => (
-                <div key={i} className="bg-zinc-900/60 border border-zinc-800 rounded-xl p-5 flex gap-4">
+                <div key={i} className="bg-white dark:bg-zinc-900/60 border border-[#e2d9c3] dark:border-zinc-800 rounded-xl p-5 flex gap-4">
                   <span className="text-2xl flex-shrink-0">{a.icon}</span>
                   <div>
                     <h3 className="font-semibold text-emerald-400 mb-1">{a.title}</h3>
-                    <p className="text-sm text-zinc-300 leading-relaxed">{a.text}</p>
+                    <p className="text-sm text-gray-700 dark:text-zinc-300 leading-relaxed">{a.text}</p>
                   </div>
                 </div>
               ))}
@@ -211,12 +211,12 @@ export default function BilanPage() {
             {result.advice.length === 0 && (
               <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-6 text-center">
                 <p className="text-emerald-400 font-medium text-lg">Excellent !</p>
-                <p className="text-zinc-400 mt-2">Vos réponses indiquent que vous êtes déjà sur la bonne voie. Continuez comme ça !</p>
+                <p className="text-gray-500 dark:text-zinc-400 mt-2">Vos réponses indiquent que vous êtes déjà sur la bonne voie. Continuez comme ça !</p>
               </div>
             )}
 
             <div className="flex gap-3 justify-center pt-4">
-              <button onClick={reset} className="px-6 py-3 bg-zinc-800 hover:bg-zinc-700 text-white rounded-xl transition-colors">
+              <button onClick={reset} className="px-6 py-3 bg-white hover:bg-gray-100 text-gray-700 rounded-xl transition-colors border border-[#e2d9c3] dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:text-white">
                 Recommencer le bilan
               </button>
               <Link href="/dashboard/planner" className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl transition-colors">
@@ -229,7 +229,7 @@ export default function BilanPage() {
           <div className="space-y-8 animate-slide-up">
             {/* Progress */}
             <div className="space-y-2">
-              <div className="flex justify-between text-xs text-zinc-500">
+              <div className="flex justify-between text-xs text-gray-500 dark:text-zinc-500">
                 <span>Question {step + 1}/{QUESTIONS.length}</span>
                 <span>{Math.round(((step + 1) / QUESTIONS.length) * 100)}%</span>
               </div>
@@ -242,7 +242,7 @@ export default function BilanPage() {
             </div>
 
             {/* Question */}
-            <div className="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-8 space-y-6">
+            <div className="bg-white dark:bg-zinc-900/60 border border-[#e2d9c3] dark:border-zinc-800 rounded-2xl p-8 space-y-6">
               <h2 className="text-xl font-semibold leading-relaxed">{q.question}</h2>
 
               {q.type === 'open' || q.type === 'textarea' ? (
@@ -253,7 +253,7 @@ export default function BilanPage() {
                       onChange={(e) => setCurrentInput(e.target.value)}
                       placeholder="Votre réponse..."
                       rows={4}
-                      className="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-xl text-white placeholder:text-zinc-500 focus:outline-none focus:border-emerald-500 resize-none"
+                      className="w-full px-4 py-3 bg-[#faf6ec] dark:bg-zinc-800 border border-[#e2d9c3] dark:border-zinc-700 rounded-xl text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-zinc-500 focus:outline-none focus:border-emerald-500 resize-none"
                       onKeyDown={(e) => { if (e.key === 'Enter' && e.metaKey) handleNext() }}
                     />
                   ) : (
@@ -262,7 +262,7 @@ export default function BilanPage() {
                       value={currentInput}
                       onChange={(e) => setCurrentInput(e.target.value)}
                       placeholder="Votre réponse..."
-                      className="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-xl text-white placeholder:text-zinc-500 focus:outline-none focus:border-emerald-500"
+                      className="w-full px-4 py-3 bg-[#faf6ec] dark:bg-zinc-800 border border-[#e2d9c3] dark:border-zinc-700 rounded-xl text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-zinc-500 focus:outline-none focus:border-emerald-500"
                       onKeyDown={(e) => { if (e.key === 'Enter') handleNext() }}
                     />
                   )}
@@ -280,7 +280,7 @@ export default function BilanPage() {
                     <button
                       key={i}
                       onClick={() => handleMCQ(a)}
-                      className="w-full text-left px-5 py-4 bg-zinc-800/50 hover:bg-zinc-700/50 border border-zinc-700/50 hover:border-emerald-500/50 rounded-xl transition-all text-white"
+                      className="w-full text-left px-5 py-4 bg-[#faf6ec] dark:bg-zinc-800/50 hover:bg-gray-100 dark:hover:bg-zinc-700/50 border border-[#e2d9c3] dark:border-zinc-700/50 hover:border-emerald-500/50 rounded-xl transition-all text-gray-900 dark:text-white"
                     >
                       {a}
                     </button>
@@ -292,7 +292,7 @@ export default function BilanPage() {
             {step > 0 && (
               <button
                 onClick={() => { setStep(step - 1); setCurrentInput('') }}
-                className="text-sm text-zinc-500 hover:text-white transition-colors"
+                className="text-sm text-gray-500 hover:text-gray-900 transition-colors dark:text-zinc-500 dark:hover:text-white"
               >
                 ← Retour
               </button>

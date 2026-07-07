@@ -191,7 +191,7 @@ export default function WeightTrackerPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-zinc-950 text-white flex items-center justify-center">
+      <div className="min-h-screen bg-[#faf6ec] text-gray-900 dark:bg-zinc-950 dark:text-white flex items-center justify-center">
         <div className="w-12 h-12 rounded-full border-2 border-orange-500/20 border-t-orange-500 animate-spin" />
       </div>
     )
@@ -200,16 +200,16 @@ export default function WeightTrackerPage() {
   const trend = stats ? (stats.diff < 0 ? 'down' : stats.diff > 0 ? 'up' : 'stable') : null
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white">
+    <div className="min-h-screen bg-[#faf6ec] text-gray-900 dark:bg-zinc-950 dark:text-white">
       {/* Header */}
-      <header className="border-b border-white/[0.06] backdrop-blur-xl bg-zinc-950/40 sticky top-0 z-20">
+      <header className="border-b border-[#e2d9c3] dark:border-white/[0.06] backdrop-blur-xl bg-[#faf6ec]/70 dark:bg-zinc-950/40 sticky top-0 z-20">
         <div className="max-w-4xl mx-auto px-5 sm:px-6 py-4 flex items-center justify-between">
-          <Link href="/dashboard" className="text-sm text-zinc-500 hover:text-white font-medium transition-colors">
+          <Link href="/dashboard" className="text-sm text-gray-500 hover:text-gray-900 font-medium transition-colors dark:text-zinc-500 dark:hover:text-white">
             ← Dashboard
           </Link>
           <div className="flex items-center gap-2.5">
             <span className="text-lg">⚖️</span>
-            <span className="text-sm text-zinc-400">Suivi de poids</span>
+            <span className="text-sm text-gray-500 dark:text-zinc-400">Suivi de poids</span>
           </div>
         </div>
       </header>
@@ -223,29 +223,29 @@ export default function WeightTrackerPage() {
           <h1 className="text-3xl sm:text-4xl font-black tracking-tight font-display">
             Ta courbe de poids
           </h1>
-          <p className="text-zinc-400 mt-2 max-w-lg">
+          <p className="text-gray-500 dark:text-zinc-400 mt-2 max-w-lg">
             Enregistre ton poids pour visualiser tes progrès quotidiens.
           </p>
         </section>
 
         {/* Input */}
         <section className="animate-slide-up">
-          <div className="relative overflow-hidden rounded-2xl bg-zinc-900/60 border border-white/[0.06] p-6">
+          <div className="relative overflow-hidden rounded-2xl bg-white dark:bg-zinc-900/60 border border-[#e2d9c3] dark:border-white/[0.06] p-6">
             <div className="flex flex-wrap gap-4 items-end">
               <div className="flex-1 min-w-[140px]">
-                <label className="block text-xs text-zinc-500 mb-1.5 font-medium">Poids (kg)</label>
+                <label className="block text-xs text-gray-500 mb-1.5 font-medium dark:text-zinc-500">Poids (kg)</label>
                 <input
                   type="number" step="0.1" min="30" max="250"
                   value={weightInput} onChange={e => setWeightInput(e.target.value)}
                   placeholder="Ex: 75.5"
-                  className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white placeholder:text-zinc-600 focus:outline-none focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/30 transition-colors"
+                  className="w-full px-4 py-2.5 rounded-xl bg-[#faf6ec] border border-[#e2d9c3] text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/30 transition-colors dark:bg-white/[0.04] dark:border-white/[0.08] dark:text-white dark:placeholder:text-zinc-600"
                 />
               </div>
               <div className="flex-1 min-w-[140px]">
-                <label className="block text-xs text-zinc-500 mb-1.5 font-medium">Date</label>
+                <label className="block text-xs text-gray-500 mb-1.5 font-medium dark:text-zinc-500">Date</label>
                 <input
                   type="date" value={dateInput} onChange={e => setDateInput(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white focus:outline-none focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/30 transition-colors [color-scheme:dark]"
+                  className="w-full px-4 py-2.5 rounded-xl bg-[#faf6ec] border border-[#e2d9c3] text-gray-900 focus:outline-none focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/30 transition-colors [color-scheme:light] dark:bg-white/[0.04] dark:border-white/[0.08] dark:text-white"
                 />
               </div>
               <button
@@ -286,13 +286,13 @@ export default function WeightTrackerPage() {
               ].map(stat => (
                 <div
                   key={stat.label}
-                  className="relative overflow-hidden rounded-2xl bg-zinc-900/60 border border-white/[0.06] p-5 hover:border-white/[0.12] transition-all"
+                  className="relative overflow-hidden rounded-2xl bg-white dark:bg-zinc-900/60 border border-[#e2d9c3] dark:border-white/[0.06] p-5 hover:border-gray-400 dark:hover:border-white/[0.12] transition-all"
                 >
                   <div className="text-2xl mb-3 opacity-70">{stat.icon}</div>
-                  <div className="text-2xl font-black text-white font-display">{stat.value}</div>
-                  <div className="text-xs text-zinc-500 mt-1.5 font-medium flex items-center gap-1.5">
+                  <div className="text-2xl font-black text-gray-900 dark:text-white font-display">{stat.value}</div>
+                  <div className="text-xs text-gray-500 mt-1.5 font-medium flex items-center gap-1.5 dark:text-zinc-500">
                     {stat.label}
-                    {stat.sub && <span className={stat.subColor || 'text-zinc-500'}>· {stat.sub}</span>}
+                    {stat.sub && <span className={stat.subColor || 'text-gray-500 dark:text-zinc-500'}>· {stat.sub}</span>}
                   </div>
                 </div>
               ))}
@@ -302,17 +302,17 @@ export default function WeightTrackerPage() {
 
         {/* Chart */}
         <section className="animate-slide-up">
-          <div className="relative overflow-hidden rounded-2xl bg-zinc-900/60 border border-white/[0.06] p-6">
+          <div className="relative overflow-hidden rounded-2xl bg-white dark:bg-zinc-900/60 border border-[#e2d9c3] dark:border-white/[0.06] p-6">
             <h2 className="text-lg font-bold font-display mb-2">Historique</h2>
             {weightData.length === 0 ? (
-              <div className="py-16 text-center text-zinc-500">
+              <div className="py-16 text-center text-gray-500 dark:text-zinc-500">
                 <div className="text-4xl mb-3">📊</div>
                 <p>Aucune donnée pour le moment.</p>
                 <p className="text-sm mt-1">Ajoute ton premier poids ci-dessus.</p>
               </div>
             ) : (
               <>
-                <p className="text-xs text-zinc-600 mb-4">
+                <p className="text-xs text-gray-500 dark:text-zinc-600 mb-4">
                   {weightData.length} entrée{weightData.length > 1 ? 's' : ''} · clique sur un point pour le supprimer
                 </p>
                 <div className="h-72 sm:h-80">
@@ -326,16 +326,16 @@ export default function WeightTrackerPage() {
         {/* Delete modal */}
         {deleteIdx !== null && weightData[deleteIdx] && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-            <div className="bg-zinc-900 border border-white/[0.08] rounded-2xl p-6 w-full max-w-sm shadow-2xl">
-              <h3 className="text-lg font-bold font-display mb-2">Supprimer ?</h3>
-              <p className="text-sm text-zinc-400 mb-2">
+            <div className="bg-white dark:bg-zinc-900 border border-[#e2d9c3] dark:border-white/[0.08] rounded-2xl p-6 w-full max-w-sm shadow-2xl">
+              <h3 className="text-lg font-bold font-display mb-2 text-gray-900 dark:text-white">Supprimer ?</h3>
+              <p className="text-sm text-gray-500 dark:text-zinc-400 mb-2">
                 {formatDate(weightData[deleteIdx].date)} · {weightData[deleteIdx].weight} kg
               </p>
-              <p className="text-xs text-zinc-500 mb-6">Cette action est irréversible.</p>
+              <p className="text-xs text-gray-500 dark:text-zinc-500 mb-6">Cette action est irréversible.</p>
               <div className="flex gap-3">
                 <button
                   onClick={() => setDeleteIdx(null)}
-                  className="flex-1 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-zinc-300 font-medium hover:bg-white/[0.08] transition-colors"
+                  className="flex-1 py-2.5 rounded-xl bg-gray-100 border border-gray-200 text-gray-700 font-medium hover:bg-gray-200 transition-colors dark:bg-white/[0.04] dark:border-white/[0.08] dark:text-zinc-300 dark:hover:bg-white/[0.08]"
                 >
                   Annuler
                 </button>
@@ -350,7 +350,7 @@ export default function WeightTrackerPage() {
           </div>
         )}
 
-        <footer className="pt-8 pb-4 text-center text-xs text-zinc-600 border-t border-white/[0.04]">
+        <footer className="pt-8 pb-4 text-center text-xs text-gray-500 dark:text-zinc-600 border-t border-[#e2d9c3] dark:border-white/[0.04]">
           <p>Club Fasting · Suivi de poids</p>
         </footer>
       </main>
