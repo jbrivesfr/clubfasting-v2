@@ -116,6 +116,15 @@ export function getDefaultAvatarUrl(seed, size = 40) {
 }
 
 /**
+ * Gravatar URL from email (same fallback as ClubFasting V1 header)
+ */
+export function getGravatarUrl(email, size = 80) {
+  if (!email) return getDefaultAvatarUrl('default', size)
+  const hash = md5(email.trim().toLowerCase())
+  return `https://www.gravatar.com/avatar/${hash}?s=${size}&d=mp&r=g`
+}
+
+/**
  * Simple MD5 hash for avatar seed
  */
 function md5(str) {

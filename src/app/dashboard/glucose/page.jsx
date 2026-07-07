@@ -186,7 +186,7 @@ export default function GlucoseSimulator() {
           </Link>
           <div>
             <h1 className="text-lg font-bold font-display">Simulateur de glycémie</h1>
-            <p className="text-xs text-gray-500 dark:text-zinc-500">Visualise l&apos;impact des aliments sur ta glycémie</p>
+            <p className="text-xs text-gray-500 dark:text-zinc-500">Visualisez l&apos;impact des aliments sur votre glycémie</p>
           </div>
         </div>
       </div>

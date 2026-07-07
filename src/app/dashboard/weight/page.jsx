@@ -221,10 +221,10 @@ export default function WeightTrackerPage() {
             Suivi · Poids
           </p>
           <h1 className="text-3xl sm:text-4xl font-black tracking-tight font-display">
-            Ta courbe de poids
+            Ma courbe de poids
           </h1>
           <p className="text-gray-500 dark:text-zinc-400 mt-2 max-w-lg">
-            Enregistre ton poids pour visualiser tes progrès quotidiens.
+            Enregistrez votre poids pour visualiser vos progrès quotidiens.
           </p>
         </section>
 
@@ -308,7 +308,7 @@ export default function WeightTrackerPage() {
               <div className="py-16 text-center text-gray-500 dark:text-zinc-500">
                 <div className="text-4xl mb-3">📊</div>
                 <p>Aucune donnée pour le moment.</p>
-                <p className="text-sm mt-1">Ajoute ton premier poids ci-dessus.</p>
+                <p className="text-sm mt-1">Ajoutez votre premier poids ci-dessus.</p>
               </div>
             ) : (
               <>

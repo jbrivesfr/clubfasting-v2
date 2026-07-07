@@ -48,8 +48,8 @@ export function NewsfeedCard({ item, onOpenThread, userId }) {
     <div 
       className={`
         group relative overflow-hidden rounded-2xl 
-        bg-zinc-900/60 border border-white/[0.06] 
-        hover:border-white/[0.12] hover:-translate-y-1 
+        bg-white border border-[#e2d9c3] dark:bg-zinc-900/60 dark:border-white/[0.06]
+        hover:border-gray-300 dark:hover:border-white/[0.12] hover:-translate-y-1 
         transition-all duration-300 cursor-pointer
         ${item.is_pinned ? 'ring-1 ring-orange-500/30' : ''}
       `}
@@ -58,7 +58,7 @@ export function NewsfeedCard({ item, onOpenThread, userId }) {
       {/* Pinned badge */}
       {item.is_pinned && (
         <div className="absolute top-3 left-3 z-10">
-          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-orange-500/20 text-orange-400 text-[10px] font-bold uppercase tracking-wider border border-orange-500/30">
+          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-orange-100 text-orange-600 text-[10px] font-bold uppercase tracking-wider border border-orange-200">
             <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2">
               <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
             </svg>
@@ -89,11 +89,11 @@ export function NewsfeedCard({ item, onOpenThread, userId }) {
         {/* Author info */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <span className="font-semibold text-white text-sm truncate">
+            <span className="font-semibold text-gray-900 dark:text-white text-sm truncate">
               {item.author_name || 'Membre ClubFasting'}
             </span>
-            <span className="text-zinc-600 text-xs">·</span>
-            <span className="text-zinc-500 text-xs">
+            <span className="text-gray-400 dark:text-zinc-600 text-xs">·</span>
+            <span className="text-gray-500 dark:text-zinc-500 text-xs">
               {timeAgo(item.created_at)}
             </span>
           </div>
@@ -101,8 +101,8 @@ export function NewsfeedCard({ item, onOpenThread, userId }) {
           {/* Journey tag if available */}
           {item.journey_name && (
             <div className="flex items-center gap-1.5 mt-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-sky-400"></span>
-              <span className="text-xs text-sky-400/80 font-medium">{item.journey_name}</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-sky-500"></span>
+              <span className="text-xs text-sky-600 dark:text-sky-400/80 font-medium">{item.journey_name}</span>
             </div>
           )}
         </div>
@@ -111,7 +111,7 @@ export function NewsfeedCard({ item, onOpenThread, userId }) {
         <div className="relative" ref={menuRef}>
           <button
             onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu) }}
-            className="p-1.5 rounded-full text-zinc-500 hover:text-white hover:bg-white/[0.06] transition-colors"
+            className="p-1.5 rounded-full text-gray-400 dark:text-zinc-500 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/[0.06] transition-colors"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
               <circle cx="12" cy="5" r="1.5"/>
@@ -121,10 +121,10 @@ export function NewsfeedCard({ item, onOpenThread, userId }) {
           </button>
 
           {showMenu && (
-            <div className="absolute right-0 top-full mt-1 bg-zinc-900 border border-white/[0.1] rounded-xl shadow-xl overflow-hidden z-50 min-w-[160px] animate-fade-in">
+            <div className="absolute right-0 top-full mt-1 bg-white dark:bg-zinc-900 border border-[#e2d9c3] dark:border-white/[0.1] rounded-xl shadow-xl overflow-hidden z-50 min-w-[160px] animate-fade-in">
               <button
                 onClick={(e) => { e.stopPropagation(); handleCopyLink() }}
-                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-zinc-300 hover:bg-white/[0.05] hover:text-white transition-colors"
+                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-white/[0.05] hover:text-gray-900 dark:hover:text-white transition-colors"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
@@ -165,7 +165,7 @@ export function NewsfeedCard({ item, onOpenThread, userId }) {
       <div className="px-5 pb-4">
         <div className="feed-comment-body flex gap-4">
           <div 
-            className="feed-comment-main-content flex-1 min-w-0 text-white text-sm leading-relaxed [&_a]:text-orange-400 [&_a:hover]:text-orange-300 [&_a]:underline [&_a]:underline-offset-2"
+            className="feed-comment-main-content flex-1 min-w-0 text-gray-900 dark:text-white text-sm leading-relaxed [&_a]:text-orange-500 dark:[&_a]:text-orange-400 [&_a:hover]:text-orange-600 dark:[&_a:hover]:text-orange-300 [&_a]:underline [&_a]:underline-offset-2"
             dangerouslySetInnerHTML={{ __html: formatJourneyMessageJS(item.content) }}
           />
           
@@ -206,7 +206,7 @@ export function NewsfeedCard({ item, onOpenThread, userId }) {
       </div>
 
       {/* Card footer */}
-      <div className="relative flex items-center gap-4 px-5 py-4 border-t border-white/[0.04]">
+      <div className="relative flex items-center gap-4 px-5 py-4 border-t border-[#e2d9c3] dark:border-white/[0.04]">
         <LikeButton
           commentId={item.id}
           likesCount={item.likes_count}
@@ -217,7 +217,7 @@ export function NewsfeedCard({ item, onOpenThread, userId }) {
 
         {/* Replies */}
         <button 
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/[0.04] hover:bg-white/[0.08] text-zinc-400 hover:text-white transition-all text-xs font-medium"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gray-100 dark:bg-white/[0.04] hover:bg-gray-200 dark:hover:bg-white/[0.08] text-gray-500 dark:text-zinc-400 hover:text-gray-700 dark:hover:text-white transition-all text-xs font-medium"
           onClick={(e) => { e.stopPropagation(); onOpenThread && onOpenThread(item) }}
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -234,7 +234,7 @@ export function NewsfeedCard({ item, onOpenThread, userId }) {
                 key={author.id || i}
                 src={getAvatarUrl(author.avatar) || getDefaultAvatarUrl(author.id)}
                 alt={author.name}
-                className="w-6 h-6 rounded-full ring-2 ring-zinc-900 object-cover"
+                className="w-6 h-6 rounded-full ring-2 ring-white dark:ring-zinc-900 object-cover"
                 title={author.name}
                 onError={(e) => { e.target.src = getDefaultAvatarUrl(author.id) }}
               />
@@ -245,7 +245,7 @@ export function NewsfeedCard({ item, onOpenThread, userId }) {
         {/* View more replies indicator */}
         {totalReplies > 0 && (
           <button 
-            className="ml-auto text-xs text-zinc-500 hover:text-orange-400 transition-colors flex items-center gap-1"
+            className="ml-auto text-xs text-gray-500 dark:text-zinc-500 hover:text-orange-500 dark:hover:text-orange-400 transition-colors flex items-center gap-1"
             onClick={(e) => { e.stopPropagation(); onOpenThread && onOpenThread(item) }}
           >
             Voir le fil

@@ -49,14 +49,14 @@ export default function RegisterPage() {
             📧
           </div>
           <h2 className="text-3xl font-bold font-display">
-            Bienvenue, {name || 'toi'} !
+            Bienvenue{name ? `, ${name}` : ''} !
           </h2>
           <p className="text-gray-600">
             Un lien de connexion a été envoyé à{' '}
             <strong className="text-gray-900">{email}</strong>.
           </p>
           <p className="text-gray-500 text-sm">
-            Clique sur le lien dans l&apos;email pour accéder au Club.
+            Cliquez sur le lien dans l&apos;email pour accéder au Club.
           </p>
           <button
             onClick={() => setSent(false)}
@@ -81,13 +81,13 @@ export default function RegisterPage() {
           </Link>
           <h2 className="mt-3 text-gray-700">Une nouvelle version pour mieux jeûner</h2>
           <p className="mt-1 text-sm text-gray-500 max-w-sm mx-auto">
-            Rejoins le Club Fasting et prends le contrôle de ton métabolisme.
+            Rejoignez le Club Fasting et prenez le contrôle de votre métabolisme.
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5 bg-white p-8 rounded-2xl border border-[#e2d9c3] shadow-lg">
           <div>
-            <label className="block text-sm text-gray-700 mb-2 font-medium">Ton prénom</label>
+            <label className="block text-sm text-gray-700 mb-2 font-medium">Votre prénom</label>
             <input
               type="text"
               value={name}
@@ -99,7 +99,7 @@ export default function RegisterPage() {
           </div>
 
           <div>
-            <label className="block text-sm text-gray-700 mb-2 font-medium">Ton email</label>
+            <label className="block text-sm text-gray-700 mb-2 font-medium">Votre email</label>
             <input
               type="email"
               value={email}
@@ -109,7 +109,7 @@ export default function RegisterPage() {
               placeholder="jean@example.com"
             />
             <p className="text-xs text-gray-500 mt-2">
-              On t&apos;envoie un lien magique par email.
+              Nous vous envoyons un lien magique par email.
             </p>
           </div>
 

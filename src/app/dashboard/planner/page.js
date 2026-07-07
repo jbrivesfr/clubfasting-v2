@@ -86,8 +86,8 @@ function DraggableTime({ hour, onDragEnd, disabled }) {
 const QUESTIONS = [
   {
     step: 1,
-    title: 'Étape 1 : Ton repas incontournable',
-    question: 'Quel repas tu ne voudrais manquer pour rien au monde ?',
+    title: 'Étape 1 : Votre repas incontournable',
+    question: 'Quel repas ne voudriez-vous manquer pour rien au monde ?',
     key: 'favoriteMeal',
     options: [
       { value: 'petit-dejeuner', label: 'Le petit-déjeuner 🍳' },
@@ -97,14 +97,14 @@ const QUESTIONS = [
   },
   {
     step: 2,
-    title: 'Étape 2 : Ton rythme de vie',
-    question: 'Quels sont tes horaires habituels ?',
+    title: 'Étape 2 : Votre rythme de vie',
+    question: 'Quels sont vos horaires habituels ?',
     key: 'lifeRhythm',
   },
   {
     step: 3,
-    title: 'Étape 3 : Ton allié pendant le jeûne',
-    question: 'Que recherches-tu le plus dans une boisson ?',
+    title: 'Étape 3 : Votre allié pendant le jeûne',
+    question: 'Que recherchez-vous le plus dans une boisson ?',
     key: 'drinkHabit',
     options: [
       { value: 'boost', label: 'Un coup de fouet (café) ☕' },
@@ -333,7 +333,7 @@ export default function PlannerPage() {
           <section className="space-y-8">
             <div className="text-center">
               <div className="text-5xl mb-4">⏰</div>
-              <h1 className="text-2xl font-bold text-gray-900">Ta fenêtre de jeûne</h1>
+              <h1 className="text-2xl font-bold text-gray-900">Votre fenêtre de jeûne</h1>
               {routine.meals?.length >= 2 && draftStart != null && draftEnd != null && (
                 <div className="flex items-center justify-center gap-4 mt-4">
                   <span className="text-4xl font-black text-gray-900">
@@ -397,7 +397,7 @@ export default function PlannerPage() {
                 <span className="text-xl">🥤</span>
                 <div>
                   <div className="font-semibold text-gray-900">{DRINK_LABELS[routine.drink] || routine.drink}</div>
-                  <div className="text-sm text-gray-500">Ta boisson pendant le jeûne</div>
+                  <div className="text-sm text-gray-500">Votre boisson pendant le jeûne</div>
                 </div>
               </div>
             )}
@@ -416,7 +416,7 @@ export default function PlannerPage() {
         ) : saving ? (
           <div className="text-center py-10">
             <div className="animate-spin text-4xl mb-4">⏳</div>
-            <p className="text-gray-500">Création de ta fenêtre...</p>
+            <p className="text-gray-500">Création de votre fenêtre...</p>
           </div>
         ) : (
           <section className="space-y-6">

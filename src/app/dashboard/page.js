@@ -8,12 +8,13 @@ import { NewsfeedProvider } from '@/components/newsfeed/NewsfeedProvider'
 import { NewsfeedFeed } from '@/components/newsfeed/NewsfeedFeed'
 import { JourneyTabs } from '@/components/newsfeed/JourneyTabs'
 import { ThemeToggle } from '@/components/ThemeToggle'
+import { getGravatarUrl } from '@/components/newsfeed/utils'
 
 const TOOLS = [
   {
     id: 'fasting-planner',
     title: 'Fenêtre de jeûne',
-    desc: 'Calcule et ajuste ta fenêtre de jeûne optimale.',
+    desc: 'Calculez et ajustez votre fenêtre de jeûne optimale.',
     tag: 'Routine',
     url: '/dashboard/planner',
     accent: 'from-orange-500 to-red-500',
@@ -22,7 +23,7 @@ const TOOLS = [
   {
     id: 'glucose',
     title: 'Simulateur de glycémie',
-    desc: 'Visualise l\'impact des aliments sur ta glycémie en temps réel.',
+    desc: 'Visualisez l\'impact des aliments sur votre glycémie en temps réel.',
     tag: 'Analyse',
     url: '/dashboard/glucose',
     accent: 'from-sky-500 to-cyan-500',
@@ -30,8 +31,8 @@ const TOOLS = [
   },
   {
     id: 'meal-analyzer',
-    title: 'Montre-moi ton assiette',
-    desc: 'L\'IA analyse ton repas et l\'optimise pour ton métabolisme.',
+    title: 'Montrez-moi votre assiette',
+    desc: 'L\'IA analyse votre repas et l\'optimise pour votre métabolisme.',
     tag: 'IA',
     url: '/dashboard/meal-analyzer',
     accent: 'from-emerald-500 to-teal-500',
@@ -40,7 +41,7 @@ const TOOLS = [
   {
     id: 'cart-analyzer',
     title: 'Analyseur de caddie',
-    desc: 'L\'IA analyse tes courses et te guide vers les meilleurs choix.',
+    desc: 'L\'IA analyse vos courses et vous guide vers les meilleurs choix.',
     tag: 'IA',
     url: '/dashboard/cart-analyzer',
     accent: 'from-violet-500 to-purple-500',
@@ -49,7 +50,7 @@ const TOOLS = [
   {
     id: 'bilan',
     title: 'Bilan Métabolique',
-    desc: '9 questions pour comprendre où tu en es et quoi faire ensuite.',
+    desc: '9 questions pour comprendre où vous en êtes et quoi faire ensuite.',
     tag: 'Quiz',
     url: '/dashboard/bilan',
     accent: 'from-emerald-500 to-teal-500',
@@ -58,7 +59,7 @@ const TOOLS = [
   {
     id: 'weight-tracker',
     title: 'Suivi de poids',
-    desc: 'Enregistre ton poids, visualise ta courbe et tes progrès.',
+    desc: 'Enregistrez votre poids, visualisez votre courbe et vos progrès.',
     tag: 'Suivi',
     url: '/dashboard/weight',
     accent: 'from-amber-500 to-orange-500',
@@ -409,6 +410,7 @@ export default function DashboardPage() {
   const [user, setUser] = useState(null)
   const [userId, setUserId] = useState(null)
   const [displayName, setDisplayName] = useState('')
+  const [avatarUrl, setAvatarUrl] = useState('')
   const [routine, setRoutine] = useState(null)
   const [recaps, setRecaps] = useState([])
   const [loading, setLoading] = useState(true)
@@ -446,6 +448,23 @@ export default function DashboardPage() {
       setUser(effectiveUser)
       setUserId(effectiveUser.id)
       setDisplayName(effectiveEmail?.split('@')[0] || 'Membre')
+
+      // Avatar: users table (V1-synced avatar_url/avatar_path) → Gravatar fallback
+      let avatar = effectiveUser?.user_metadata?.avatar_url || null
+      if (!avatar && authUser?.id) {
+        try {
+          const { data: profile } = await supabase
+            .from('users')
+            .select('avatar_url, avatar_path')
+            .eq('id', authUser.id)
+            .maybeSingle()
+          avatar = profile?.avatar_url || profile?.avatar_path || null
+          if (avatar && !avatar.startsWith('http')) {
+            avatar = `https://clubfasting.com${avatar.startsWith('/') ? '' : '/'}${avatar}`
+          }
+        } catch (e) {}
+      }
+      setAvatarUrl(avatar || getGravatarUrl(effectiveEmail, 80))
 
       // Load routine via API
       try {
@@ -543,16 +562,25 @@ export default function DashboardPage() {
       {/* Header */}
       <header className="relative z-20 border-b border-[#e2d9c3] dark:border-white/[0.06] backdrop-blur-xl bg-[#faf6ec]/70 dark:bg-zinc-950/40 sticky top-0">
         <div className="max-w-6xl mx-auto px-5 sm:px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="text-xl font-black tracking-tight font-display flex items-center gap-2 text-zinc-900 dark:text-white">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center text-sm shadow-lg shadow-orange-500/30">
-              🔥
-            </div>
-            Club <span className="text-orange-500 dark:text-orange-400">Fasting</span>
+          <Link href="/" className="dark:bg-white/95 dark:rounded-lg dark:px-2.5 dark:py-1.5">
+            <img
+              src="/club-fasting-logo.png"
+              alt="Club Fasting"
+              className="h-8 w-auto"
+            />
           </Link>
           <div className="flex items-center gap-3">
             <ThemeToggle />
             <div className="hidden sm:flex items-center gap-2.5 pl-1 pr-3 py-1 rounded-full bg-black/[0.03] dark:bg-white/[0.04] border border-[#e2d9c3] dark:border-white/[0.08] hover:bg-black/[0.06] dark:hover:bg-white/[0.08] transition-colors">
-              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center text-xs font-bold text-white shadow-md">
+              {avatarUrl ? (
+                <img
+                  src={avatarUrl}
+                  alt={displayName}
+                  className="w-7 h-7 rounded-full object-cover"
+                  onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex' }}
+                />
+              ) : null}
+              <div className={`w-7 h-7 rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center text-xs font-bold text-white shadow-md ${avatarUrl ? 'hidden' : ''}`}>
                 {displayName.charAt(0).toUpperCase()}
               </div>
               <span className="text-sm text-zinc-700 dark:text-zinc-200 font-medium">{displayName}</span>
@@ -574,11 +602,11 @@ export default function DashboardPage() {
             {greeting} · {new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}
           </p>
           <h1 className="text-4xl sm:text-6xl font-black tracking-tight font-display leading-[1.05]">
-            Salut {displayName}{' '}
+            Bonjour {displayName}{' '}
             <span className="inline-block animate-wave origin-bottom-right">👋</span>
           </h1>
           <p className="text-zinc-600 dark:text-zinc-400 text-lg max-w-xl">
-            Voici ta routine de jeûne et tous tes outils pour avancer aujourd&apos;hui.
+            Voici votre routine de jeûne et tous vos outils pour avancer aujourd&apos;hui.
           </p>
         </section>
 
@@ -595,9 +623,9 @@ export default function DashboardPage() {
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 mb-5 shadow-lg shadow-orange-500/30 text-3xl">
                 ⏰
               </div>
-              <h2 className="text-3xl font-bold mb-3 font-display text-white">Démarre ta routine</h2>
+              <h2 className="text-3xl font-bold mb-3 font-display text-white">Démarrez votre routine</h2>
               <p className="text-zinc-400 mb-7 max-w-md mx-auto">
-                Réponds à quelques questions, on calcule ta fenêtre de jeûne idéale.
+                Répondez à quelques questions, nous calculons votre fenêtre de jeûne idéale.
               </p>
               <Link
                 href="/dashboard/planner"
@@ -613,8 +641,8 @@ export default function DashboardPage() {
         <section className="animate-slide-up">
           <div className="flex items-baseline justify-between mb-6">
             <div>
-              <h2 className="text-2xl font-bold font-display">Tes outils</h2>
-              <p className="text-sm text-zinc-500 mt-1">Pour optimiser ton métabolisme jour après jour</p>
+              <h2 className="text-2xl font-bold font-display">Mes outils</h2>
+              <p className="text-sm text-zinc-500 mt-1">Pour optimiser votre métabolisme jour après jour</p>
             </div>
             <span className="text-xs text-zinc-600 uppercase tracking-wider font-medium">
               {TOOLS.length} apps
@@ -631,7 +659,7 @@ export default function DashboardPage() {
                 <Comp
                   key={tool.id}
                   {...props}
-                  className="card-glow group relative overflow-hidden rounded-2xl bg-white dark:bg-zinc-900/60 border border-[#e2d9c3] dark:border-white/[0.06] shadow-sm dark:shadow-none hover:border-gray-300 dark:hover:border-white/[0.12] transition-all hover:-translate-y-1 flex flex-col"
+                  className="card-glow group relative overflow-hidden rounded-2xl bg-zinc-900 border border-white/[0.06] shadow-none hover:border-white/[0.12] transition-all hover:-translate-y-1 flex flex-col"
                 >
                   <div className="relative h-44 overflow-hidden">
                     <img
@@ -646,9 +674,9 @@ export default function DashboardPage() {
                     </span>
                   </div>
                   <div className="relative p-5 flex-1 flex flex-col">
-                    <h3 className="font-bold text-lg text-zinc-900 dark:text-white mb-1.5 font-display">{tool.title}</h3>
-                    <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed flex-1">{tool.desc}</p>
-                    <div className="mt-4 flex items-center gap-2 text-sm text-zinc-500 group-hover:text-orange-300 transition-colors font-medium">
+                    <h3 className="font-bold text-lg text-white mb-1.5 font-display">{tool.title}</h3>
+                    <p className="text-sm text-zinc-400 leading-relaxed flex-1">{tool.desc}</p>
+                    <div className="mt-4 flex items-center gap-2 text-sm text-zinc-400 group-hover:text-orange-300 transition-colors font-medium">
                       <span>Ouvrir</span>
                       <span className="transition-transform group-hover:translate-x-1">→</span>
                     </div>
@@ -664,8 +692,8 @@ export default function DashboardPage() {
           <section className="animate-slide-up">
             <div className="flex items-baseline justify-between mb-6">
               <div>
-                <h2 className="text-2xl font-bold font-display">Tes récaps</h2>
-                <p className="text-sm text-zinc-500 mt-1">Dernières données de tes outils</p>
+                <h2 className="text-2xl font-bold font-display">Mes récaps</h2>
+                <p className="text-sm text-zinc-500 mt-1">Les dernières données de vos outils</p>
               </div>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -698,8 +726,8 @@ export default function DashboardPage() {
         <section className="animate-slide-up">
           <div className="flex items-baseline justify-between mb-6">
             <div>
-              <h2 className="text-2xl font-bold font-display">Tes stats</h2>
-              <p className="text-sm text-zinc-500 mt-1">Tes progrès en chiffres</p>
+              <h2 className="text-2xl font-bold font-display">Mes stats</h2>
+              <p className="text-sm text-zinc-500 mt-1">Vos progrès en chiffres</p>
             </div>
             <span className="text-xs text-orange-400/70 uppercase tracking-wider font-medium px-2.5 py-1 rounded-full bg-orange-500/10 border border-orange-500/20">
               Bientôt

@@ -109,8 +109,8 @@ export default function MealAnalyzer() {
             </svg>
           </Link>
           <div>
-            <h1 className="text-lg font-bold font-display">Montre-moi ton assiette</h1>
-            <p className="text-xs text-gray-500 dark:text-zinc-500">L&apos;IA analyse ton repas et l&apos;optimise pour ton métabolisme</p>
+            <h1 className="text-lg font-bold font-display">Montrez-moi votre assiette</h1>
+            <p className="text-xs text-gray-500 dark:text-zinc-500">L&apos;IA analyse votre repas et l&apos;optimise pour votre métabolisme</p>
           </div>
         </div>
       </div>

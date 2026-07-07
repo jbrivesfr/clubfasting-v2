@@ -146,15 +146,15 @@ export function ThreadModal({ item, onClose, userId }) {
 
       {/* Modal */}
       <div 
-        className="relative w-full max-w-2xl max-h-[90vh] sm:max-h-[85vh] bg-zinc-900 rounded-t-3xl sm:rounded-2xl border border-white/[0.08] overflow-hidden flex flex-col animate-slide-up"
+        className="relative w-full max-w-2xl max-h-[90vh] sm:max-h-[85vh] bg-white dark:bg-zinc-900 rounded-t-3xl sm:rounded-2xl border border-[#e2d9c3] dark:border-white/[0.08] overflow-hidden flex flex-col animate-slide-up"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-white/[0.06] flex-shrink-0">
-          <h2 className="font-bold text-white font-display">Fil de discussion</h2>
+        <div className="flex items-center justify-between px-5 py-4 border-b border-[#e2d9c3] dark:border-white/[0.06] flex-shrink-0">
+          <h2 className="font-bold text-gray-900 dark:text-white font-display">Fil de discussion</h2>
           <button
             onClick={onClose}
-            className="p-2 rounded-full text-zinc-400 hover:text-white hover:bg-white/[0.06] transition-colors"
+            className="p-2 rounded-full text-gray-400 dark:text-zinc-400 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/[0.06] transition-colors"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <line x1="18" y1="6" x2="6" y2="18"/>
@@ -166,22 +166,22 @@ export function ThreadModal({ item, onClose, userId }) {
         {/* Content area - scrollable */}
         <div className="flex-1 overflow-y-auto">
           {/* Original post */}
-          <div className="p-5 border-b border-white/[0.04]">
+          <div className="p-5 border-b border-[#e2d9c3] dark:border-white/[0.04]">
             <div className="flex items-start gap-3">
               <img
                 src={getAvatarUrl(item.author_avatar, item.author_id)}
                 alt={item.author_name}
-                className="w-12 h-12 rounded-full object-cover ring-2 ring-white/10 flex-shrink-0"
+                className="w-12 h-12 rounded-full object-cover ring-2 ring-[#e2d9c3] dark:ring-white/10 flex-shrink-0"
                 onError={(e) => { e.target.src = getDefaultAvatarUrl(item.author_id) }}
               />
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <span className="font-semibold text-white">{item.author_name}</span>
-                  <span className="text-zinc-600 text-xs">·</span>
-                  <span className="text-zinc-500 text-xs">{timeAgo(item.created_at)}</span>
+                  <span className="font-semibold text-gray-900 dark:text-white">{item.author_name}</span>
+                  <span className="text-gray-400 dark:text-zinc-600 text-xs">·</span>
+                  <span className="text-gray-500 dark:text-zinc-500 text-xs">{timeAgo(item.created_at)}</span>
                 </div>
                 <div 
-                  className="mt-2 text-white text-sm leading-relaxed [&_a]:text-orange-400 [&_a:hover]:text-orange-300 [&_a]:underline [&_a]:underline-offset-2"
+                  className="mt-2 text-gray-900 dark:text-white text-sm leading-relaxed [&_a]:text-orange-500 dark:[&_a]:text-orange-400 [&_a:hover]:text-orange-600 dark:[&_a:hover]:text-orange-300 [&_a]:underline [&_a]:underline-offset-2"
                   dangerouslySetInnerHTML={{ __html: formatJourneyMessageJS(item.content) }}
                 />
                 
@@ -219,16 +219,16 @@ export function ThreadModal({ item, onClose, userId }) {
           <div className="p-5">
             {/* Sort toggle */}
             <div className="flex items-center justify-between mb-4">
-              <span className="text-sm text-zinc-400">
+              <span className="text-sm text-gray-500 dark:text-zinc-400">
                 {replies.length} {replies.length === 1 ? 'réponse' : 'réponses'}
               </span>
-              <div className="flex items-center gap-1 bg-zinc-800/50 rounded-lg p-1">
+              <div className="flex items-center gap-1 bg-gray-100 dark:bg-zinc-800/50 rounded-lg p-1">
                 <button
                   onClick={() => setSortOrder('default')}
                   className={`px-3 py-1 rounded-md text-xs font-medium transition-colors ${
                     sortOrder === 'default' 
-                      ? 'bg-white/[0.08] text-white' 
-                      : 'text-zinc-500 hover:text-white'
+                      ? 'bg-gray-200 dark:bg-white/[0.08] text-gray-900 dark:text-white' 
+                      : 'text-gray-500 dark:text-zinc-500 hover:text-gray-700 dark:hover:text-white'
                   }`}
                 >
                   Plus récents
@@ -237,8 +237,8 @@ export function ThreadModal({ item, onClose, userId }) {
                   onClick={() => setSortOrder('chronological')}
                   className={`px-3 py-1 rounded-md text-xs font-medium transition-colors ${
                     sortOrder === 'chronological' 
-                      ? 'bg-white/[0.08] text-white' 
-                      : 'text-zinc-500 hover:text-white'
+                      ? 'bg-gray-200 dark:bg-white/[0.08] text-gray-900 dark:text-white' 
+                      : 'text-gray-500 dark:text-zinc-500 hover:text-gray-700 dark:hover:text-white'
                   }`}
                 >
                   Chronologique
@@ -248,7 +248,7 @@ export function ThreadModal({ item, onClose, userId }) {
 
             {/* Replies list */}
             {sortedReplies.length === 0 ? (
-              <div className="text-center py-8 text-zinc-500 text-sm">
+              <div className="text-center py-8 text-gray-500 dark:text-zinc-500 text-sm">
                 Pas encore de réponses
               </div>
             ) : (
@@ -258,17 +258,17 @@ export function ThreadModal({ item, onClose, userId }) {
                     <img
                       src={getAvatarUrl(reply.author_avatar || reply.author_custom_avatar_url, reply.author_id)}
                       alt={reply.author_name}
-                      className="w-9 h-9 rounded-full object-cover ring-2 ring-white/5 flex-shrink-0"
+                      className="w-9 h-9 rounded-full object-cover ring-2 ring-[#e2d9c3] dark:ring-white/5 flex-shrink-0"
                       onError={(e) => { e.target.src = getDefaultAvatarUrl(reply.author_id) }}
                     />
-                    <div className="flex-1 min-w-0 bg-zinc-800/30 rounded-xl p-3">
+                    <div className="flex-1 min-w-0 bg-gray-100 dark:bg-zinc-800/30 rounded-xl p-3">
                       <div className="flex items-center gap-2">
-                        <span className="font-medium text-white text-sm">{reply.author_name}</span>
-                        <span className="text-zinc-600 text-xs">·</span>
-                        <span className="text-zinc-500 text-xs">{timeAgo(reply.created_at)}</span>
+                        <span className="font-medium text-gray-900 dark:text-white text-sm">{reply.author_name}</span>
+                        <span className="text-gray-400 dark:text-zinc-600 text-xs">·</span>
+                        <span className="text-gray-500 dark:text-zinc-500 text-xs">{timeAgo(reply.created_at)}</span>
                       </div>
                       <div 
-                        className="mt-1 text-sm text-zinc-300 [&_a]:text-orange-400 [&_a:hover]:text-orange-300 [&_a]:underline [&_a]:underline-offset-2"
+                        className="mt-1 text-sm text-gray-700 dark:text-zinc-300 [&_a]:text-orange-500 dark:[&_a]:text-orange-400 [&_a:hover]:text-orange-600 dark:[&_a:hover]:text-orange-300 [&_a]:underline [&_a]:underline-offset-2"
                         dangerouslySetInnerHTML={{ __html: formatJourneyMessageJS(reply.content) }}
                       />
                       {(() => {
@@ -292,7 +292,7 @@ export function ThreadModal({ item, onClose, userId }) {
         </div>
 
         {/* Reply form */}
-        <div className="flex-shrink-0 p-4 border-t border-white/[0.06] bg-zinc-900/80 backdrop-blur-sm">
+        <div className="flex-shrink-0 p-4 border-t border-[#e2d9c3] dark:border-white/[0.06] bg-white/80 dark:bg-zinc-900/80 backdrop-blur-sm">
           <form onSubmit={handleSubmit} className="flex flex-col gap-3">
             <textarea
               ref={textareaRef}
@@ -301,7 +301,7 @@ export function ThreadModal({ item, onClose, userId }) {
               onKeyDown={handleKeyDown}
               placeholder="Écrire une réponse..."
               rows={2}
-              className="w-full bg-zinc-800/50 border border-white/[0.08] rounded-xl px-4 py-3 text-white text-sm placeholder:text-zinc-500 resize-none focus:outline-none focus:border-orange-500/50 transition-colors"
+              className="w-full bg-[#faf6ec] dark:bg-zinc-800/50 border border-[#e2d9c3] dark:border-white/[0.08] rounded-xl px-4 py-3 text-gray-900 dark:text-white text-sm placeholder:text-gray-400 dark:placeholder:text-zinc-500 resize-none focus:outline-none focus:border-orange-500 transition-colors"
             />
             
             {/* Image preview */}
@@ -330,7 +330,7 @@ export function ThreadModal({ item, onClose, userId }) {
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="p-2 rounded-lg text-zinc-500 hover:text-white hover:bg-white/[0.06] transition-colors"
+                className="p-2 rounded-lg text-gray-500 dark:text-zinc-500 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/[0.06] transition-colors"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>

@@ -103,7 +103,7 @@ export default function CartAnalyzer() {
           </Link>
           <div>
             <h1 className="text-lg font-bold font-display">Analyseur de caddie</h1>
-            <p className="text-xs text-gray-500 dark:text-zinc-500">L&apos;IA analyse tes courses et les optimise</p>
+            <p className="text-xs text-gray-500 dark:text-zinc-500">L&apos;IA analyse vos courses et les optimise</p>
           </div>
         </div>
       </div>

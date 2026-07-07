@@ -46,12 +46,12 @@ export default function LoginPage() {
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-gradient-to-br from-orange-500 to-red-500 shadow-2xl shadow-orange-500/30 text-4xl">
             📧
           </div>
-          <h2 className="text-3xl font-bold font-display">Vérifie tes emails</h2>
+          <h2 className="text-3xl font-bold font-display">Vérifiez vos emails</h2>
           <p className="text-gray-600">
             Un lien de connexion a été envoyé à <strong className="text-gray-900">{email}</strong>.
           </p>
           <p className="text-gray-500 text-sm">
-            Clique sur le lien dans l&apos;email pour accéder au Club.
+            Cliquez sur le lien dans l&apos;email pour accéder au Club.
           </p>
           <button
             onClick={() => setSent(false)}
@@ -80,7 +80,7 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit} className="space-y-5 bg-white p-8 rounded-2xl border border-[#e2d9c3] shadow-lg">
           <div>
-            <label className="block text-sm text-gray-700 mb-2 font-medium">Ton email</label>
+            <label className="block text-sm text-gray-700 mb-2 font-medium">Votre email</label>
             <input
               type="email"
               value={email}
@@ -90,7 +90,7 @@ export default function LoginPage() {
               placeholder="jean@example.com"
             />
             <p className="text-xs text-gray-500 mt-2">
-              On t&apos;envoie un lien magique par email.
+              Nous vous envoyons un lien magique par email.
             </p>
           </div>
 
