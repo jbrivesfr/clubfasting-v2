@@ -99,6 +99,57 @@ function getBodyState(fastingHours) {
   return BODY_STATES[BODY_STATES.length - 1]
 }
 
+// Scroll-linked offset: the backdrop image slides as the card moves through
+// the viewport, like scenery behind an elevator window
+function useParallax(strength = 36) {
+  const ref = useRef(null)
+  const [offset, setOffset] = useState(0)
+
+  useEffect(() => {
+    let raf = null
+    const update = () => {
+      raf = null
+      const el = ref.current
+      if (!el) return
+      const rect = el.getBoundingClientRect()
+      const vh = window.innerHeight || 1
+      const progress = ((rect.top + rect.height / 2) / vh - 0.5) * 2 // -1 top … 1 bottom
+      setOffset(Math.max(-1, Math.min(1, progress)) * strength)
+    }
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update) }
+    update()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+      if (raf) cancelAnimationFrame(raf)
+    }
+  }, [strength])
+
+  return [ref, offset]
+}
+
+// Frosted "liquid glass" backdrop: heavily blurred copy of an image that
+// parallaxes behind the content, under a light translucent tint
+function GlassBackdrop({ image, offset = 0 }) {
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+      <img
+        src={image}
+        alt=""
+        className="absolute inset-x-0 top-1/2 w-full h-[170%] object-cover blur-[36px] saturate-[1.5] brightness-110 dark:brightness-[0.55]"
+        style={{ transform: `translate3d(0, calc(-50% + ${offset}px), 0) scale(1.25)`, willChange: 'transform' }}
+      />
+      {/* Light frost tint */}
+      <div className="absolute inset-0 bg-white/[0.55] dark:bg-zinc-950/60" />
+      {/* Specular highlight — high-refraction feel */}
+      <div className="absolute inset-0 bg-gradient-to-br from-white/50 via-white/[0.08] to-white/25 dark:from-white/[0.08] dark:via-transparent dark:to-white/[0.04]" />
+      <div className="absolute inset-x-0 top-0 h-px bg-white/80 dark:bg-white/20" />
+    </div>
+  )
+}
+
 function LiveFastingRing({ start, end }) {
   const [now, setNow] = useState(new Date())
 
@@ -177,7 +228,8 @@ function LiveFastingRing({ start, end }) {
         {/* Background ring */}
         <circle
           cx={size / 2} cy={size / 2} r={radius}
-          fill="none" stroke="rgba(255,255,255,0.08)"
+          fill="none" stroke="currentColor"
+          className="text-black/10 dark:text-white/10"
           strokeWidth={stroke} strokeLinecap="round"
         />
         {/* Eating window arc */}
@@ -211,7 +263,8 @@ function LiveFastingRing({ start, end }) {
             <line
               key={i}
               x1={x1} y1={y1} x2={x2} y2={y2}
-              stroke="rgba(255,255,255,0.15)"
+              stroke="currentColor"
+              className="text-black/20 dark:text-white/15"
               strokeWidth={i % 6 === 0 ? 1.5 : 1}
             />
           )
@@ -230,9 +283,9 @@ function LiveFastingRing({ start, end }) {
         <span className="text-[10px] uppercase tracking-[0.3em] text-zinc-500 font-medium">
           {isEating ? 'Repas' : 'Jeûne'}
         </span>
-        <span className="text-5xl font-black text-white leading-none mt-2 font-display">{bigText}</span>
-        <span className="text-[10px] text-zinc-400 mt-2">{statusText}</span>
-        <span className="text-[10px] uppercase tracking-wider text-orange-400/80 mt-1.5">
+        <span className="text-5xl font-black text-zinc-900 dark:text-white leading-none mt-2 font-display">{bigText}</span>
+        <span className="text-[10px] text-zinc-600 dark:text-zinc-400 mt-2">{statusText}</span>
+        <span className="text-[10px] uppercase tracking-wider text-orange-600/90 dark:text-orange-400/80 mt-1.5">
           {eatingHours}h de repas
         </span>
       </div>
@@ -249,6 +302,7 @@ const MEAL_TYPE_FROM_HOUR = (h) => {
 
 function FastingHeroCard({ start, end, routine }) {
   const [now, setNow] = useState(new Date())
+  const [parallaxRef, parallaxOffset] = useParallax(44)
 
   useEffect(() => {
     const timer = setInterval(() => setNow(new Date()), 60000)
@@ -289,14 +343,14 @@ function FastingHeroCard({ start, end, routine }) {
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || ''
 
   return (
-    <section className="relative overflow-hidden rounded-[2rem] border border-white/[0.08] animate-slide-up">
-      <div className="absolute inset-0">
-        <img src={HERO_IMAGE} alt="" className="w-full h-full object-cover opacity-25" />
-        <div className="absolute inset-0 bg-gradient-to-br from-zinc-950 via-zinc-950/85 to-zinc-900/70" />
-        <div className="absolute inset-0" style={{
-          background: 'radial-gradient(60% 80% at 100% 0%, rgba(251,146,60,0.25) 0%, transparent 60%)',
-        }} />
-      </div>
+    <section
+      ref={parallaxRef}
+      className="relative overflow-hidden rounded-[2rem] border border-white/70 dark:border-white/[0.08] shadow-xl shadow-orange-900/[0.07] dark:shadow-none animate-slide-up"
+    >
+      <GlassBackdrop image={HERO_IMAGE} offset={parallaxOffset} />
+      <div className="absolute inset-0 pointer-events-none" style={{
+        background: 'radial-gradient(60% 80% at 100% 0%, rgba(251,146,60,0.14) 0%, transparent 60%)',
+      }} />
 
       <div className="relative grid grid-cols-1 lg:grid-cols-[auto_1fr] gap-10 items-center p-8 sm:p-12">
         <div className="flex justify-center lg:justify-start">
@@ -309,14 +363,14 @@ function FastingHeroCard({ start, end, routine }) {
               {isEating ? 'Fenêtre de repas' : 'Fenêtre de jeûne'}
             </p>
             <div className="flex items-baseline gap-3 text-5xl sm:text-6xl font-black font-display leading-none">
-              <span className="bg-gradient-to-r from-orange-300 to-orange-400 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-orange-500 to-orange-600 dark:from-orange-300 dark:to-orange-400 bg-clip-text text-transparent">
                 <span className="inline-flex items-center gap-2">
                   <span className="text-3xl sm:text-4xl">{MEAL_TYPE_FROM_HOUR(start).icon}</span>
                   <span>{start}h</span>
                 </span>
               </span>
-              <span className="text-zinc-700 font-light text-3xl sm:text-4xl">→</span>
-              <span className="bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">
+              <span className="text-zinc-400 dark:text-zinc-700 font-light text-3xl sm:text-4xl">→</span>
+              <span className="bg-gradient-to-r from-orange-600 to-red-500 dark:from-orange-400 dark:to-red-400 bg-clip-text text-transparent">
                 <span className="inline-flex items-center gap-2">
                   <span className="text-3xl sm:text-4xl">{MEAL_TYPE_FROM_HOUR(end).icon}</span>
                   <span>{end}h</span>
@@ -328,7 +382,7 @@ function FastingHeroCard({ start, end, routine }) {
           {/* Live status */}
           <div className="space-y-2">
             <div className="flex items-center gap-3">
-              <p className="text-sm uppercase tracking-[0.15em] text-zinc-400 font-medium">{statusLabel}</p>
+              <p className="text-sm uppercase tracking-[0.15em] text-zinc-600 dark:text-zinc-400 font-medium">{statusLabel}</p>
               {bodyStateData && (
                 <span
                   className="px-3 py-1 rounded-full text-xs font-semibold border"
@@ -343,10 +397,10 @@ function FastingHeroCard({ start, end, routine }) {
               )}
             </div>
             <div className="flex items-baseline gap-3">
-              <p className="text-4xl sm:text-5xl font-black text-white font-display leading-none">{timeDisplay}</p>
-              <p className="text-sm text-zinc-500">{subStatusLabel}</p>
+              <p className="text-4xl sm:text-5xl font-black text-zinc-900 dark:text-white font-display leading-none">{timeDisplay}</p>
+              <p className="text-sm text-zinc-600 dark:text-zinc-500">{subStatusLabel}</p>
             </div>
-            <div className="w-full h-2 bg-white/[0.06] rounded-full overflow-hidden mt-1">
+            <div className="w-full h-2 bg-black/[0.08] dark:bg-white/[0.06] rounded-full overflow-hidden mt-1">
               <div
                 className="h-full rounded-full transition-all duration-1000 ease-linear"
                 style={{
@@ -365,11 +419,11 @@ function FastingHeroCard({ start, end, routine }) {
             {[start, end].map((h, i) => {
               const m = MEAL_TYPE_FROM_HOUR(h)
               return (
-                <span key={i} className="px-4 py-2 rounded-full bg-white/[0.05] border border-white/[0.08] text-sm text-zinc-200 flex items-center gap-2 backdrop-blur-sm">
+                <span key={i} className="px-4 py-2 rounded-full bg-white/50 dark:bg-white/[0.05] border border-white/70 dark:border-white/[0.08] text-sm text-zinc-800 dark:text-zinc-200 flex items-center gap-2 backdrop-blur-sm shadow-sm dark:shadow-none">
                   <span className="text-base">{m.icon}</span>
                   <span className="font-medium">{m.name}</span>
-                  <span className="text-zinc-600">·</span>
-                  <span className="text-orange-300 font-semibold">{h}h</span>
+                  <span className="text-zinc-400 dark:text-zinc-600">·</span>
+                  <span className="text-orange-600 dark:text-orange-300 font-semibold">{h}h</span>
                 </span>
               )
             })}
@@ -377,19 +431,19 @@ function FastingHeroCard({ start, end, routine }) {
 
           <div className="flex items-center gap-6 pt-1">
             {routine?.drink && DRINK_LABELS[routine.drink] && (
-              <div className="flex items-center gap-2 text-sm text-zinc-400">
+              <div className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400">
                 <span className="text-lg">{DRINK_LABELS[routine.drink].icon}</span>
                 <span>{DRINK_LABELS[routine.drink].label}</span>
               </div>
             )}
             {routine?.wake_up_time !== null && routine?.wake_up_time !== undefined && (
-              <div className="flex items-center gap-2 text-sm text-zinc-400">
+              <div className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400">
                 <span className="text-lg">🌅</span>
                 <span>Réveil {routine.wake_up_time}h</span>
               </div>
             )}
             {routine?.bed_time !== null && routine?.bed_time !== undefined && (
-              <div className="flex items-center gap-2 text-sm text-zinc-400">
+              <div className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400">
                 <span className="text-lg">🌙</span>
                 <span>Coucher {routine.bed_time}h</span>
               </div>
@@ -402,6 +456,73 @@ function FastingHeroCard({ start, end, routine }) {
         </div>
       </div>
     </section>
+  )
+}
+
+function EmptyRoutineCard() {
+  const [parallaxRef, parallaxOffset] = useParallax(44)
+  return (
+    <section
+      ref={parallaxRef}
+      className="relative overflow-hidden rounded-[2rem] border border-white/70 dark:border-white/[0.08] shadow-xl shadow-orange-900/[0.07] dark:shadow-none animate-slide-up"
+    >
+      <GlassBackdrop image={HERO_IMAGE} offset={parallaxOffset} />
+      <div className="relative p-12 text-center">
+        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 mb-5 shadow-lg shadow-orange-500/30 text-3xl">
+          ⏰
+        </div>
+        <h2 className="text-3xl font-bold mb-3 font-display text-zinc-900 dark:text-white">Démarrez votre routine</h2>
+        <p className="text-zinc-600 dark:text-zinc-400 mb-7 max-w-md mx-auto">
+          Répondez à quelques questions, nous calculons votre fenêtre de jeûne idéale.
+        </p>
+        <Link
+          href="/dashboard/planner"
+          className="inline-block px-7 py-3.5 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-400 hover:to-red-400 text-white font-semibold rounded-full transition-all shadow-xl shadow-orange-500/30 hover:shadow-orange-500/50 hover:-translate-y-0.5"
+        >
+          Créer ma routine
+        </Link>
+      </div>
+    </section>
+  )
+}
+
+function ToolCard({ tool }) {
+  const [parallaxRef, parallaxOffset] = useParallax(26)
+  const isInternal = tool.url.startsWith('/')
+  const Comp = isInternal ? Link : 'a'
+  const props = isInternal
+    ? { href: tool.url }
+    : { href: tool.url, target: '_blank', rel: 'noopener noreferrer' }
+
+  return (
+    <Comp
+      {...props}
+      className="card-glow group relative overflow-hidden rounded-2xl border border-white/70 dark:border-white/[0.08] shadow-lg shadow-black/[0.06] dark:shadow-none hover:border-white dark:hover:border-white/[0.15] transition-all hover:-translate-y-1 flex flex-col"
+    >
+      <div ref={parallaxRef} className="relative h-44 overflow-hidden">
+        <img
+          src={tool.image}
+          alt=""
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+        />
+        <div className={`absolute inset-0 bg-gradient-to-br ${tool.accent} opacity-0 group-hover:opacity-30 transition-opacity duration-500 mix-blend-overlay`} />
+        <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-white/60 dark:bg-black/50 backdrop-blur-md border border-white/70 dark:border-white/10 text-[10px] font-bold uppercase tracking-wider text-zinc-800 dark:text-white">
+          {tool.tag}
+        </span>
+      </div>
+      {/* Lower panel: frosted glass over the same image, parallaxing */}
+      <div className="relative flex-1 flex flex-col overflow-hidden">
+        <GlassBackdrop image={tool.image} offset={parallaxOffset} />
+        <div className="relative p-5 flex-1 flex flex-col">
+          <h3 className="font-bold text-lg text-zinc-900 dark:text-white mb-1.5 font-display">{tool.title}</h3>
+          <p className="text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed flex-1">{tool.desc}</p>
+          <div className="mt-4 flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400 group-hover:text-orange-600 dark:group-hover:text-orange-300 transition-colors font-medium">
+            <span>Ouvrir</span>
+            <span className="transition-transform group-hover:translate-x-1">→</span>
+          </div>
+        </div>
+      </div>
+    </Comp>
   )
 }
 
@@ -614,27 +735,7 @@ export default function DashboardPage() {
         {hasWindow ? (
           <FastingHeroCard start={start} end={end} routine={routine} />
         ) : (
-          <section className="relative overflow-hidden rounded-[2rem] border border-white/[0.08] dark:border-white/[0.08] animate-slide-up">
-            <div className="absolute inset-0">
-              <img src={HERO_IMAGE} alt="" className="w-full h-full object-cover opacity-25" />
-              <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/80 to-zinc-950/50" />
-            </div>
-            <div className="relative p-12 text-center">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 mb-5 shadow-lg shadow-orange-500/30 text-3xl">
-                ⏰
-              </div>
-              <h2 className="text-3xl font-bold mb-3 font-display text-white">Démarrez votre routine</h2>
-              <p className="text-zinc-400 mb-7 max-w-md mx-auto">
-                Répondez à quelques questions, nous calculons votre fenêtre de jeûne idéale.
-              </p>
-              <Link
-                href="/dashboard/planner"
-                className="inline-block px-7 py-3.5 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-400 hover:to-red-400 text-white font-semibold rounded-full transition-all shadow-xl shadow-orange-500/30 hover:shadow-orange-500/50 hover:-translate-y-0.5"
-              >
-                Créer ma routine
-              </Link>
-            </div>
-          </section>
+          <EmptyRoutineCard />
         )}
 
         {/* Tools */}
@@ -649,41 +750,9 @@ export default function DashboardPage() {
             </span>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {TOOLS.map((tool) => {
-              const isInternal = tool.url.startsWith('/')
-              const Comp = isInternal ? Link : 'a'
-              const props = isInternal
-                ? { href: tool.url }
-                : { href: tool.url, target: '_blank', rel: 'noopener noreferrer' }
-              return (
-                <Comp
-                  key={tool.id}
-                  {...props}
-                  className="card-glow group relative overflow-hidden rounded-2xl bg-zinc-900 border border-white/[0.06] shadow-none hover:border-white/[0.12] transition-all hover:-translate-y-1 flex flex-col"
-                >
-                  <div className="relative h-44 overflow-hidden">
-                    <img
-                      src={tool.image}
-                      alt=""
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 via-zinc-900/40 to-transparent" />
-                    <div className={`absolute inset-0 bg-gradient-to-br ${tool.accent} opacity-0 group-hover:opacity-30 transition-opacity duration-500 mix-blend-overlay`} />
-                    <span className={`absolute top-3 left-3 px-2.5 py-1 rounded-full bg-black/50 backdrop-blur-md border border-white/10 text-[10px] font-bold uppercase tracking-wider text-white`}>
-                      {tool.tag}
-                    </span>
-                  </div>
-                  <div className="relative p-5 flex-1 flex flex-col">
-                    <h3 className="font-bold text-lg text-white mb-1.5 font-display">{tool.title}</h3>
-                    <p className="text-sm text-zinc-400 leading-relaxed flex-1">{tool.desc}</p>
-                    <div className="mt-4 flex items-center gap-2 text-sm text-zinc-400 group-hover:text-orange-300 transition-colors font-medium">
-                      <span>Ouvrir</span>
-                      <span className="transition-transform group-hover:translate-x-1">→</span>
-                    </div>
-                  </div>
-                </Comp>
-              )
-            })}
+            {TOOLS.map((tool) => (
+              <ToolCard key={tool.id} tool={tool} />
+            ))}
           </div>
         </section>
 
