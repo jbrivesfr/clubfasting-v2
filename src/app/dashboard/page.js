@@ -302,7 +302,6 @@ const MEAL_TYPE_FROM_HOUR = (h) => {
 
 function FastingHeroCard({ start, end, routine }) {
   const [now, setNow] = useState(new Date())
-  const [parallaxRef, parallaxOffset] = useParallax(44)
 
   useEffect(() => {
     const timer = setInterval(() => setNow(new Date()), 60000)
@@ -343,16 +342,13 @@ function FastingHeroCard({ start, end, routine }) {
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || ''
 
   return (
-    <section
-      ref={parallaxRef}
-      className="relative overflow-hidden rounded-[2rem] border border-white/70 dark:border-white/[0.08] shadow-xl shadow-orange-900/[0.07] dark:shadow-none animate-slide-up"
-    >
-      <GlassBackdrop image={HERO_IMAGE} offset={parallaxOffset} />
-      <div className="absolute inset-0 pointer-events-none" style={{
-        background: 'radial-gradient(60% 80% at 100% 0%, rgba(251,146,60,0.14) 0%, transparent 60%)',
-      }} />
+    <section className="relative rounded-[2.5rem] p-2 bg-gradient-to-br from-orange-500 via-orange-400 to-red-500 shadow-xl shadow-orange-500/25 animate-slide-up">
+      <div className="relative overflow-hidden rounded-[2rem] bg-white/70 dark:bg-zinc-900/75 backdrop-blur-md">
+        <div className="absolute inset-0 pointer-events-none" style={{
+          background: 'radial-gradient(60% 80% at 100% 0%, rgba(251,146,60,0.12) 0%, transparent 60%)',
+        }} />
 
-      <div className="relative grid grid-cols-1 lg:grid-cols-[auto_1fr] gap-10 items-center p-8 sm:p-12">
+        <div className="relative grid grid-cols-1 lg:grid-cols-[auto_1fr] gap-10 items-center p-8 sm:p-12">
         <div className="flex justify-center lg:justify-start">
           <LiveFastingRing start={start} end={end} />
         </div>
@@ -454,20 +450,16 @@ function FastingHeroCard({ start, end, routine }) {
             <span className="text-[10px] text-zinc-600">{timezone}</span>
           </div>
         </div>
+        </div>
       </div>
     </section>
   )
 }
 
 function EmptyRoutineCard() {
-  const [parallaxRef, parallaxOffset] = useParallax(44)
   return (
-    <section
-      ref={parallaxRef}
-      className="relative overflow-hidden rounded-[2rem] border border-white/70 dark:border-white/[0.08] shadow-xl shadow-orange-900/[0.07] dark:shadow-none animate-slide-up"
-    >
-      <GlassBackdrop image={HERO_IMAGE} offset={parallaxOffset} />
-      <div className="relative p-12 text-center">
+    <section className="relative rounded-[2.5rem] p-2 bg-gradient-to-br from-orange-500 via-orange-400 to-red-500 shadow-xl shadow-orange-500/25 animate-slide-up">
+      <div className="relative overflow-hidden rounded-[2rem] bg-white/70 dark:bg-zinc-900/75 backdrop-blur-md p-12 text-center">
         <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 mb-5 shadow-lg shadow-orange-500/30 text-3xl">
           ⏰
         </div>
@@ -687,7 +679,7 @@ export default function DashboardPage() {
             <img
               src="/club-fasting-logo.png"
               alt="Club Fasting"
-              className="h-8 w-auto"
+              className="h-12 w-auto"
             />
           </Link>
           <div className="flex items-center gap-3">

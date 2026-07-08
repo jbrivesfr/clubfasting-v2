@@ -136,6 +136,52 @@ export function ThreadModal({ item, onClose, userId }) {
     }
   }
 
+  // Renders a reply and its nested replies (replies of replies), indented per level
+  const renderReply = (reply, depth = 0) => {
+    const children = (reply.replies || []).slice().sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+    return (
+      <div key={reply.id}>
+        <div className="flex items-start gap-3">
+          <img
+            src={getAvatarUrl(reply.author_avatar || reply.author_custom_avatar_url, reply.author_id)}
+            alt={reply.author_name}
+            className={`${depth > 0 ? 'w-7 h-7' : 'w-9 h-9'} rounded-full object-cover ring-2 ring-[#e2d9c3] dark:ring-white/5 flex-shrink-0`}
+            onError={(e) => { e.target.src = getDefaultAvatarUrl(reply.author_id) }}
+          />
+          <div className="flex-1 min-w-0 bg-gray-100 dark:bg-zinc-800/30 rounded-xl p-3">
+            <div className="flex items-center gap-2">
+              <span className="font-medium text-gray-900 dark:text-white text-sm">{reply.author_name}</span>
+              <span className="text-gray-400 dark:text-zinc-600 text-xs">·</span>
+              <span className="text-gray-500 dark:text-zinc-500 text-xs">{timeAgo(reply.created_at)}</span>
+            </div>
+            <div
+              className="mt-1 text-sm text-gray-700 dark:text-zinc-300 [&_a]:text-orange-500 dark:[&_a]:text-orange-400 [&_a:hover]:text-orange-600 dark:[&_a:hover]:text-orange-300 [&_a]:underline [&_a]:underline-offset-2"
+              dangerouslySetInnerHTML={{ __html: formatJourneyMessageJS(reply.content) }}
+            />
+            {(() => {
+              const replyImages = safeImageUrls(reply.image_urls)
+              return replyImages.length > 0 && (
+                <div className="mt-2">
+                  <img
+                    src={typeof replyImages[0] === 'string' ? replyImages[0] : (replyImages[0].preview || replyImages[0].original || '')}
+                    alt=""
+                    className="w-full max-w-[200px] rounded-lg object-cover"
+                    onError={(e) => { e.target.style.display = 'none' }}
+                  />
+                </div>
+              )
+            })()}
+          </div>
+        </div>
+        {children.length > 0 && (
+          <div className="mt-3 ml-8 sm:ml-12 pl-3 border-l-2 border-orange-200 dark:border-white/[0.08] space-y-3">
+            {children.map((child) => renderReply(child, depth + 1))}
+          </div>
+        )}
+      </div>
+    )
+  }
+
   return (
     <div 
       className="fixed inset-0 z-50 flex items-end sm:items-center justify-center"
@@ -253,39 +299,7 @@ export function ThreadModal({ item, onClose, userId }) {
               </div>
             ) : (
               <div className="space-y-4">
-                {sortedReplies.map((reply) => (
-                  <div key={reply.id} className="flex items-start gap-3">
-                    <img
-                      src={getAvatarUrl(reply.author_avatar || reply.author_custom_avatar_url, reply.author_id)}
-                      alt={reply.author_name}
-                      className="w-9 h-9 rounded-full object-cover ring-2 ring-[#e2d9c3] dark:ring-white/5 flex-shrink-0"
-                      onError={(e) => { e.target.src = getDefaultAvatarUrl(reply.author_id) }}
-                    />
-                    <div className="flex-1 min-w-0 bg-gray-100 dark:bg-zinc-800/30 rounded-xl p-3">
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium text-gray-900 dark:text-white text-sm">{reply.author_name}</span>
-                        <span className="text-gray-400 dark:text-zinc-600 text-xs">·</span>
-                        <span className="text-gray-500 dark:text-zinc-500 text-xs">{timeAgo(reply.created_at)}</span>
-                      </div>
-                      <div 
-                        className="mt-1 text-sm text-gray-700 dark:text-zinc-300 [&_a]:text-orange-500 dark:[&_a]:text-orange-400 [&_a:hover]:text-orange-600 dark:[&_a:hover]:text-orange-300 [&_a]:underline [&_a]:underline-offset-2"
-                        dangerouslySetInnerHTML={{ __html: formatJourneyMessageJS(reply.content) }}
-                      />
-                      {(() => {
-                        const replyImages = safeImageUrls(reply.image_urls)
-                        return replyImages.length > 0 && (
-                          <div className="mt-2">
-                            <img
-                              src={typeof replyImages[0] === 'string' ? replyImages[0] : (replyImages[0].preview || replyImages[0].original || '')}
-                            alt=""
-                            className="w-full max-w-[200px] rounded-lg object-cover"
-                            onError={(e) => { e.target.style.display = 'none' }}
-                          />
-                        </div>
-                      )})()}
-                    </div>
-                  </div>
-                ))}
+                {sortedReplies.map((reply) => renderReply(reply))}
               </div>
             )}
           </div>
