@@ -74,6 +74,15 @@ const TOOLS = [
     accent: 'from-orange-500 to-amber-500',
     image: 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=900&q=80&auto=format&fit=crop',
   },
+  {
+    id: 'macros',
+    title: 'Calculateur de Macros',
+    desc: 'Calcule tes macros keto idéales selon ton profil et ton objectif.',
+    tag: 'Keto',
+    url: '/dashboard/macros',
+    accent: 'from-orange-500 to-rose-500',
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=900&q=80&auto=format&fit=crop',
+  },
 ]
 
 const MEAL_ICONS = {

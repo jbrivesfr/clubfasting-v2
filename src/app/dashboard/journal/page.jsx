@@ -150,7 +150,10 @@ export default function JournalPage() {
             {target?.mode === 'strict (par défaut)' && !editing && (
               <div className="bg-amber-50 dark:bg-amber-500/10 border border-amber-300 dark:border-amber-500/30 rounded-xl p-4 text-sm text-amber-800 dark:text-amber-300 flex items-center justify-between gap-3">
                 <span>Objectif par défaut (20g glucides nets, mode strict) — pas encore personnalisé.</span>
-                <button onClick={() => setEditing(true)} className="underline font-medium whitespace-nowrap">Personnaliser</button>
+                <div className="flex items-center gap-3 whitespace-nowrap">
+                  <button onClick={() => setEditing(true)} className="underline font-medium">Modifier vite</button>
+                  <Link href="/dashboard/macros" className="underline font-medium">Calculer précisément</Link>
+                </div>
               </div>
             )}
 
