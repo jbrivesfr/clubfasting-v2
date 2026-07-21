@@ -23,6 +23,7 @@ export default function CartAnalyzer() {
   const [image, setImage] = useState(null)
   const [analysis, setAnalysis] = useState(null)
   const [score, setScore] = useState(null)
+  const [macros, setMacros] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [userId, setUserId] = useState(null)
@@ -59,7 +60,7 @@ export default function CartAnalyzer() {
   const handleFile = useCallback((e) => {
     const file = e.target.files?.[0]
     if (!file) return
-    setError(null); setAnalysis(null); setScore(null)
+    setError(null); setAnalysis(null); setScore(null); setMacros(null)
     const reader = new FileReader()
     reader.onload = () => setImage(reader.result)
     reader.onerror = () => setError('Erreur de lecture du fichier')
@@ -71,7 +72,7 @@ export default function CartAnalyzer() {
     setLoading(true); setError(null)
     try {
       const compressed = await compressImage(image)
-      const res = await fetch('/api/analyze-meal', {
+      const res = await fetch('/api/analyze-cart', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ imageBase64: compressed, type: 'cart' }),
@@ -80,6 +81,7 @@ export default function CartAnalyzer() {
       if (!res.ok) throw new Error(data.error || 'Erreur inconnue')
       setAnalysis(data.analysis)
       setScore(data.score)
+      setMacros({ calories: data.calories, carbs: data.carbs, protein: data.protein, fat: data.fat })
       setHistoryKey(k => k + 1)
     } catch (err) {
       setError(err.message)
@@ -89,7 +91,7 @@ export default function CartAnalyzer() {
   }, [image, compressImage])
 
   const reset = useCallback(() => {
-    setImage(null); setAnalysis(null); setScore(null); setError(null)
+    setImage(null); setAnalysis(null); setScore(null); setMacros(null); setError(null)
   }, [])
 
   return (
@@ -157,6 +159,24 @@ export default function CartAnalyzer() {
                   <h3 className="text-lg font-semibold text-sky-400">Résultat de l&apos;analyse</h3>
                   {score && <ScoreBadge score={score} />}
                 </div>
+                {macros && (
+                  <div className="grid grid-cols-4 gap-3">
+                    {[
+                      { label: 'Calories', value: macros.calories, unit: 'kcal', color: 'text-orange-400' },
+                      { label: 'Glucides', value: macros.carbs, unit: 'g', color: 'text-emerald-400' },
+                      { label: 'Protéines', value: macros.protein, unit: 'g', color: 'text-sky-400' },
+                      { label: 'Lipides', value: macros.fat, unit: 'g', color: 'text-rose-400' },
+                    ].map((m, i) => (
+                      <div key={i} className="bg-gray-50 dark:bg-zinc-800/30 rounded-xl p-3 text-center">
+                        <p className={`text-xl font-black ${m.color}`}>
+                          {m.value !== undefined ? m.value : '?'}<span className="text-sm font-medium ml-0.5">{m.unit}</span>
+                        </p>
+                        <p className="text-[10px] uppercase tracking-wider text-gray-500 dark:text-zinc-500 mt-1">{m.label}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
                 <div className="prose prose-sm max-w-none dark:prose-invert [&_h1]:text-sky-400 [&_h2]:text-sky-400 [&_strong]:text-gray-900 dark:[&_strong]:text-zinc-200">
                   <ReactMarkdown>{analysis}</ReactMarkdown>
                 </div>

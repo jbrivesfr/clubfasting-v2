@@ -40,6 +40,11 @@ steps:
       - '--cpu=1'
       - '--min-instances=0'
       - '--max-instances=3'
+      # MiniMax (JB 2026-07-20: migrated off Gemini). Uses --update-env-vars,
+      # not --set-env-vars, so this MERGES with SUPABASE_SERVICE_KEY (and any
+      # leftover GEMINI_API_KEY) already set manually on the Cloud Run
+      # service via console — a --set-env-vars here would silently wipe those.
+      - '--update-env-vars=MINIMAX_API_KEY=sk-cp-mLer88ZCJNzEwrXBdeiB3WUj1cEAwMjQNBk1WB3i2OLUjPZUaAuLYi0xBPYw1CYO3eJP-QQg37CH-_Do4SfemkX-mkqckc5wdXsZ2hI6PFqrn9lUqkq7RAk,MINIMAX_BASE_URL=https://api.minimax.io/v1'
 images:
   - 'us-west1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/clubfasting-v2/app:$COMMIT_SHA'
 options:

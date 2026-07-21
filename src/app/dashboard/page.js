@@ -65,6 +65,15 @@ const TOOLS = [
     accent: 'from-amber-500 to-orange-500',
     image: 'https://images.unsplash.com/photo-1576678927484-cc907957088c?w=900&q=80&auto=format&fit=crop',
   },
+  {
+    id: 'journal',
+    title: 'Journal du jour',
+    desc: 'Ton total de glucides nets cumulé aujourd\'hui vs ton objectif, à partir de tes photos de repas.',
+    tag: 'Suivi',
+    url: '/dashboard/journal',
+    accent: 'from-orange-500 to-amber-500',
+    image: 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=900&q=80&auto=format&fit=crop',
+  },
 ]
 
 const MEAL_ICONS = {
