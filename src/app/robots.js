@@ -19,5 +19,11 @@ export default function robots() {
       'https://app.clubfasting.com/sitemap.xml',
       'https://app.clubfasting.com/sitemap-news.xml',
     ],
+  return {
+    rules: {
+      userAgent: '*',
+      allow: ['/', '/newsfeed', '/articles'],
+      disallow: ['/dashboard', '/api', '/login', '/register'],
+    },
   }
 }
