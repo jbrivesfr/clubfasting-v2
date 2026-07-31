@@ -50,7 +50,7 @@ export default function AnalysisHistory({ userId, type = 'all', onSelect }) {
               {a.image_url && (
                 <img
                   src={a.image_url}
-                  alt=""
+                  alt="Aperçu de l'image analysée"
                   className="absolute inset-0 w-full h-full object-cover"
                   onError={(e) => { e.target.style.display = 'none' }}
                 />
@@ -96,7 +96,7 @@ export default function AnalysisHistory({ userId, type = 'all', onSelect }) {
               </button>
             </div>
             {selected.image_url && (
-              <img src={selected.image_url} alt="" className="w-full rounded-xl max-h-64 object-cover" />
+              <img src={selected.image_url} alt="Image analysée" className="w-full rounded-xl max-h-64 object-cover" />
             )}
             <p className="text-xs text-zinc-500">
               {new Date(selected.created_at).toLocaleDateString('fr-FR', {

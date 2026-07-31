@@ -46,7 +46,7 @@ export default function LoginPage() {
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-gradient-to-br from-orange-500 to-red-500 shadow-2xl shadow-orange-500/30 text-4xl">
             📧
           </div>
-          <h2 className="text-3xl font-bold font-display">Vérifiez vos emails</h2>
+          <h1 className="text-3xl font-bold font-display">Vérifiez vos emails</h1>
           <p className="text-gray-600">
             Un lien de connexion a été envoyé à <strong className="text-gray-900">{email}</strong>.
           </p>
@@ -67,10 +67,11 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-[#faf6ec] text-gray-900 flex items-center justify-center px-4 relative overflow-hidden">
       <div className="relative w-full max-w-md space-y-8 animate-slide-up">
+        <h1 className="sr-only">Connexion au Club Fasting</h1>
         <div className="text-center">
           <img
             src="/club-fasting-logo.png"
-            alt="Club Fasting"
+            alt="Logo Club Fasting"
             className="mx-auto w-64 max-w-full h-auto mb-6"
           />
           <p className="mt-1 text-lg text-gray-600 font-medium">

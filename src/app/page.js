@@ -36,10 +36,11 @@ export default function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <div className="max-w-lg text-center space-y-8">
+        <h1 className="sr-only">Club Fasting - Une nouvelle version pour mieux jeûner</h1>
         <div className="space-y-4">
           <img
             src="/club-fasting-logo.png"
-            alt="Club Fasting"
+            alt="Logo Club Fasting"
             className="mx-auto w-64 max-w-full h-auto"
           />
         </div>

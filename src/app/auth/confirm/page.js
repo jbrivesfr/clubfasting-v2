@@ -70,7 +70,7 @@ function ConfirmHandler() {
         👋
       </div>
       <div>
-        <h2 className="text-3xl font-bold text-gray-900 font-display">Bienvenue au Club</h2>
+        <h1 className="text-3xl font-bold text-gray-900 font-display">Bienvenue au Club</h1>
         <p className="text-gray-500 mt-2">Un dernier clic pour finaliser votre connexion.</p>
       </div>
       <button

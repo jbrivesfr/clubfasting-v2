@@ -174,7 +174,7 @@ export function NewsfeedCard({ item, onOpenThread, userId }) {
             <div className="feed-comment-image-preview flex-shrink-0 w-[180px] aspect-square relative rounded-xl overflow-hidden">
               <img
                 src={getImageUrl(item.image_urls[0])}
-                alt=""
+                alt="Image jointe"
                 className="w-full h-full object-cover"
                 onError={(e) => { e.target.style.display = 'none' }}
               />
@@ -189,7 +189,7 @@ export function NewsfeedCard({ item, onOpenThread, userId }) {
             <div className="feed-comment-image-preview flex-shrink-0 w-[180px] aspect-square relative rounded-xl overflow-hidden">
               <img
                 src={`https://vimeo.com/api/v2/video/${item.vimeo_id}/thumbnail.gif`}
-                alt=""
+                alt="Miniature vidéo"
                 className="w-full h-full object-cover"
                 onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=600&q=80' }}
               />

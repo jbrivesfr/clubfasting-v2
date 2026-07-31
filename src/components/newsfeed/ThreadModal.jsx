@@ -164,7 +164,7 @@ export function ThreadModal({ item, onClose, userId }) {
                 <div className="mt-2">
                   <img
                     src={typeof replyImages[0] === 'string' ? replyImages[0] : (replyImages[0].preview || replyImages[0].original || '')}
-                    alt=""
+                    alt="Image du commentaire"
                     className="w-full max-w-[200px] rounded-lg object-cover"
                     onError={(e) => { e.target.style.display = 'none' }}
                   />
@@ -197,7 +197,7 @@ export function ThreadModal({ item, onClose, userId }) {
       >
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-[#e2d9c3] dark:border-white/[0.06] flex-shrink-0">
-          <h2 className="font-bold text-gray-900 dark:text-white font-display">Fil de discussion</h2>
+          <h1 className="font-bold text-gray-900 dark:text-white font-display text-xl">Fil de discussion</h1>
           <button
             onClick={onClose}
             className="p-2 rounded-full text-gray-400 dark:text-zinc-400 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/[0.06] transition-colors"
@@ -238,7 +238,7 @@ export function ThreadModal({ item, onClose, userId }) {
                       <img
                         key={i}
                         src={typeof url === 'string' ? url : (url.preview || url.original || '')}
-                        alt=""
+                        alt="Image jointe à la publication"
                         className="w-full rounded-xl object-cover max-h-64"
                         onError={(e) => { e.target.style.display = 'none' }}
                       />
@@ -323,7 +323,7 @@ export function ThreadModal({ item, onClose, userId }) {
               <div className="relative inline-block">
                 <img
                   src={URL.createObjectURL(imageFile)}
-                  alt="Preview"
+                  alt="Aperçu de l'image sélectionnée"
                   className="w-24 h-24 rounded-lg object-cover"
                 />
                 <button

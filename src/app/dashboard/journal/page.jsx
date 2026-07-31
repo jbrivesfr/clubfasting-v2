@@ -235,7 +235,7 @@ export default function JournalPage() {
                     <div key={m.id} className="flex items-center gap-3 p-3 bg-white dark:bg-zinc-900/40 border border-[#e2d9c3] dark:border-zinc-800 rounded-xl">
                       <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-zinc-800 flex items-center justify-center text-lg flex-shrink-0 relative overflow-hidden">
                         {m.image_url && (
-                          <img src={m.image_url} alt="" className="absolute inset-0 w-full h-full object-cover" onError={(e) => { e.target.style.display = 'none' }} />
+                          <img src={m.image_url} alt="Photo du repas" className="absolute inset-0 w-full h-full object-cover" onError={(e) => { e.target.style.display = 'none' }} />
                         )}
                         <span className="relative z-10">🍽️</span>
                       </div>

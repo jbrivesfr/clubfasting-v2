@@ -512,7 +512,7 @@ function ToolCard({ tool }) {
       <div ref={parallaxRef} className="relative h-44 overflow-hidden">
         <img
           src={tool.image}
-          alt=""
+          alt={tool.title}
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
         />
         <div className={`absolute inset-0 bg-gradient-to-br ${tool.accent} opacity-0 group-hover:opacity-30 transition-opacity duration-500 mix-blend-overlay`} />
@@ -696,7 +696,7 @@ export default function DashboardPage() {
           <Link href="/" className="dark:bg-white/95 dark:rounded-lg dark:px-2.5 dark:py-1.5">
             <img
               src="/club-fasting-logo.png"
-              alt="Club Fasting"
+              alt="Logo Club Fasting"
               className="h-12 w-auto"
             />
           </Link>

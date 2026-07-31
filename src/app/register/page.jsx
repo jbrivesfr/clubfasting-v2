@@ -48,9 +48,9 @@ export default function RegisterPage() {
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-gradient-to-br from-orange-500 to-red-500 shadow-2xl shadow-orange-500/30 text-4xl">
             📧
           </div>
-          <h2 className="text-3xl font-bold font-display">
+          <h1 className="text-3xl font-bold font-display">
             Bienvenue{name ? `, ${name}` : ''} !
-          </h2>
+          </h1>
           <p className="text-gray-600">
             Un lien de connexion a été envoyé à{' '}
             <strong className="text-gray-900">{email}</strong>.
@@ -79,7 +79,7 @@ export default function RegisterPage() {
             </div>
             Club <span className="text-orange-500">Fasting</span>
           </Link>
-          <h2 className="mt-3 text-gray-700">Une nouvelle version pour mieux jeûner</h2>
+          <h1 className="mt-3 text-xl font-bold text-gray-700">Une nouvelle version pour mieux jeûner</h1>
           <p className="mt-1 text-sm text-gray-500 max-w-sm mx-auto">
             Rejoignez le Club Fasting et prenez le contrôle de votre métabolisme.
           </p>
