@@ -305,6 +305,31 @@ export function ThreadModal({ item, onClose, userId }) {
                     />
                   </div>
                 )}
+
+                {/* Lire aussi block */}
+                <div className="mt-4 pt-4 border-t border-gray-100 dark:border-white/[0.04]">
+                  <span className="text-xs font-semibold text-gray-500 dark:text-zinc-400 uppercase tracking-wider mb-2 block">Lire aussi sur Fasting.fr :</span>
+                  <ul className="space-y-1 text-sm">
+                    <li>
+                      <a href="https://fasting.fr/c-est-quoi-le-fasting" target="_blank" rel="noopener noreferrer" className="text-orange-500 hover:text-orange-600 dark:text-orange-400 dark:hover:text-orange-300 hover:underline flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                        C'est quoi le Fasting ?
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://fasting.fr/assiettedufasting" target="_blank" rel="noopener noreferrer" className="text-orange-500 hover:text-orange-600 dark:text-orange-400 dark:hover:text-orange-300 hover:underline flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                        L'assiette du Fasting
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://fasting.fr/snacks-proteines" target="_blank" rel="noopener noreferrer" className="text-orange-500 hover:text-orange-600 dark:text-orange-400 dark:hover:text-orange-300 hover:underline flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                        Les meilleurs snacks protéinés
+                      </a>
+                    </li>
+                  </ul>
+                </div>
               </div>
             </div>
           </div>
