@@ -96,6 +96,11 @@ export default async function SitemapContenusPage() {
               </Link>
             </li>
             <li>
+              <Link href="/jeune-14-10" className="text-orange-600 hover:text-orange-700 hover:underline block truncate" title="Jeûne 14/10 : la méthode douce pour débuter en 2026">
+                Jeûne 14/10 : la méthode douce pour débuter en 2026
+              </Link>
+            </li>
+            <li>
               <Link href="/jeune-intermittent-perte-de-poids" className="text-orange-600 hover:text-orange-700 hover:underline block truncate" title="Jeûne Intermittent et Perte de Poids : Résultats et Mécanismes">
                 Jeûne Intermittent et Perte de Poids : Résultats et Mécanismes
               </Link>
