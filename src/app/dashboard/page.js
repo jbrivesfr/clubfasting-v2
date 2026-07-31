@@ -671,9 +671,32 @@ export default function DashboardPage() {
   const hour = new Date().getHours()
   const greeting = hour < 6 ? 'Bonne nuit' : hour < 12 ? 'Bon matin' : hour < 18 ? 'Bel après-midi' : 'Bonne soirée'
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Accueil",
+        "item": "https://app.clubfasting.com/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Dashboard",
+        "item": "https://app.clubfasting.com/dashboard"
+      }
+    ]
+  };
+
   return (
     <NewsfeedProvider>
       <div className="min-h-screen bg-[#faf6ec] text-zinc-900 dark:bg-zinc-950 dark:text-white relative overflow-hidden">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Ambient glows */}
       <div
         className="fixed inset-x-0 top-0 h-[700px] -z-0 pointer-events-none animate-pulse-glow"
