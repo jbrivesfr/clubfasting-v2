@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
 import Link from 'next/link'
 import { NewsfeedProvider } from '@/components/newsfeed/NewsfeedProvider'
+import Footer from '@/components/Footer'
 import { NewsfeedFeed } from '@/components/newsfeed/NewsfeedFeed'
 import { JourneyTabs } from '@/components/newsfeed/JourneyTabs'
 import { ThemeToggle } from '@/components/ThemeToggle'
@@ -864,9 +865,7 @@ export default function DashboardPage() {
           <NewsfeedFeed />
         </section>
 
-        <footer className="pt-8 pb-4 text-center text-xs text-gray-500 border-t border-[#e2d9c3] dark:border-white/[0.04]">
-          <p>Club Fasting · v2.6</p>
-        </footer>
+        <Footer />
       </main>
     </div>
     </NewsfeedProvider>
