@@ -1,0 +1,16 @@
+name: Deploy Hook
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '**/admin/moderation/**'
+      - '**/api/**/comments/**'
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - name: JB: deployer clubfasting-site
+        run: ~/managers/bin/deploy-clubfasting-ftp.sh
