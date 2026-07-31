@@ -106,6 +106,40 @@ export default function HomePage() {
         <p className="text-sm text-gray-500">
           Une nouvelle version pour mieux jeûner
         </p>
+
+        <div className="pt-8 w-full">
+          <h2 className="text-xl font-semibold mb-4 text-gray-800">Articles récents</h2>
+          <div className="grid grid-cols-2 gap-4">
+            <Link
+              href="/jeune-intermittent-16-8"
+              className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm hover:shadow-md transition-shadow text-left"
+            >
+              <div className="font-medium text-gray-900 mb-1">Jeûne 16/8</div>
+              <div className="text-xs text-gray-500">Le guide complet pour débuter</div>
+            </Link>
+            <Link
+              href="/jeune-intermittent-18-6"
+              className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm hover:shadow-md transition-shadow text-left"
+            >
+              <div className="font-medium text-gray-900 mb-1">Jeûne 18/6</div>
+              <div className="text-xs text-gray-500">Passer au niveau supérieur</div>
+            </Link>
+            <Link
+              href="/jeune-intermittent-14-10"
+              className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm hover:shadow-md transition-shadow text-left"
+            >
+              <div className="font-medium text-gray-900 mb-1">Jeûne 14/10</div>
+              <div className="text-xs text-gray-500">Idéal pour commencer en douceur</div>
+            </Link>
+            <Link
+              href="/jeune-intermittent-5-2"
+              className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm hover:shadow-md transition-shadow text-left"
+            >
+              <div className="font-medium text-gray-900 mb-1">Jeûne 5:2</div>
+              <div className="text-xs text-gray-500">La méthode sur la semaine</div>
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
   )
