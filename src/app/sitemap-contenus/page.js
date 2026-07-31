@@ -91,6 +91,11 @@ export default async function SitemapContenusPage() {
               </Link>
             </li>
             <li>
+              <Link href="/guide-jeune-intermittent" className="text-orange-600 hover:text-orange-700 hover:underline block truncate" title="Guide du Jeûne Intermittent : Tous les protocoles">
+                Guide du Jeûne Intermittent : Tous les protocoles
+              </Link>
+            </li>
+            <li>
               <Link href="/jeune-intermittent-16-8" className="text-orange-600 hover:text-orange-700 hover:underline block truncate" title="La méthode 16/8 : Comment pratiquer le jeûne intermittent efficacement">
                 La méthode 16/8 : Comment pratiquer le jeûne intermittent efficacement
               </Link>
