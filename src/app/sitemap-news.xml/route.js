@@ -9,7 +9,7 @@ export async function GET() {
     .select('id, title, content, created_at')
     .is('parent_id', null)
     .order('created_at', { ascending: false })
-    .limit(50)
+    .limit(20)
 
   if (error) {
     console.error('Error fetching newsfeed for sitemap-news:', error)
