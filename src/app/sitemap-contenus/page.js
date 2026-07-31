@@ -96,6 +96,11 @@ export default async function SitemapContenusPage() {
               </Link>
             </li>
             <li>
+              <Link href="/jeune-intermittent-18-6" className="text-orange-600 hover:text-orange-700 hover:underline block truncate" title="La méthode 18/6 : Comment pratiquer le jeûne intermittent efficacement">
+                La méthode 18/6 : Comment pratiquer le jeûne intermittent efficacement
+              </Link>
+            </li>
+            <li>
               <Link href="/jeune-intermittent-perte-de-poids" className="text-orange-600 hover:text-orange-700 hover:underline block truncate" title="Jeûne Intermittent et Perte de Poids : Résultats et Mécanismes">
                 Jeûne Intermittent et Perte de Poids : Résultats et Mécanismes
               </Link>
