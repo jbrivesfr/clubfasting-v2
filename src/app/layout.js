@@ -1,8 +1,20 @@
 import './globals.css'
 
 export const metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://club-fasting.com'),
   title: 'Club Fasting',
-  description: 'Une nouvelle version pour mieux jeûner.',
+  description: "Une nouvelle version pour mieux jeûner. Profitez de notre fenêtre de jeûne, du simulateur de glycémie et de l'analyse de repas par IA.",
+  openGraph: {
+    title: 'Club Fasting',
+    description: "Une nouvelle version pour mieux jeûner. Profitez de notre fenêtre de jeûne, du simulateur de glycémie et de l'analyse de repas par IA.",
+    images: [
+      {
+        url: '/og-image.jpg',
+        width: 1200,
+        height: 630,
+      },
+    ],
+  },
   other: {
     'Cache-Control': 'no-cache, no-store, must-revalidate',
   },
