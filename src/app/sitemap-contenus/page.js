@@ -82,7 +82,39 @@ export default async function SitemapContenusPage() {
           </p>
         </div>
 
+        <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100 mb-8">
+          <h2 className="text-2xl font-bold mb-4">Dossiers : Jeûne Intermittent</h2>
+          <ul className="space-y-3">
+            <li>
+              <Link href="/jeune-intermittent" className="text-orange-600 hover:text-orange-700 hover:underline block truncate" title="Le guide complet du Jeûne Intermittent : 16/8, Bienfaits et Perte de poids">
+                Le guide complet du Jeûne Intermittent : 16/8, Bienfaits et Perte de poids
+              </Link>
+            </li>
+            <li>
+              <Link href="/jeune-intermittent-16-8" className="text-orange-600 hover:text-orange-700 hover:underline block truncate" title="La méthode 16/8 : Comment pratiquer le jeûne intermittent efficacement">
+                La méthode 16/8 : Comment pratiquer le jeûne intermittent efficacement
+              </Link>
+            </li>
+            <li>
+              <Link href="/jeune-intermittent-perte-de-poids" className="text-orange-600 hover:text-orange-700 hover:underline block truncate" title="Jeûne Intermittent et Perte de Poids : Résultats et Mécanismes">
+                Jeûne Intermittent et Perte de Poids : Résultats et Mécanismes
+              </Link>
+            </li>
+            <li>
+              <Link href="/menu-jeune-intermittent" className="text-orange-600 hover:text-orange-700 hover:underline block truncate" title="Menu pour le Jeûne Intermittent : Que manger pour rompre le jeûne ?">
+                Menu pour le Jeûne Intermittent : Que manger pour rompre le jeûne ?
+              </Link>
+            </li>
+            <li>
+              <Link href="/que-boire-pendant-le-jeune" className="text-orange-600 hover:text-orange-700 hover:underline block truncate" title="Que peut-on boire pendant un jeûne intermittent sans le casser ?">
+                Que peut-on boire pendant un jeûne intermittent sans le casser ?
+              </Link>
+            </li>
+          </ul>
+        </div>
+
         <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100">
+          <h2 className="text-2xl font-bold mb-4">Tous les autres contenus</h2>
           {error && (
             <div className="text-red-500 mb-4">
               Erreur lors du chargement des contenus.
