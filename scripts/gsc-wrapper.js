@@ -62,6 +62,11 @@ async function main() {
                 { keys: ['https://fasting.fr/page5'], clicks: 2, impressions: 6000, ctr: 0.00033, position: 22.1 },
                 { keys: ['https://fasting.fr/page6'], clicks: 50, impressions: 1500, ctr: 0.033, position: 8.9 },
                 { keys: ['https://fasting.fr/page7'], clicks: 1, impressions: 4000, ctr: 0.00025, position: 18.2 },
+                { keys: ['https://fasting.fr/page8'], clicks: 20, impressions: 3000, ctr: 0.0066, position: 11.2 },
+                { keys: ['https://fasting.fr/page9'], clicks: 5, impressions: 1200, ctr: 0.0041, position: 25.4 },
+                { keys: ['https://fasting.fr/page10'], clicks: 80, impressions: 900, ctr: 0.088, position: 6.7 },
+                { keys: ['https://fasting.fr/page11'], clicks: 3, impressions: 5500, ctr: 0.00054, position: 28.9 },
+                { keys: ['https://fasting.fr/page12'], clicks: 200, impressions: 1800, ctr: 0.111, position: 4.2 },
             ];
         } else {
             // Exit with 1 as requested by convention for failing Cloud Run jobs
@@ -98,7 +103,7 @@ async function main() {
     await csvWriter.writeRecords(records);
     console.log(`Weekly CSV written to ${csvPath}`);
 
-    // Identify 5 high potential pages:
+    // Identify 10 high potential pages:
     // Criteria: position between 5 and 30, sorted by "missed click potential"
     const potentialPages = records
       .filter(r => r.position > 5 && r.position < 30) // Pages not at the very top, but not completely lost
@@ -108,9 +113,9 @@ async function main() {
           const potB = b.impressions * Math.max(0, 0.1 - b.ctr);
           return potB - potA;
       })
-      .slice(0, 5);
+      .slice(0, 10);
 
-    console.log('\n--- Top 5 Pages à Fort Potentiel ---');
+    console.log('\n--- Top 10 Pages à Fort Potentiel ---');
     potentialPages.forEach((p, idx) => {
         console.log(`${idx + 1}. ${p.page}`);
         console.log(`   Impressions: ${p.impressions} | Clics: ${p.clicks} | Position: ${p.position.toFixed(1)}`);
