@@ -30,15 +30,15 @@ describe('GET /api/healthcheck-pages', () => {
     const fetchSpy = vi.spyOn(global, 'fetch').mockImplementation(async () => {
       // simulate fast network
       vi.advanceTimersByTime(100);
-      return { status: 200 } as Response;
+      return { status: 200 };
     });
 
-    const response = await GET() as any;
+    const response = await GET();
     expect(response.status).toBe(200);
 
     const data = await response.json();
     expect(data).toHaveLength(8);
-    data.forEach((result: any) => {
+    data.forEach((result) => {
       expect(result.ok).toBe(true);
       expect(result.status).toBe(200);
       expect(result.latencyMs).toBeGreaterThanOrEqual(100);
@@ -52,15 +52,15 @@ describe('GET /api/healthcheck-pages', () => {
     const fetchSpy = vi.spyOn(global, 'fetch').mockImplementation(async () => {
       // simulate slow network
       vi.advanceTimersByTime(5500);
-      return { status: 200 } as Response;
+      return { status: 200 };
     });
 
-    const response = await GET() as any;
+    const response = await GET();
     expect(response.status).toBe(200);
 
     const data = await response.json();
     expect(data).toHaveLength(8);
-    data.forEach((result: any) => {
+    data.forEach((result) => {
       expect(result.ok).toBe(false);
       expect(result.status).toBe(200);
       expect(result.latencyMs).toBeGreaterThanOrEqual(5500);
@@ -74,12 +74,12 @@ describe('GET /api/healthcheck-pages', () => {
       throw new Error('Network error');
     });
 
-    const response = await GET() as any;
+    const response = await GET();
     expect(response.status).toBe(200);
 
     const data = await response.json();
     expect(data).toHaveLength(8);
-    data.forEach((result: any) => {
+    data.forEach((result) => {
       expect(result.ok).toBe(false);
       expect(result.status).toBe(0);
     });
