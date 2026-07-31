@@ -2,7 +2,7 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
 
 const THIRTY_DAYS = 30 * 24 * 60 * 60
-const PUBLIC_PATHS = ['/login', '/register', '/auth/callback', '/auth/confirm', '/', '/favicon.ico']
+const PUBLIC_PATHS = ['/login', '/register', '/auth/callback', '/auth/confirm', '/', '/favicon.ico', '/sitemap-contenus']
 
 function isPublicPath(pathname) {
   return PUBLIC_PATHS.some(
