@@ -3,6 +3,22 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import ReactMarkdown from 'react-markdown'
+import Image from 'next/image'
+
+
+function AnalysisImage({ src, alt, className, isFill }) {
+  const [error, setError] = useState(false)
+  if (error || !src) return null
+  return (
+    <Image
+      src={src}
+      alt={alt || ''}
+      className={className}
+      onError={() => setError(true)}
+      {...(isFill ? { fill: true, sizes: "(max-width: 768px) 100vw, 500px" } : { width: 500, height: 300, style: { objectFit: 'cover' } })}
+    />
+  )
+}
 
 export default function AnalysisHistory({ userId, type = 'all', onSelect }) {
   const [analyses, setAnalyses] = useState([])
@@ -48,11 +64,10 @@ export default function AnalysisHistory({ userId, type = 'all', onSelect }) {
           >
             <div className="w-12 h-12 rounded-lg bg-zinc-800 flex items-center justify-center text-lg flex-shrink-0 relative overflow-hidden">
               {a.image_url && (
-                <img
+                <AnalysisImage
                   src={a.image_url}
-                  alt=""
                   className="absolute inset-0 w-full h-full object-cover"
-                  onError={(e) => { e.target.style.display = 'none' }}
+                  isFill={true}
                 />
               )}
               <span className="relative z-10">{a.type === 'meal' ? '🍽️' : '🛒'}</span>
@@ -96,7 +111,11 @@ export default function AnalysisHistory({ userId, type = 'all', onSelect }) {
               </button>
             </div>
             {selected.image_url && (
-              <img src={selected.image_url} alt="" className="w-full rounded-xl max-h-64 object-cover" />
+              <AnalysisImage
+                src={selected.image_url}
+                className="w-full rounded-xl max-h-64 object-cover"
+                isFill={false}
+              />
             )}
             <p className="text-xs text-zinc-500">
               {new Date(selected.created_at).toLocaleDateString('fr-FR', {

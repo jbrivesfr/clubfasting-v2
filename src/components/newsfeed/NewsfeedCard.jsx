@@ -1,8 +1,56 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import Image from 'next/image'
 import { LikeButton } from './LikeButton'
 import { timeAgo, formatJourneyMessageJS, getDefaultAvatarUrl, countAllRepliesRecursive, getReplyAuthors } from './utils'
+
+
+function AvatarImage({ src, fallback, alt, className, width, height }) {
+  const [imgSrc, setImgSrc] = useState(src || fallback)
+  useEffect(() => { setImgSrc(src || fallback) }, [src, fallback])
+  return (
+    <Image
+      src={imgSrc}
+      alt={alt || 'User'}
+      width={width}
+      height={height}
+      className={className}
+      onError={() => { setImgSrc(fallback) }}
+    />
+  )
+}
+
+function PreviewImage({ src, alt, className }) {
+  const [error, setError] = useState(false)
+  if (error || !src) return null
+  return (
+    <Image
+      src={src}
+      alt={alt || ''}
+      fill
+      sizes="(max-width: 768px) 180px, 180px"
+      className={className}
+      onError={() => { setError(true) }}
+    />
+  )
+}
+
+function VimeoThumbnail({ vimeoId, className }) {
+  const fallback = 'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=600&q=80'
+  const [imgSrc, setImgSrc] = useState(`https://vimeo.com/api/v2/video/${vimeoId}/thumbnail.gif`)
+
+  return (
+    <Image
+      src={imgSrc}
+      alt=""
+      fill
+      sizes="(max-width: 768px) 180px, 180px"
+      className={className}
+      onError={() => { setImgSrc(fallback) }}
+    />
+  )
+}
 
 export function NewsfeedCard({ item, onOpenThread, userId }) {
   const [showMenu, setShowMenu] = useState(false)
@@ -71,11 +119,13 @@ export function NewsfeedCard({ item, onOpenThread, userId }) {
       <div className="relative flex items-start gap-3 p-5 pb-3">
         {/* Avatar */}
         <div className="relative flex-shrink-0">
-          <img
+          <AvatarImage
             src={getAvatarUrl(item.author_avatar)}
-            alt={item.author_name || 'User'}
+            fallback={getDefaultAvatarUrl(item.author_id)}
+            alt={item.author_name}
+            width={44}
+            height={44}
             className="w-11 h-11 rounded-full object-cover ring-2 ring-white/10"
-            onError={(e) => { e.target.src = getDefaultAvatarUrl(item.author_id) }}
           />
           {item.is_featured && (
             <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center shadow-md">
@@ -172,11 +222,9 @@ export function NewsfeedCard({ item, onOpenThread, userId }) {
           {/* Square image preview on the right */}
           {(item.image_urls && item.image_urls.length > 0) && (
             <div className="feed-comment-image-preview flex-shrink-0 w-[180px] aspect-square relative rounded-xl overflow-hidden">
-              <img
+              <PreviewImage
                 src={getImageUrl(item.image_urls[0])}
-                alt=""
                 className="w-full h-full object-cover"
-                onError={(e) => { e.target.style.display = 'none' }}
               />
               {item.image_urls.length > 1 && (
                 <span className="absolute bottom-2 right-2 bg-black/70 px-2 py-0.5 rounded text-xs text-white font-medium">+{item.image_urls.length - 1}</span>
@@ -187,11 +235,9 @@ export function NewsfeedCard({ item, onOpenThread, userId }) {
           {/* Vimeo thumbnail on the right (only if no image_urls — avoid duplicate thumbnails) */}
           {item.has_vimeo_content && item.vimeo_id && (!item.image_urls || item.image_urls.length === 0) && (
             <div className="feed-comment-image-preview flex-shrink-0 w-[180px] aspect-square relative rounded-xl overflow-hidden">
-              <img
-                src={`https://vimeo.com/api/v2/video/${item.vimeo_id}/thumbnail.gif`}
-                alt=""
+              <VimeoThumbnail
+                vimeoId={item.vimeo_id}
                 className="w-full h-full object-cover"
-                onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=600&q=80' }}
               />
               <div className="absolute inset-0 flex items-center justify-center bg-black/30">
                 <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
@@ -230,13 +276,14 @@ export function NewsfeedCard({ item, onOpenThread, userId }) {
         {replyAuthors.length > 0 && (
           <div className="flex items-center -space-x-2 ml-auto">
             {replyAuthors.map((author, i) => (
-              <img
+              <AvatarImage
                 key={author.id || i}
-                src={getAvatarUrl(author.avatar) || getDefaultAvatarUrl(author.id)}
+                src={getAvatarUrl(author.avatar)}
+                fallback={getDefaultAvatarUrl(author.id)}
                 alt={author.name}
+                width={24}
+                height={24}
                 className="w-6 h-6 rounded-full ring-2 ring-white dark:ring-zinc-900 object-cover"
-                title={author.name}
-                onError={(e) => { e.target.src = getDefaultAvatarUrl(author.id) }}
               />
             ))}
           </div>
