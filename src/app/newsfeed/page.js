@@ -5,6 +5,7 @@ import { NewsfeedFeed } from '@/components/newsfeed/NewsfeedFeed'
 import { JourneyTabs } from '@/components/newsfeed/JourneyTabs'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import Link from 'next/link'
+import Footer from '@/components/Footer'
 
 export default function NewsfeedPage() {
   const jsonLd = {
@@ -75,9 +76,7 @@ export default function NewsfeedPage() {
             <NewsfeedFeed />
           </section>
 
-          <footer className="pt-8 pb-4 text-center text-xs text-gray-500 border-t border-[#e2d9c3] dark:border-white/[0.04]">
-            <p>Club Fasting · v2.6</p>
-          </footer>
+          <Footer />
         </main>
       </div>
     </NewsfeedProvider>

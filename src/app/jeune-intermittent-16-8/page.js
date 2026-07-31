@@ -1,5 +1,6 @@
 
 import Link from 'next/link';
+import Footer from '@/components/Footer';
 
 export const metadata = {
   title: 'Jeûne intermittent 16/8 : le guide complet 2026',
@@ -202,6 +203,7 @@ export default function JeuneIntermittentPage() {
           Si ce guide a éveillé votre curiosité et que vous souhaitez aller plus loin, sachez que vous n'êtes pas seul dans cette démarche. Vous pouvez tout à fait <Link href="/sitemap-contenus" className="text-indigo-600 hover:underline">parcourir l'ensemble de nos contenus détaillés</Link> pour approfondir d'autres aspects du jeûne et de la nutrition. N'hésitez pas non plus à <Link href="/newsfeed" className="text-indigo-600 hover:underline">découvrir les témoignages récents sur notre fil d'actualité</Link> ; la communauté est toujours une excellente source de motivation et de conseils pratiques. Et bien sûr, vous pouvez à tout moment <Link href="/" className="text-indigo-600 hover:underline">revenir à l'accueil de notre plateforme pour en savoir plus</Link> sur ce que nous vous proposons. Prenez soin de vous, écoutez votre corps, et belle découverte du 16/8 !
         </p>
       </div>
+      <Footer />
     </main>
   );
 }

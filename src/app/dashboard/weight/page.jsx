@@ -14,6 +14,7 @@ import {
   Filler,
 } from 'chart.js'
 import Link from 'next/link'
+import Footer from '@/components/Footer'
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler)
 
@@ -350,9 +351,7 @@ export default function WeightTrackerPage() {
           </div>
         )}
 
-        <footer className="pt-8 pb-4 text-center text-xs text-gray-500 dark:text-zinc-600 border-t border-[#e2d9c3] dark:border-white/[0.04]">
-          <p>Club Fasting · Suivi de poids</p>
-        </footer>
+        <Footer />
       </main>
     </div>
   )
