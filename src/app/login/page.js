@@ -70,7 +70,7 @@ export default function LoginPage() {
         <div className="text-center">
           <img
             src="/club-fasting-logo.png"
-            alt="Club Fasting"
+            alt="Logo Club Fasting, connectez-vous à votre espace de jeûne intermittent"
             className="mx-auto w-64 max-w-full h-auto mb-6"
           />
           <p className="mt-1 text-lg text-gray-600 font-medium">
