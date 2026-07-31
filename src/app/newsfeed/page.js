@@ -76,7 +76,11 @@ export default function NewsfeedPage() {
           </section>
 
           <footer className="pt-8 pb-4 text-center text-xs text-gray-500 border-t border-[#e2d9c3] dark:border-white/[0.04]">
-            <p>Club Fasting · v2.6</p>
+            <p className="mb-2">Club Fasting · v2.6</p>
+            <div className="flex justify-center gap-4">
+              <Link href="/mentions-legales" className="hover:text-gray-800 dark:hover:text-gray-300">Mentions Légales</Link>
+              <Link href="/confidentialite" className="hover:text-gray-800 dark:hover:text-gray-300">Confidentialité</Link>
+            </div>
           </footer>
         </main>
       </div>
