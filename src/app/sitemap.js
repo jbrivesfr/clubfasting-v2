@@ -93,6 +93,13 @@ export default async function sitemap() {
   })
 
   urls.push({
+    url: 'https://app.clubfasting.com/lexique-jeune-intermittent',
+    lastModified: maxDate,
+    changeFrequency: 'weekly',
+    priority: 0.7,
+  })
+
+  urls.push({
     url: 'https://app.clubfasting.com/sitemap-contenus',
     lastModified: maxDate,
     changeFrequency: 'daily',

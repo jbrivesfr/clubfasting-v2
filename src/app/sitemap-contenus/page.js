@@ -97,6 +97,11 @@ export default async function SitemapContenusPage() {
               </Link>
             </li>
             <li>
+              <Link href="/lexique-jeune-intermittent" className="text-orange-600 hover:text-orange-700 hover:underline block truncate" title="Lexique du Jeûne Intermittent : 30 Termes Essentiels Définis">
+                Lexique du Jeûne Intermittent : 30 Termes Essentiels Définis
+              </Link>
+            </li>
+            <li>
               <Link href="/jeune-intermittent-16-8" className="text-orange-600 hover:text-orange-700 hover:underline block truncate" title="La méthode 16/8 : Comment pratiquer le jeûne intermittent efficacement">
                 La méthode 16/8 : Comment pratiquer le jeûne intermittent efficacement
               </Link>
