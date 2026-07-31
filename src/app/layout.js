@@ -7,6 +7,9 @@ export const metadata = {
   openGraph: {
     title: 'Club Fasting',
     description: "Une nouvelle version pour mieux jeûner. Profitez de notre fenêtre de jeûne, du simulateur de glycémie et de l'analyse de repas par IA.",
+    url: 'https://app.clubfasting.com',
+    siteName: 'Club Fasting',
+    type: 'website',
     images: [
       {
         url: '/og-image.jpg',
@@ -14,6 +17,12 @@ export const metadata = {
         height: 630,
       },
     ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Club Fasting',
+    description: "Une nouvelle version pour mieux jeûner. Profitez de notre fenêtre de jeûne, du simulateur de glycémie et de l'analyse de repas par IA.",
+    images: ['/og-image.jpg'],
   },
   other: {
     'Cache-Control': 'no-cache, no-store, must-revalidate',
