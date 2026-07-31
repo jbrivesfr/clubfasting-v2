@@ -55,7 +55,7 @@ export default function NewsfeedPage() {
             <Link href="/" className="dark:bg-white/95 dark:rounded-lg dark:px-2.5 dark:py-1.5">
               <img
                 src="/club-fasting-logo.png"
-                alt="Club Fasting"
+                alt="Logo Club Fasting, l'application pour votre jeûne intermittent"
                 className="h-12 w-auto"
               />
             </Link>

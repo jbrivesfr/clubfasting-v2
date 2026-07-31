@@ -45,7 +45,7 @@ export default async function SitemapContenusPage() {
           <Link href="/" className="inline-block mb-8">
             <img
               src="/club-fasting-logo.png"
-              alt="Club Fasting"
+              alt="Logo Club Fasting, l'application pour votre jeûne intermittent"
               className="w-48 h-auto"
             />
           </Link>

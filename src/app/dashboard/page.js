@@ -155,7 +155,7 @@ function GlassBackdrop({ image, offset = 0 }) {
     <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
       <img
         src={image}
-        alt=""
+        alt="Fond décoratif pour votre outil de jeûne intermittent"
         className="absolute inset-x-0 top-1/2 w-full h-[170%] object-cover blur-[36px] saturate-[1.5] brightness-110 dark:brightness-[0.55]"
         style={{ transform: `translate3d(0, calc(-50% + ${offset}px), 0) scale(1.25)`, willChange: 'transform' }}
       />
@@ -512,7 +512,7 @@ function ToolCard({ tool }) {
       <div ref={parallaxRef} className="relative h-44 overflow-hidden">
         <img
           src={tool.image}
-          alt=""
+          alt={`Illustration de votre outil : ${tool.title}`}
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
         />
         <div className={`absolute inset-0 bg-gradient-to-br ${tool.accent} opacity-0 group-hover:opacity-30 transition-opacity duration-500 mix-blend-overlay`} />
@@ -719,7 +719,7 @@ export default function DashboardPage() {
           <Link href="/" className="dark:bg-white/95 dark:rounded-lg dark:px-2.5 dark:py-1.5">
             <img
               src="/club-fasting-logo.png"
-              alt="Club Fasting"
+              alt="Logo Club Fasting, l'application pour votre jeûne intermittent"
               className="h-12 w-auto"
             />
           </Link>
@@ -729,7 +729,7 @@ export default function DashboardPage() {
               {avatarUrl ? (
                 <img
                   src={avatarUrl}
-                  alt={displayName}
+                  alt={`Photo de profil de ${displayName} sur votre espace jeûne intermittent`}
                   className="w-7 h-7 rounded-full object-cover"
                   onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex' }}
                 />
