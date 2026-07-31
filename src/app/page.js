@@ -1,8 +1,40 @@
 import Link from 'next/link'
 
 export default function HomePage() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://app.clubfasting.com/#website",
+        "url": "https://app.clubfasting.com/",
+        "name": "Club Fasting",
+        "description": "Une nouvelle version pour mieux jeûner.",
+        "publisher": {
+          "@id": "https://app.clubfasting.com/#organization"
+        },
+        "inLanguage": "fr-FR"
+      },
+      {
+        "@type": "Organization",
+        "@id": "https://app.clubfasting.com/#organization",
+        "name": "Club Fasting",
+        "url": "https://app.clubfasting.com/",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://app.clubfasting.com/club-fasting-logo.png"
+        },
+        "sameAs": []
+      }
+    ]
+  };
+
   return (
     <div className="min-h-screen bg-[#faf6ec] text-gray-900 flex flex-col items-center justify-center px-4">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <div className="max-w-lg text-center space-y-8">
         <div className="space-y-4">
           <img
