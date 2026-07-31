@@ -1,13 +1,10 @@
 'use client'
 
-import { useState, useRef } from 'react'
-import { createClient } from '@/utils/supabase/client'
-import Link from 'next/link'
+import { useState } from 'react'
 
 export const dynamic = 'force-dynamic'
 
 export default function LoginPage() {
-  const supabaseRef = useRef(null)
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [sent, setSent] = useState(false)
