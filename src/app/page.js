@@ -25,6 +25,43 @@ export default function HomePage() {
           "url": "https://app.clubfasting.com/club-fasting-logo.png"
         },
         "sameAs": []
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Est-ce qu’un demi citron dans un verre d’eau tiède est à proscrire le matin à la place du café ou d’un thé ?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Pas de souci pour le citron dans l'eau, un demi c'est parfait. Cela ne casse pas votre jeûne."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Les capsules de café sont-elles autorisées pour le café du matin (sans lait ni sucre) ?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Oui, c'est sans problème pour le jeûne. Il est souvent préférable de boire les cafés un peu plus allongés pendant le jeûne pour qu'ils soient moins agressifs sur l'estomac."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Le jeûne intermittent est-il efficace si on le pratique 5 jours par semaine ?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Oui cela fonctionne également, sachant que la perte de poids sera potentiellement plus lente qu'en le faisant tous les jours. C'est une excellente idée de commencer à votre rythme, le plus important est de vous y mettre."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Je prends un traitement médical tous les matins, est-ce que cela casse le jeûne ?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Si votre traitement est recommandé à jeun, cela devrait convenir. En règle générale, il n'y a pas de contre-indication avec le jeûne pour les médicaments sans sucre, mais n'hésitez pas à demander l'avis de votre médecin."
+            }
+          }
+        ]
       }
     ]
   };
