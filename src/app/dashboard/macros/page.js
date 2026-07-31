@@ -172,7 +172,7 @@ export default function MacrosPage() {
             <h2 className="text-sm font-semibold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">Activité & Objectif</h2>
 
             <div>
-              <label className="block text-xs text-gray-500 dark:text-zinc-500 mb-1.5 font-medium">Niveau d'activité</label>
+              <label className="block text-xs text-gray-500 dark:text-zinc-500 mb-1.5 font-medium">Niveau d&apos;activité</label>
               <select value={activity} onChange={e => setActivity(e.target.value)}
                 className="w-full px-3 py-2.5 rounded-xl bg-gray-50 dark:bg-zinc-800/50 border border-gray-200 dark:border-zinc-700 text-gray-900 dark:text-white text-sm focus:outline-none focus:border-orange-500 transition-colors">
                 {Object.entries(ACTIVITY_LABELS).map(([k, v]) => (
@@ -324,7 +324,7 @@ export default function MacrosPage() {
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-orange-500 dark:text-orange-400 mt-0.5">•</span>
-                  <span>Bois 2-3L d'eau par jour + électrolytes (sodium, potassium, magnésium).</span>
+                  <span>Bois 2-3L d&apos;eau par jour + électrolytes (sodium, potassium, magnésium).</span>
                 </li>
               </ul>
             </div>

@@ -634,6 +634,7 @@ export default function DashboardPage() {
 
       setLoading(false)
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const refreshRoutine = useCallback(async () => {
