@@ -1,9 +1,12 @@
-export const metadata = {
-  alternates: {
-    canonical: 'https://app.clubfasting.com/dashboard',
-  },
-}
+import CanonicalPath from './CanonicalPath'
+
+export const metadata = {}
 
 export default function DashboardLayout({ children }) {
-  return <>{children}</>
+  return (
+    <>
+      <CanonicalPath />
+      {children}
+    </>
+  )
 }
