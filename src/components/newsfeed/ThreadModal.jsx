@@ -3,12 +3,45 @@
 import { useState, useRef, useEffect } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { useNewsfeedContext } from './NewsfeedProvider'
+import Image from 'next/image'
 import { timeAgo, formatJourneyMessageJS, getDefaultAvatarUrl, countAllRepliesRecursive } from './utils'
 
 function extractVimeoId(url) {
   if (!url) return ''
   const match = url.match(/vimeo\.com\/(\d+)/)
   return match ? match[1] : ''
+}
+
+
+function AvatarImage({ src, fallback, alt, className, width, height }) {
+  const [imgSrc, setImgSrc] = useState(src || fallback)
+  useEffect(() => { setImgSrc(src || fallback) }, [src, fallback])
+  return (
+    <Image
+      src={imgSrc}
+      alt={alt || 'User'}
+      width={width}
+      height={height}
+      className={className}
+      onError={() => { setImgSrc(fallback) }}
+    />
+  )
+}
+
+function ContentImage({ src, className, width, height }) {
+  const [error, setError] = useState(false)
+  if (error || !src) return null
+  return (
+    <Image
+      src={src}
+      alt=""
+      width={width}
+      height={height}
+      className={className}
+      style={{ objectFit: 'cover' }}
+      onError={() => { setError(true) }}
+    />
+  )
 }
 
 export function ThreadModal({ item, onClose, userId }) {
@@ -18,6 +51,17 @@ export function ThreadModal({ item, onClose, userId }) {
   const [newReply, setNewReply] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [imageFile, setImageFile] = useState(null)
+  const [previewUrl, setPreviewUrl] = useState(null)
+
+  useEffect(() => {
+    if (imageFile) {
+      const url = URL.createObjectURL(imageFile)
+      setPreviewUrl(url)
+      return () => URL.revokeObjectURL(url)
+    } else {
+      setPreviewUrl(null)
+    }
+  }, [imageFile])
   const [sortOrder, setSortOrder] = useState('default') // 'default' or 'chronological'
   const textareaRef = useRef(null)
   const fileInputRef = useRef(null)
@@ -142,11 +186,13 @@ export function ThreadModal({ item, onClose, userId }) {
     return (
       <div key={reply.id}>
         <div className="flex items-start gap-3">
-          <img
+          <AvatarImage
             src={getAvatarUrl(reply.author_avatar || reply.author_custom_avatar_url, reply.author_id)}
+            fallback={getDefaultAvatarUrl(reply.author_id)}
             alt={reply.author_name}
+            width={depth > 0 ? 28 : 36}
+            height={depth > 0 ? 28 : 36}
             className={`${depth > 0 ? 'w-7 h-7' : 'w-9 h-9'} rounded-full object-cover ring-2 ring-[#e2d9c3] dark:ring-white/5 flex-shrink-0`}
-            onError={(e) => { e.target.src = getDefaultAvatarUrl(reply.author_id) }}
           />
           <div className="flex-1 min-w-0 bg-gray-100 dark:bg-zinc-800/30 rounded-xl p-3">
             <div className="flex items-center gap-2">
@@ -162,11 +208,11 @@ export function ThreadModal({ item, onClose, userId }) {
               const replyImages = safeImageUrls(reply.image_urls)
               return replyImages.length > 0 && (
                 <div className="mt-2">
-                  <img
+                  <ContentImage
                     src={typeof replyImages[0] === 'string' ? replyImages[0] : (replyImages[0].preview || replyImages[0].original || '')}
-                    alt=""
+                    width={200}
+                    height={200}
                     className="w-full max-w-[200px] rounded-lg object-cover"
-                    onError={(e) => { e.target.style.display = 'none' }}
                   />
                 </div>
               )
@@ -214,11 +260,13 @@ export function ThreadModal({ item, onClose, userId }) {
           {/* Original post */}
           <div className="p-5 border-b border-[#e2d9c3] dark:border-white/[0.04]">
             <div className="flex items-start gap-3">
-              <img
+              <AvatarImage
                 src={getAvatarUrl(item.author_avatar, item.author_id)}
+                fallback={getDefaultAvatarUrl(item.author_id)}
                 alt={item.author_name}
+                width={48}
+                height={48}
                 className="w-12 h-12 rounded-full object-cover ring-2 ring-[#e2d9c3] dark:ring-white/10 flex-shrink-0"
-                onError={(e) => { e.target.src = getDefaultAvatarUrl(item.author_id) }}
               />
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
@@ -235,12 +283,12 @@ export function ThreadModal({ item, onClose, userId }) {
                 {itemImages.length > 0 && (
                   <div className="mt-3 grid grid-cols-2 gap-2">
                     {itemImages.map((url, i) => (
-                      <img
+                      <ContentImage
                         key={i}
                         src={typeof url === 'string' ? url : (url.preview || url.original || '')}
-                        alt=""
+                        width={600}
+                        height={400}
                         className="w-full rounded-xl object-cover max-h-64"
-                        onError={(e) => { e.target.style.display = 'none' }}
                       />
                     ))}
                   </div>
@@ -319,12 +367,15 @@ export function ThreadModal({ item, onClose, userId }) {
             />
             
             {/* Image preview */}
-            {imageFile && (
+            {previewUrl && (
               <div className="relative inline-block">
-                <img
-                  src={URL.createObjectURL(imageFile)}
+                <Image
+                  src={previewUrl}
                   alt="Preview"
+                  width={96}
+                  height={96}
                   className="w-24 h-24 rounded-lg object-cover"
+                  unoptimized={true}
                 />
                 <button
                   type="button"
