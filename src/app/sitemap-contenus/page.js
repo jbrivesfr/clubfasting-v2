@@ -38,8 +38,35 @@ export default async function SitemapContenusPage() {
     })
   }
 
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Que contient cette page de plan du site ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Cette page contient la liste complète de tous les articles et contenus disponibles sur le Club Fasting, classés par ordre alphabétique pour faciliter votre recherche."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Comment accéder à un article spécifique ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Il vous suffit de cliquer sur le titre de l'article dans la liste pour être redirigé directement vers son contenu complet."
+        }
+      }
+    ]
+  }
+
   return (
     <div className="min-h-screen bg-[#faf6ec] text-gray-900 py-12 px-4">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
       <div className="max-w-4xl mx-auto space-y-8">
         <div>
           <Link href="/" className="inline-block mb-8">
