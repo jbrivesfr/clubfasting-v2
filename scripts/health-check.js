@@ -108,3 +108,77 @@ async function main() {
 }
 
 main();
+const SLACK_WEBHOOK_URL = process.env.SLACK_WEBHOOK_URL;
+
+const URLS_TO_CHECK = [
+  'https://clubfasting.com',
+  'https://fasting.fr',
+  'https://app.clubfasting.com/login'
+];
+
+async function sendSlackAlert(message) {
+  if (!SLACK_WEBHOOK_URL) {
+    console.warn('No SLACK_WEBHOOK_URL configured, skipping slack alert for:', message);
+    return;
+  }
+
+  try {
+    const res = await fetch(SLACK_WEBHOOK_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        text: message
+      })
+    });
+
+    if (!res.ok) {
+      console.error('Failed to send slack alert:', await res.text());
+    }
+  } catch (err) {
+    console.error('Error sending slack alert:', err);
+  }
+}
+
+async function checkUrls() {
+  let hasErrors = false;
+
+  for (const url of URLS_TO_CHECK) {
+    try {
+      console.log(`Checking ${url}...`);
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
+
+      const response = await fetch(url, {
+        method: 'GET',
+        signal: controller.signal
+      });
+
+      clearTimeout(timeoutId);
+
+      if (response.status !== 200) {
+        const message = `🚨 Health Check Alert: ${url} returned status ${response.status} instead of 200.`;
+        console.error(message);
+        await sendSlackAlert(message);
+        hasErrors = true;
+      } else {
+        console.log(`✅ ${url} is OK (200).`);
+      }
+    } catch (error) {
+      const message = `🚨 Health Check Alert: Failed to fetch ${url}. Error: ${error.message}`;
+      console.error(message);
+      await sendSlackAlert(message);
+      hasErrors = true;
+    }
+  }
+
+  if (hasErrors) {
+    process.exit(1);
+  } else {
+    process.exit(0);
+  }
+}
+
+checkUrls();
