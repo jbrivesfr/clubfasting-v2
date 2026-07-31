@@ -5,6 +5,7 @@ import { useNewsfeed } from '@/hooks/useNewsfeed'
 import { useNewsfeedContext } from './NewsfeedProvider'
 import { NewsfeedCard } from './NewsfeedCard'
 import { ThreadModal } from './ThreadModal'
+import { EmptyState } from './EmptyState'
 
 export function NewsfeedFeed() {
   const { user, selectedJourneyId } = useNewsfeedContext()
@@ -71,17 +72,7 @@ export function NewsfeedFeed() {
   }
 
   if (items.length === 0) {
-    return (
-      <div className="relative overflow-hidden rounded-2xl bg-white dark:bg-zinc-900/60 border border-[#e2d9c3] dark:border-white/[0.06] p-12 text-center">
-        <div className="relative">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gray-100 dark:bg-white/[0.04] border border-[#e2d9c3] dark:border-white/[0.08] text-2xl mb-4">
-            📭
-          </div>
-          <p className="text-gray-700 dark:text-zinc-300 font-medium mb-1">Aucun message</p>
-          <p className="text-sm text-gray-500 dark:text-zinc-500">Aucun message trouvé pour ce parcours.</p>
-        </div>
-      </div>
-    )
+    return <EmptyState />
   }
 
   return (
