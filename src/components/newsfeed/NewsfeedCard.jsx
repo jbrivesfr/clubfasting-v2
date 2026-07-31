@@ -26,7 +26,7 @@ export function NewsfeedCard({ item, onOpenThread, userId }) {
   }, [showMenu])
 
   const handleCopyLink = () => {
-    const url = `${window.location.origin}/dashboard?post=${item.id}`
+    const url = `${window.location.origin}/newsfeed/${item.id}`
     navigator.clipboard.writeText(url)
     setShowMenu(false)
   }
