@@ -8,7 +8,7 @@ const V1_API_URL = 'https://clubfasting.com/api/send-magic-link.php'
 
 export async function POST(request) {
   try {
-    const { email } = await request.json()
+    const { email, name } = await request.json()
 
     if (!email || !email.includes('@')) {
       return NextResponse.json({ error: 'Email requis' }, { status: 400 })
@@ -20,7 +20,7 @@ export async function POST(request) {
     })
 
     // Check user exists (same as V1 login.php)
-    const { data: user, error: userQueryError } = await supabaseAdmin
+    let { data: user, error: userQueryError } = await supabaseAdmin
       .from('users')
       .select('id, email, name')
       .eq('email', normalizedEmail)
@@ -31,7 +31,23 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Erreur de connexion.' }, { status: 500 })
     }
 
-    if (!user) {
+    // If user does not exist but a name is provided (registration flow), create the user
+    if (!user && name) {
+      const { data: newUser, error: createUserError } = await supabaseAdmin
+        .from('users')
+        .insert({
+          email: normalizedEmail,
+          name: name.trim(),
+        })
+        .select('id, email, name')
+        .single()
+
+      if (createUserError) {
+        console.error('User creation error:', createUserError)
+        return NextResponse.json({ error: 'Erreur lors de la création du compte.' }, { status: 500 })
+      }
+      user = newUser
+    } else if (!user) {
       return NextResponse.json({ error: 'Aucun compte trouvé avec cet email.' }, { status: 404 })
     }
 
