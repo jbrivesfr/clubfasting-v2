@@ -9,6 +9,7 @@ export const metadata = {
     languages: {
       'fr-FR': 'https://app.clubfasting.com/sitemap-contenus',
     },
+
   },
 }
 
