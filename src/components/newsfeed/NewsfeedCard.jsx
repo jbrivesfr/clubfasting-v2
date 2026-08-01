@@ -12,7 +12,7 @@ function AvatarImage({ src, fallback, alt, className, width, height }) {
   return (
     <Image
       src={imgSrc}
-      alt={alt || 'User'}
+      alt={alt || 'Utilisateur'}
       width={width}
       height={height}
       className={className}
@@ -27,7 +27,7 @@ function PreviewImage({ src, alt, className }) {
   return (
     <Image
       src={src}
-      alt={alt || ''}
+      alt={alt || "Aperçu de l'image"}
       fill
       sizes="(max-width: 768px) 180px, 180px"
       className={className}
@@ -36,14 +36,14 @@ function PreviewImage({ src, alt, className }) {
   )
 }
 
-function VimeoThumbnail({ vimeoId, className }) {
+function VimeoThumbnail({ vimeoId, alt, className }) {
   const fallback = 'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=600&q=80'
   const [imgSrc, setImgSrc] = useState(`https://vimeo.com/api/v2/video/${vimeoId}/thumbnail.gif`)
 
   return (
     <Image
       src={imgSrc}
-      alt=""
+      alt={alt || "Aperçu de la vidéo"}
       fill
       sizes="(max-width: 768px) 180px, 180px"
       className={className}
@@ -224,6 +224,7 @@ export function NewsfeedCard({ item, onOpenThread, userId }) {
             <div className="feed-comment-image-preview flex-shrink-0 w-[180px] aspect-square relative rounded-xl overflow-hidden">
               <PreviewImage
                 src={getImageUrl(item.image_urls[0])}
+                alt="Image attachée à la publication"
                 className="w-full h-full object-cover"
               />
               {item.image_urls.length > 1 && (
@@ -237,6 +238,7 @@ export function NewsfeedCard({ item, onOpenThread, userId }) {
             <div className="feed-comment-image-preview flex-shrink-0 w-[180px] aspect-square relative rounded-xl overflow-hidden">
               <VimeoThumbnail
                 vimeoId={item.vimeo_id}
+                alt="Aperçu de la vidéo Vimeo"
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 flex items-center justify-center bg-black/30">

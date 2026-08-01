@@ -19,7 +19,7 @@ function AvatarImage({ src, fallback, alt, className, width, height }) {
   return (
     <Image
       src={imgSrc}
-      alt={alt || 'User'}
+      alt={alt || 'Utilisateur'}
       width={width}
       height={height}
       className={className}
@@ -28,13 +28,13 @@ function AvatarImage({ src, fallback, alt, className, width, height }) {
   )
 }
 
-function ContentImage({ src, className, width, height }) {
+function ContentImage({ src, alt, className, width, height }) {
   const [error, setError] = useState(false)
   if (error || !src) return null
   return (
     <Image
       src={src}
-      alt=""
+      alt={alt || "Image de la publication"}
       width={width}
       height={height}
       className={className}
@@ -210,6 +210,7 @@ export function ThreadModal({ item, onClose, userId }) {
                 <div className="mt-2">
                   <ContentImage
                     src={typeof replyImages[0] === 'string' ? replyImages[0] : (replyImages[0].preview || replyImages[0].original || '')}
+                    alt="Image attachée à la réponse"
                     width={200}
                     height={200}
                     className="w-full max-w-[200px] rounded-lg object-cover"
@@ -286,6 +287,7 @@ export function ThreadModal({ item, onClose, userId }) {
                       <ContentImage
                         key={i}
                         src={typeof url === 'string' ? url : (url.preview || url.original || '')}
+                        alt={`Image ${i + 1} de la publication`}
                         width={600}
                         height={400}
                         className="w-full rounded-xl object-cover max-h-64"
@@ -396,7 +398,7 @@ export function ThreadModal({ item, onClose, userId }) {
               <div className="relative inline-block">
                 <Image
                   src={previewUrl}
-                  alt="Preview"
+                  alt="Aperçu de l'image sélectionnée"
                   width={96}
                   height={96}
                   className="w-24 h-24 rounded-lg object-cover"

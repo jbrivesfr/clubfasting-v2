@@ -12,7 +12,7 @@ function AnalysisImage({ src, alt, className, isFill }) {
   return (
     <Image
       src={src}
-      alt={alt || ''}
+      alt={alt || "Image analysée"}
       className={className}
       onError={() => setError(true)}
       {...(isFill ? { fill: true, sizes: "(max-width: 768px) 100vw, 500px" } : { width: 500, height: 300, style: { objectFit: 'cover' } })}
@@ -66,6 +66,7 @@ export default function AnalysisHistory({ userId, type = 'all', onSelect }) {
               {a.image_url && (
                 <AnalysisImage
                   src={a.image_url}
+                  alt="Aperçu de l'analyse"
                   className="absolute inset-0 w-full h-full object-cover"
                   isFill={true}
                 />
@@ -113,6 +114,7 @@ export default function AnalysisHistory({ userId, type = 'all', onSelect }) {
             {selected.image_url && (
               <AnalysisImage
                 src={selected.image_url}
+                alt="Image analysée en détail"
                 className="w-full rounded-xl max-h-64 object-cover"
                 isFill={false}
               />
