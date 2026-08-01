@@ -10,6 +10,7 @@ import { NewsfeedFeed } from '@/components/newsfeed/NewsfeedFeed'
 import { JourneyTabs } from '@/components/newsfeed/JourneyTabs'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { getGravatarUrl } from '@/components/newsfeed/utils'
+import { Breadcrumbs } from '@/components/Breadcrumbs'
 
 const TOOLS = [
   {
@@ -751,6 +752,13 @@ export default function DashboardPage() {
       </header>
 
       <main className="relative z-10 max-w-6xl mx-auto px-5 sm:px-6 py-10 sm:py-14 space-y-14">
+        <Breadcrumbs
+          items={[
+            { name: 'Accueil', href: '/' },
+            { name: 'Dashboard', href: '/dashboard' }
+          ]}
+        />
+
         {/* Greeting */}
         <section className="space-y-3 animate-slide-up">
           <p className="text-xs uppercase tracking-[0.25em] text-orange-400/80 font-semibold">

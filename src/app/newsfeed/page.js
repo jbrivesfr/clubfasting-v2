@@ -6,6 +6,7 @@ import { JourneyTabs } from '@/components/newsfeed/JourneyTabs'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import Link from 'next/link'
 import Footer from '@/components/Footer'
+import { Breadcrumbs } from '@/components/Breadcrumbs'
 
 export default function NewsfeedPage() {
   const jsonLd = {
@@ -70,6 +71,13 @@ export default function NewsfeedPage() {
         </header>
 
         <main className="relative z-10 max-w-6xl mx-auto px-5 sm:px-6 py-10 sm:py-14 space-y-14">
+          <Breadcrumbs
+            items={[
+              { name: 'Accueil', href: '/' },
+              { name: 'Newsfeed', href: '/newsfeed' }
+            ]}
+          />
+
           <section className="animate-slide-up">
             <h2 className="text-2xl font-bold mb-6 font-display">Fil d&apos;actualités</h2>
             <JourneyTabs />
