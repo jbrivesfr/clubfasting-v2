@@ -57,6 +57,12 @@ export default async function sitemap() {
       lastModified: maxDate,
       changeFrequency: 'daily',
       priority: 1,
+    },
+    {
+      url: 'https://app.clubfasting.com/jeune-intermittent',
+      lastModified: maxDate,
+      changeFrequency: 'weekly',
+      priority: 0.9,
     }
   ]
 

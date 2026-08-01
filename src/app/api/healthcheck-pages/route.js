@@ -7,6 +7,7 @@ export async function GET() {
     'https://clubfasting.com/',
     'https://fasting.fr/',
     'https://app.clubfasting.com/',
+    'https://app.clubfasting.com/jeune-intermittent',
     'https://fasting.fr/jeune-intermittent',
     'https://fasting.fr/jeune-intermittent-16-8',
     'https://fasting.fr/jeune-intermittent-perte-de-poids',

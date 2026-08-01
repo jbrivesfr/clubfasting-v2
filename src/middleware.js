@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server'
 
 const THIRTY_DAYS = 30 * 24 * 60 * 60
 const PUBLIC_PATHS = ['/login', '/register', '/auth/callback', '/auth/confirm', '/', '/favicon.ico', '/sitemap-contenus', '/sitemap.xml', '/jeune-intermittent-16-8', '/jeune-intermittent-18-6', '/newsfeed', '/api/healthcheck-pages', '/methodes-jeune']
+const PUBLIC_PATHS = ['/login', '/register', '/auth/callback', '/auth/confirm', '/', '/favicon.ico', '/sitemap-contenus', '/sitemap.xml', '/jeune-intermittent', '/jeune-intermittent-16-8', '/newsfeed', '/api/healthcheck-pages']
 
 function isPublicPath(pathname) {
   return PUBLIC_PATHS.some(
