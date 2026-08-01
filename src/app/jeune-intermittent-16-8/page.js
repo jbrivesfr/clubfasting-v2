@@ -34,12 +34,26 @@ export default function JeuneIntermittentPage() {
   const articleJsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://app.clubfasting.com/jeune-intermittent-16-8"
+    },
     "headline": "Jeûne intermittent 16/8 : le guide complet pour débuter en 2026",
+    "description": "Découvrez notre guide complet sur le jeûne intermittent 16/8. Apprenez comment débuter pas à pas, profitez des bienfaits et évitez les erreurs courantes.",
     "author": {
       "@type": "Person",
       "name": "JB"
     },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Club Fasting",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://app.clubfasting.com/club-fasting-logo.png"
+      }
+    },
     "datePublished": "2026-01-01T08:00:00+01:00",
+    "dateModified": "2026-01-01T08:00:00+01:00",
     "image": "https://app.clubfasting.com/og-image.jpg"
   };
 
