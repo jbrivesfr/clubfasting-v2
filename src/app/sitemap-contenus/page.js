@@ -4,6 +4,12 @@ import Link from 'next/link'
 export const metadata = {
   title: 'Plan du site - Contenus',
   description: 'Liste de tous les contenus et articles du Club Fasting.',
+  alternates: {
+    canonical: 'https://app.clubfasting.com/sitemap-contenus',
+    languages: {
+      'fr-FR': 'https://app.clubfasting.com/sitemap-contenus',
+    },
+  },
 }
 
 export default async function SitemapContenusPage() {

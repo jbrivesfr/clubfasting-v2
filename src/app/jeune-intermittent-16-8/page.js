@@ -7,6 +7,9 @@ export const metadata = {
   description: 'Découvrez notre guide complet sur le jeûne intermittent 16/8. Apprenez comment débuter pas à pas, profitez des bienfaits et évitez les erreurs courantes.',
   alternates: {
     canonical: 'https://app.clubfasting.com/jeune-intermittent-16-8',
+    languages: {
+      'fr-FR': 'https://app.clubfasting.com/jeune-intermittent-16-8',
+    },
   },
   openGraph: {
     title: 'Jeûne intermittent 16/8 : le guide complet pour débuter',
