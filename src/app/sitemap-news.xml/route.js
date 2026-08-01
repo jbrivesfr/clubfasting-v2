@@ -9,7 +9,7 @@ export async function GET() {
     .select('id, title, content, created_at')
     .is('parent_id', null)
     .order('created_at', { ascending: false })
-    .limit(50)
+    .limit(1000)
 
   if (error) {
     console.error('Error fetching newsfeed for sitemap-news:', error)
@@ -18,6 +18,8 @@ export async function GET() {
 
   const posts = data || []
 
+  const twoDaysAgo = new Date(Date.now() - 48 * 60 * 60 * 1000)
+
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
   ${posts.map((post) => {
@@ -25,7 +27,8 @@ export async function GET() {
     // We fall back to a truncated content if title is missing.
     const title = post.title || post.content?.substring(0, 50) || 'Post sur le Newsfeed'
     // Format date as ISO 8601
-    const date = new Date(post.created_at).toISOString()
+    const postDate = new Date(post.created_at)
+    const date = postDate.toISOString()
     const url = `https://app.clubfasting.com/newsfeed/${post.id}`
 
     // Encode XML special characters
@@ -36,7 +39,9 @@ export async function GET() {
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&apos;')
 
-    return `
+    // Only include news block for articles created in the last 2 days
+    if (postDate > twoDaysAgo) {
+      return `
   <url>
     <loc>${url}</loc>
     <news:news>
@@ -48,6 +53,12 @@ export async function GET() {
       <news:title>${safeTitle}</news:title>
     </news:news>
   </url>`
+    } else {
+      return `
+  <url>
+    <loc>${url}</loc>
+  </url>`
+    }
   }).join('')}
 </urlset>`
 
