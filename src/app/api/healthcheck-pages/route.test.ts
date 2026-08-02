@@ -37,7 +37,7 @@ describe('GET /api/healthcheck-pages', () => {
     expect(response.status).toBe(200);
 
     const data = await response.json();
-    expect(data).toHaveLength(8);
+    expect(data).toHaveLength(9);
     data.forEach((result: any) => {
       expect(result.ok).toBe(true);
       expect(result.status).toBe(200);
@@ -45,7 +45,7 @@ describe('GET /api/healthcheck-pages', () => {
       expect(result.latencyMs).toBeLessThan(5000);
     });
 
-    expect(fetchSpy).toHaveBeenCalledTimes(8);
+    expect(fetchSpy).toHaveBeenCalledTimes(9);
   });
 
   it('returns ok=false for slow responses (>5s)', async () => {
@@ -59,14 +59,14 @@ describe('GET /api/healthcheck-pages', () => {
     expect(response.status).toBe(200);
 
     const data = await response.json();
-    expect(data).toHaveLength(8);
+    expect(data).toHaveLength(9);
     data.forEach((result: any) => {
       expect(result.ok).toBe(false);
       expect(result.status).toBe(200);
       expect(result.latencyMs).toBeGreaterThanOrEqual(5500);
     });
 
-    expect(fetchSpy).toHaveBeenCalledTimes(8);
+    expect(fetchSpy).toHaveBeenCalledTimes(9);
   });
 
   it('returns ok=false when fetch throws an exception', async () => {
@@ -78,12 +78,12 @@ describe('GET /api/healthcheck-pages', () => {
     expect(response.status).toBe(200);
 
     const data = await response.json();
-    expect(data).toHaveLength(8);
+    expect(data).toHaveLength(9);
     data.forEach((result: any) => {
       expect(result.ok).toBe(false);
       expect(result.status).toBe(0);
     });
 
-    expect(fetchSpy).toHaveBeenCalledTimes(8);
+    expect(fetchSpy).toHaveBeenCalledTimes(9);
   });
 });

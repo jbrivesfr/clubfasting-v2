@@ -11,7 +11,8 @@ export async function GET() {
     'https://fasting.fr/jeune-intermittent-16-8',
     'https://fasting.fr/jeune-intermittent-perte-de-poids',
     'https://fasting.fr/menu-jeune-intermittent',
-    'https://fasting.fr/que-boire-pendant-le-jeune'
+    'https://fasting.fr/que-boire-pendant-le-jeune',
+    'https://app.clubfasting.com/methodes-jeune'
   ];
 
   const results = await Promise.all(

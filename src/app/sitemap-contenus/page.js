@@ -102,6 +102,11 @@ export default async function SitemapContenusPage() {
               </Link>
             </li>
             <li>
+              <Link href="/methodes-jeune" className="text-orange-600 hover:text-orange-700 hover:underline block truncate" title="Méthodes de jeûne intermittent : 16/8, 18/6, OMAD, 5:2">
+                Méthodes de jeûne intermittent : 16/8, 18/6, OMAD, 5:2
+              </Link>
+            </li>
+            <li>
               <Link href="/jeune-intermittent-perte-de-poids" className="text-orange-600 hover:text-orange-700 hover:underline block truncate" title="Jeûne Intermittent et Perte de Poids : Résultats et Mécanismes">
                 Jeûne Intermittent et Perte de Poids : Résultats et Mécanismes
               </Link>
