@@ -29,6 +29,31 @@ export const metadata = {
 };
 
 export default function JeuneIntermittent186Page() {
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Accueil",
+        "item": "https://clubfasting.com"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Articles",
+        "item": "https://clubfasting.com/articles"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Jeûne intermittent 18/6 : le guide avancé 2026",
+        "item": "https://app.clubfasting.com/jeune-intermittent-18-6"
+      }
+    ]
+  };
+
   const articleJsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -90,6 +115,10 @@ export default function JeuneIntermittent186Page() {
 
   return (
     <main className="max-w-4xl mx-auto px-4 py-12 bg-white text-gray-900 leading-relaxed font-sans">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
