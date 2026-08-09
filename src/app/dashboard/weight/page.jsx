@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { Line } from 'react-chartjs-2'
+import { useToast } from '@/components/Toast'
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -24,8 +25,8 @@ export default function WeightTrackerPage() {
   const [weightInput, setWeightInput] = useState('')
   const [dateInput, setDateInput] = useState(new Date().toISOString().split('T')[0])
   const [saving, setSaving] = useState(false)
-  const [message, setMessage] = useState(null)
   const [deleteIdx, setDeleteIdx] = useState(null)
+  const toast = useToast()
 
   const loadWeightData = useCallback(async () => {
     const res = await fetch('/api/weight')
@@ -164,14 +165,15 @@ export default function WeightTrackerPage() {
 
     if (!res.ok) {
       const err = await res.json()
-      setMessage({ type: 'error', text: 'Erreur: ' + (err.error || 'Échec') })
+      setTimeout(() => {
+        toast.error('Erreur: ' + (err.error || 'Échec'))
+      }, 500)
     } else {
-      setMessage({ type: 'success', text: existing ? 'Poids mis à jour !' : 'Poids enregistré !' })
+      toast.success('Poids enregistré')
       setWeightInput('')
       await loadWeightData()
     }
     setSaving(false)
-    setTimeout(() => setMessage(null), 4000)
   }
 
   const handleDelete = async () => {
@@ -183,10 +185,9 @@ export default function WeightTrackerPage() {
       body: JSON.stringify({ date: entry.date }),
     })
     if (res.ok) {
-      setMessage({ type: 'success', text: 'Entrée supprimée.' })
+      toast.success('Entrée supprimée.')
       setDeleteIdx(null)
       await loadWeightData()
-      setTimeout(() => setMessage(null), 4000)
     }
   }
 
@@ -256,16 +257,6 @@ export default function WeightTrackerPage() {
                 {saving ? '...' : 'Sauvegarder'}
               </button>
             </div>
-
-            {message && (
-              <div className={`mt-4 px-4 py-2.5 rounded-xl text-sm font-medium ${
-                message.type === 'success'
-                  ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-400'
-                  : 'bg-red-500/10 border border-red-500/20 text-red-400'
-              }`}>
-                {message.text}
-              </div>
-            )}
           </div>
         </section>
 
