@@ -752,7 +752,7 @@ export default function DashboardPage() {
         </div>
       </header>
 
-      <main className="relative z-10 max-w-6xl mx-auto px-5 sm:px-6 py-10 sm:py-14 space-y-14">
+      <main id="main-content" tabIndex="-1" className="relative z-10 max-w-6xl mx-auto px-5 sm:px-6 py-10 sm:py-14 space-y-14 outline-none">
         {/* Greeting */}
         <section className="space-y-3 animate-slide-up">
           <p className="text-xs uppercase tracking-[0.25em] text-orange-400/80 font-semibold">
