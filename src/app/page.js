@@ -82,7 +82,7 @@ export default function HomePage() {
         <div className="space-y-4">
           <img
             src="/club-fasting-logo.png"
-            alt="Logo de Club Fasting, l'application pour votre jeûne intermittent"
+            alt="Logo de Club Fasting, application pour le jeûne intermittent"
             className="mx-auto w-64 max-w-full h-auto"
           />
         </div>
