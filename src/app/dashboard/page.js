@@ -10,6 +10,7 @@ import { NewsfeedFeed } from '@/components/newsfeed/NewsfeedFeed'
 import { JourneyTabs } from '@/components/newsfeed/JourneyTabs'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { getGravatarUrl } from '@/components/newsfeed/utils'
+import OnboardingTooltip from '@/components/OnboardingTooltip'
 
 const TOOLS = [
   {
@@ -507,6 +508,7 @@ function ToolCard({ tool }) {
 
   return (
     <Comp
+      id={`tool-card-${tool.id}`}
       {...props}
       className="card-glow group relative overflow-hidden rounded-2xl border border-white/70 dark:border-white/[0.08] shadow-lg shadow-black/[0.06] dark:shadow-none hover:border-white dark:hover:border-white/[0.15] transition-all hover:-translate-y-1 flex flex-col"
     >
@@ -859,7 +861,7 @@ export default function DashboardPage() {
         </section>
 
         {/* Newsfeed */}
-        <section className="animate-slide-up">
+        <section id="newsfeed-section" className="animate-slide-up">
           <h2 className="text-2xl font-bold mb-6 font-display">Fil d&apos;actualités</h2>
           <JourneyTabs />
           <NewsfeedFeed />
@@ -867,6 +869,7 @@ export default function DashboardPage() {
 
         <Footer />
       </main>
+      <OnboardingTooltip />
     </div>
     </NewsfeedProvider>
   )
