@@ -34,6 +34,9 @@ export async function generateMetadata({ params }) {
   return {
     title: `${title} | Club Fasting`,
     description,
+    alternates: {
+      canonical: `https://app.clubfasting.com/newsfeed/${id}`,
+    },
     openGraph: {
       title,
       description,

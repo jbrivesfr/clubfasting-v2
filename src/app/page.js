@@ -1,5 +1,11 @@
 import Link from 'next/link'
 
+export const metadata = {
+  alternates: {
+    canonical: 'https://app.clubfasting.com/',
+  },
+}
+
 export default function HomePage() {
   const jsonLd = {
     "@context": "https://schema.org",
