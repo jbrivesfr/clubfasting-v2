@@ -1,6 +1,7 @@
 import React from 'react';
 import BlackboardTile from '../../../components/BlackboardTile';
 import LatestUsersTile from './LatestUsersTile';
+import PanelVentes from './PanelVentes';
 
 export const metadata = {
   title: 'Blackboard Admin Dashboard | Club Fasting',
@@ -30,7 +31,7 @@ export default function BlackboardAdminPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-min">
           <div className="lg:col-span-1">
-            <BlackboardTile title="Stripe Sales" endpoint="/api/blackboard/stripe" />
+            <PanelVentes />
           </div>
 
           <div className="lg:col-span-1">
