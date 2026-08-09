@@ -1,8 +1,28 @@
 import Link from 'next/link'
 
 export const metadata = {
+  title: 'Club Fasting',
+  description: "Une nouvelle version pour mieux jeûner. Profitez de notre fenêtre de jeûne, du simulateur de glycémie et de l'analyse de repas par IA.",
   alternates: {
     canonical: 'https://app.clubfasting.com/',
+  },
+  openGraph: {
+    title: 'Club Fasting',
+    description: "Une nouvelle version pour mieux jeûner. Profitez de notre fenêtre de jeûne, du simulateur de glycémie et de l'analyse de repas par IA.",
+    url: 'https://app.clubfasting.com/',
+    siteName: 'Le Fasting',
+    type: 'website',
+    images: [
+      {
+        url: 'https://app.clubfasting.com/club-fasting-logo.png',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Club Fasting',
+    description: "Une nouvelle version pour mieux jeûner. Profitez de notre fenêtre de jeûne, du simulateur de glycémie et de l'analyse de repas par IA.",
+    images: ['https://app.clubfasting.com/club-fasting-logo.png'],
   },
 }
 
