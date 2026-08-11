@@ -2,6 +2,7 @@ import React from 'react';
 import BlackboardTile from '../../../components/BlackboardTile';
 import LatestUsersTile from './LatestUsersTile';
 import PanelVentes from './PanelVentes';
+import GscFastingPanel from './GscFastingPanel';
 
 export const metadata = {
   title: 'Blackboard Admin Dashboard | Club Fasting',
@@ -43,7 +44,7 @@ export default function BlackboardAdminPage() {
           </div>
 
           <div className="lg:col-span-1">
-            <BlackboardTile title="Google Search Console" endpoint="/api/blackboard/gsc" />
+            <GscFastingPanel />
           </div>
 
           <div className="lg:col-span-1 md:col-span-2 lg:col-span-1">
