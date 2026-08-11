@@ -1,4 +1,5 @@
 import CanonicalPath from './CanonicalPath'
+import SkipLink from './SkipLink'
 
 export const metadata = {
   title: 'Tableau de bord - Club Fasting',
@@ -26,6 +27,7 @@ export const metadata = {
 export default function DashboardLayout({ children }) {
   return (
     <>
+      <SkipLink />
       <CanonicalPath />
       {children}
     </>
