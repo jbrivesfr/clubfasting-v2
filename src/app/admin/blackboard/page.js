@@ -1,5 +1,6 @@
 import React from 'react';
 import BlackboardTile from '../../../components/BlackboardTile';
+import LatestUsersTile from './LatestUsersTile';
 
 export const metadata = {
   title: 'Blackboard Admin Dashboard | Club Fasting',
@@ -36,6 +37,10 @@ export default function BlackboardAdminPage() {
 
           <div className="lg:col-span-1 md:col-span-2 lg:col-span-1">
             <BlackboardTile title="HubSpot Integration" endpoint="/api/blackboard/hubspot" />
+          </div>
+
+          <div className="lg:col-span-1">
+            <LatestUsersTile />
           </div>
         </div>
       </div>
