@@ -11,29 +11,33 @@ async function getEngagementData() {
   const headersList = headers();
   // We construct an absolute URL to call our own API Route.
   // In a Next.js server component fetching its own API, we need absolute URL.
-  // If NEXT_PUBLIC_SITE_URL is not fully reliable in local/build without it, we can fallback or use middleware/db directly.
-  // However, the issue explicitly requests to "fetch l'endpoint".
-
   const host = headersList.get('host') || 'localhost:3000';
   const protocol = host.includes('localhost') ? 'http' : 'https';
   const siteUrl = `${protocol}://${host}`;
   const cookieHeader = headersList.get('cookie') || '';
 
-  const res = await fetch(`${siteUrl}/api/newsfeed/engagement-weekly`, {
-    headers: {
-      cookie: cookieHeader,
-    },
-    cache: 'no-store',
-  });
+  const [weeklyRes, trendRes] = await Promise.all([
+    fetch(`${siteUrl}/api/newsfeed/engagement-weekly`, {
+      headers: { cookie: cookieHeader },
+      cache: 'no-store',
+    }),
+    fetch(`${siteUrl}/api/newsfeed/engagement-trend`, {
+      headers: { cookie: cookieHeader },
+      cache: 'no-store',
+    })
+  ]);
 
-  if (!res.ok) {
-    if (res.status === 401) {
+  if (!weeklyRes.ok || !trendRes.ok) {
+    if (weeklyRes.status === 401 || trendRes.status === 401) {
       throw new Error('Unauthorized');
     }
     throw new Error('Failed to fetch data');
   }
 
-  return res.json();
+  const weeklyData = await weeklyRes.json();
+  const trendData = await trendRes.json();
+
+  return { weeklyData, trendData };
 }
 
 function Sparkline({ data, color }) {
@@ -93,15 +97,63 @@ function KPICard({ title, value, prevValue, sparklineData }) {
   );
 }
 
+function TrendCard({ trendData }) {
+  if (!trendData) return null;
+
+  const { delta, is_up, current_week, previous_week } = trendData;
+
+  const renderMetric = (label, current, abs, percent) => {
+    const isPositive = abs > 0;
+    const isNeutral = abs === 0;
+    let badgeColor = 'bg-gray-100 text-gray-800';
+    if (isPositive) badgeColor = 'bg-green-100 text-green-800';
+    if (!isPositive && !isNeutral) badgeColor = 'bg-red-100 text-red-800';
+
+    return (
+      <div className="flex flex-col items-center p-4 bg-gray-50 rounded-md">
+        <span className="text-sm text-gray-500 mb-1">{label}</span>
+        <span className="text-xl font-semibold text-gray-900 mb-2">{current}</span>
+        <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${badgeColor}`}>
+          {isPositive ? '+' : ''}{abs} ({isPositive ? '+' : ''}{percent.toFixed(1)}%)
+        </span>
+      </div>
+    );
+  };
+
+  return (
+    <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 mb-8">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-lg font-medium text-gray-900 flex items-center">
+          Tendance semaine (ISO courante vs prcd.)
+          {is_up ? (
+            <span className="ml-2 text-green-600 text-xl font-bold" title="Tendance haussière">↗️</span>
+          ) : (
+            <span className="ml-2 text-red-600 text-xl font-bold" title="Tendance baissière">↘️</span>
+          )}
+        </h2>
+        <span className="text-sm text-gray-500">Mise à jour: {new Date(trendData.computed_at).toLocaleString()}</span>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {renderMetric('Posts', current_week.posts_count, delta.posts.abs, delta.posts.percent)}
+        {renderMetric('Comments', current_week.comments_count, delta.comments.abs, delta.comments.percent)}
+        {renderMetric('Reactions', current_week.reactions_count, delta.reactions.abs, delta.reactions.percent)}
+      </div>
+    </div>
+  );
+}
+
 export default async function NewsfeedEngagementPage() {
-  let data;
+  let combinedData;
   let errorMsg = null;
 
   try {
-    data = await getEngagementData();
+    combinedData = await getEngagementData();
   } catch (err) {
     errorMsg = err.message;
   }
+
+  const data = combinedData?.weeklyData;
+  const trendData = combinedData?.trendData;
 
   if (errorMsg === 'Unauthorized') {
     return (
@@ -127,6 +179,7 @@ export default async function NewsfeedEngagementPage() {
       <div className="min-h-screen bg-gray-50 p-8">
         <div className="max-w-7xl mx-auto">
           <h1 className="text-3xl font-bold text-gray-900 mb-8">Engagement Hebdo</h1>
+          {trendData && <TrendCard trendData={trendData} />}
           <EmptyState title="No Data" message="No engagement data found for the past week." />
         </div>
       </div>
@@ -147,6 +200,8 @@ export default async function NewsfeedEngagementPage() {
             {new Date(data.week_start).toLocaleDateString()} to {new Date(data.week_end).toLocaleDateString()}
           </p>
         </div>
+
+        <TrendCard trendData={trendData} />
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <KPICard
