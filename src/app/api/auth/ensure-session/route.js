@@ -50,3 +50,7 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Internal error' }, { status: 500 })
   }
 }
+
+export async function GET(request) {
+  return NextResponse.redirect(new URL('/login', request.url))
+}
