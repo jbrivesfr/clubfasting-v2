@@ -75,3 +75,7 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Refresh failed' }, { status: 500 })
   }
 }
+
+export async function GET(request) {
+  return NextResponse.redirect(new URL('/login', request.url))
+}
