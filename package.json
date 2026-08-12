@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "health-check": "tsx scripts/health-check.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.5.0",
@@ -24,10 +25,13 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.62.1",
+    "@testing-library/react": "^16.3.2",
     "@types/node": "^26.1.2",
     "autoprefixer": "^10.5.0",
     "postcss": "^8.5.15",
     "tailwindcss": "^3.4.19",
-    "typescript": "^5.4.5"
+    "tsx": "^4.23.12",
+    "typescript": "^5.4.5",
+    "vitest": "^4.1.10"
   }
 }
