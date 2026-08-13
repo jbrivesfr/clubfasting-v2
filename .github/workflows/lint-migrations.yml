@@ -17,5 +17,8 @@ jobs:
         with:
           version: latest
 
+      - name: Start Supabase Local
+        run: supabase start
+
       - name: Lint migrations
         run: supabase db lint
