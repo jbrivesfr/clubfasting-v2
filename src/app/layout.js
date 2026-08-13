@@ -33,14 +33,26 @@ export const metadata = {
 const themeInitScript = `try{if(localStorage.getItem('theme')==='dark'){document.documentElement.classList.add('dark')}}catch(e){}`
 
 export default function RootLayout({ children }) {
-  const orgJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "Club Fasting",
-    "url": "https://app.clubfasting.com/",
-    "logo": "https://app.clubfasting.com/club-fasting-logo.png",
-    "sameAs": []
-  };
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Le Fasting",
+      "url": "https://clubfasting.com",
+      "logo": "https://app.clubfasting.com/club-fasting-logo.png",
+      "founder": {
+        "@type": "Person",
+        "name": "JB Rives"
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Le Fasting",
+      "url": "https://clubfasting.com",
+      "inLanguage": "fr-FR"
+    }
+  ];
 
   return (
     <html lang="fr">
@@ -49,7 +61,7 @@ export default function RootLayout({ children }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <link rel="icon" href="/favicon.ico" />
