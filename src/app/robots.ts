@@ -10,13 +10,18 @@ export default function robots(): MetadataRoute.Robots {
       disallow: [
         '/api/',
         '/admin/',
-        '/dashboard',
+        '/dashboard/',
+        '/_next/',
         '/auth',
         '/login',
         '/register',
         '/newsfeed'
       ],
     },
-    sitemap: `${baseUrl}/sitemap.xml`,
+    sitemap: [
+      'https://clubfasting.com/sitemap.xml',
+      'https://fasting.fr/sitemap.xml'
+    ],
+    host: 'https://app.clubfasting.com',
   }
 }
