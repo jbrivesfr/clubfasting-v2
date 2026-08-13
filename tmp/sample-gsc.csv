@@ -1,0 +1,11 @@
+Some random Google Search Console header
+Date: 2026-01-15
+Another empty line
+
+Query,Page,Impressions,Clicks,CTR,Position
+query1,https://app.clubfasting.com/page1,100,10,10.0%,5.5
+query2,https://app.clubfasting.com/page2,200,20,10.0%,3.2
+query3,https://app.clubfasting.com/page3,300,30,10.0%,2.1
+query1,https://app.clubfasting.com/page1,50,5,10.0%,5.5
+query4,https://app.clubfasting.com/page4,400,40,10.0%,1.0
+query5,https://app.clubfasting.com/page5,500,50,10.0%,4.0
