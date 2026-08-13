@@ -31,28 +31,6 @@ export default function HomePage() {
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": "WebSite",
-        "@id": "https://app.clubfasting.com/#website",
-        "url": "https://app.clubfasting.com/",
-        "name": "Club Fasting",
-        "description": "Une nouvelle version pour mieux jeûner.",
-        "publisher": {
-          "@id": "https://app.clubfasting.com/#organization"
-        },
-        "inLanguage": "fr-FR"
-      },
-      {
-        "@type": "Organization",
-        "@id": "https://app.clubfasting.com/#organization",
-        "name": "Club Fasting",
-        "url": "https://app.clubfasting.com/",
-        "logo": {
-          "@type": "ImageObject",
-          "url": "https://app.clubfasting.com/club-fasting-logo.png"
-        },
-        "sameAs": []
-      },
-      {
         "@type": "FAQPage",
         "mainEntity": [
           {
