@@ -19,12 +19,18 @@ export default function BlackboardAdminPage() {
               Overview of external metrics and system statuses.
             </p>
           </div>
-          <div>
+          <div className="flex space-x-4">
             <a
               href="/admin/newsfeed-engagement"
               className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
             >
               Engagement hebdo
+            </a>
+            <a
+              href="/admin/seo-opportunities"
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200"
+            >
+              Opportunités SEO
             </a>
           </div>
         </div>
