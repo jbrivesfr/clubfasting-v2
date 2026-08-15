@@ -11,6 +11,7 @@ import { JourneyTabs } from '@/components/newsfeed/JourneyTabs'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { getGravatarUrl } from '@/components/newsfeed/utils'
 import OnboardingTooltip from '@/components/OnboardingTooltip'
+import FastingProgressRing from '@/components/dashboard/FastingProgressRing'
 
 const TOOLS = [
   {
@@ -548,6 +549,7 @@ export default function DashboardPage() {
   const [routine, setRoutine] = useState(null)
   const [recaps, setRecaps] = useState([])
   const [loading, setLoading] = useState(true)
+  const [lastMealAt, setLastMealAt] = useState(null)
 
   const supabase = createClient()
 
@@ -633,6 +635,23 @@ export default function DashboardPage() {
         }
       } catch (e) {
         console.warn('Weight load failed:', e)
+      }
+
+
+      try {
+        const { data: mealData } = await supabase
+          .from('user_analyses')
+          .select('created_at')
+          .eq('user_id', effectiveUser.id)
+          .eq('type', 'meal')
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle()
+        if (mealData && mealData.created_at) {
+          setLastMealAt(new Date(mealData.created_at))
+        }
+      } catch (e) {
+        console.warn('Last meal load failed:', e)
       }
 
       setLoading(false)
@@ -765,6 +784,12 @@ export default function DashboardPage() {
           <p className="text-zinc-600 dark:text-zinc-400 text-lg max-w-xl">
             Voici votre routine de jeûne et tous vos outils pour avancer aujourd&apos;hui.
           </p>
+        </section>
+
+
+        {/* Fasting Progress Ring */}
+        <section className="animate-slide-up bg-white dark:bg-zinc-900/60 border border-[#e2d9c3] dark:border-white/[0.06] rounded-3xl p-6 shadow-sm">
+          <FastingProgressRing lastMealAt={lastMealAt} />
         </section>
 
         {/* Fasting hero card */}
