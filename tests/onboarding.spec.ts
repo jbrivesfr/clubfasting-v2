@@ -10,6 +10,10 @@ test.describe('Dashboard Onboarding Tooltip', () => {
           value: 'test@example.com',
           domain: 'localhost',
           path: '/',
+          expires: -1,
+          httpOnly: false,
+          secure: false,
+          sameSite: 'Lax',
         }
       ],
       origins: []

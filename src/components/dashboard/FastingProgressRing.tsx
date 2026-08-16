@@ -5,8 +5,8 @@ import { computeFastingState } from '@/lib/fasting/compute-window';
 export default function FastingProgressRing({ lastMealAt }: { lastMealAt: Date | null }) {
   if (!lastMealAt) {
     return (
-      <div className="max-w-xs mx-auto text-center" aria-label="Aucun repas enregistré">
-        <svg viewBox="0 0 120 120" className="w-32 h-32 mx-auto">
+      <div className="max-w-xs mx-auto text-center" role="progressbar" aria-label="Aucun repas enregistré">
+        <svg viewBox="0 0 120 120" className="w-32 h-32 mx-auto" aria-hidden="true">
           <circle
             cx="60"
             cy="60"
@@ -37,8 +37,16 @@ export default function FastingProgressRing({ lastMealAt }: { lastMealAt: Date |
   }
 
   return (
-    <div className="max-w-xs mx-auto text-center" aria-label={labelText}>
-      <svg viewBox="0 0 120 120" className="w-32 h-32 mx-auto transform -rotate-90">
+    <div
+      className="max-w-xs mx-auto text-center"
+      role="progressbar"
+      aria-valuenow={Math.floor(progress)}
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-labelledby="progress-ring-label"
+      aria-describedby={state !== 'goal-met' ? "progress-ring-desc" : undefined}
+    >
+      <svg viewBox="0 0 120 120" className="w-32 h-32 mx-auto transform -rotate-90" aria-hidden="true">
         <circle
           cx="60"
           cy="60"
@@ -52,7 +60,7 @@ export default function FastingProgressRing({ lastMealAt }: { lastMealAt: Date |
           cy="60"
           r="52"
           fill="none"
-          className={`${strokeColor} transition-all duration-1000 ease-out`}
+          className={`${strokeColor} transition-all duration-1000 ease-out motion-reduce:transition-none`}
           strokeWidth="8"
           strokeDasharray={strokeDasharray}
           strokeLinecap="round"
@@ -68,9 +76,9 @@ export default function FastingProgressRing({ lastMealAt }: { lastMealAt: Date |
           {Math.floor(hoursElapsed)}h
         </text>
       </svg>
-      <p className="mt-4 text-sm font-medium text-zinc-600 dark:text-zinc-400">{labelText}</p>
+      <p id="progress-ring-label" className="mt-4 text-sm font-medium text-zinc-600 dark:text-zinc-400">{labelText}</p>
       {state !== 'goal-met' && (
-        <p className="text-xs text-zinc-500 mt-1">Encore {Math.ceil(hoursToGoal)}h avant l'objectif</p>
+        <p id="progress-ring-desc" className="text-xs text-zinc-500 mt-1">Encore {Math.ceil(hoursToGoal)}h avant l'objectif</p>
       )}
     </div>
   );
