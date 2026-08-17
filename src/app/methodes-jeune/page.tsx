@@ -240,6 +240,14 @@ export default function MethodesJeune() {
               <p className="text-gray-600">Pour la plupart des adultes en bonne santé, le jeûne intermittent est sans danger. Il est cependant déconseillé aux femmes enceintes ou allaitantes, aux enfants, et aux personnes souffrant de troubles du comportement alimentaire ou de certaines maladies (consultez toujours un médecin).</p>
             </div>
           </div>
+          <div className="mt-8 text-center">
+            <Link
+              href="/reponses-fasting"
+              className="inline-block bg-white text-orange-600 border border-orange-200 font-semibold py-3 px-6 rounded-xl hover:bg-orange-50 transition-colors duration-200"
+            >
+              Voir toutes les questions fréquentes (FAQ)
+            </Link>
+          </div>
         </section>
       </main>
       <Footer />

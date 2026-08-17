@@ -12,6 +12,11 @@ export default function Footer() {
             </Link>
           </li>
           <li>
+            <Link href="/reponses-fasting" className="hover:underline">
+              FAQ
+            </Link>
+          </li>
+          <li>
             <Link href="#" className="hover:underline">
               18/6
             </Link>
