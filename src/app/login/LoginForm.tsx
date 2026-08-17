@@ -2,15 +2,13 @@
 
 import { useState } from 'react'
 
-export const dynamic = 'force-dynamic'
-
-export default function LoginPage() {
+export default function LoginForm() {
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [sent, setSent] = useState(false)
-  const [error, setError] = useState(null)
+  const [error, setError] = useState<string | null>(null)
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault()
     setLoading(true)
     setError(null)
@@ -29,7 +27,7 @@ export default function LoginPage() {
       }
 
       setSent(true)
-    } catch (err) {
+    } catch (err: any) {
       setError(err.message)
     } finally {
       setLoading(false)
