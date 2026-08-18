@@ -83,6 +83,10 @@ export default function HomePage() {
             alt="Logo de Club Fasting, application pour le jeûne intermittent"
             className="mx-auto w-64 max-w-full h-auto"
           />
+          <h1 className="text-4xl font-bold text-gray-900 mt-6 mb-2">Rejoignez la communauté du fasting</h1>
+          <p className="text-lg text-gray-700">
+            Rejoignez notre aventure débutée en 2012. Nous vous accompagnons pour réussir votre jeûne de 12h ou 16h.
+          </p>
         </div>
 
         <div className="grid grid-cols-3 gap-3 text-sm">
