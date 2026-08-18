@@ -112,6 +112,27 @@ export default function HomePage() {
         </p>
 
         <div className="pt-8 w-full">
+          <h2 className="text-xl font-semibold mb-4 text-gray-800">Notre méthode en 3 étapes</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
+            <div className="bg-white rounded-xl p-3 border border-gray-200 shadow-sm text-left">
+              <div className="text-2xl mb-1" role="img" aria-label="Horloge">⏱️</div>
+              <h3 className="text-gray-900 font-medium">12h minimum</h3>
+              <p className="text-gray-500 text-xs mt-1">Jeûne intermittent court, base non négociable</p>
+            </div>
+            <div className="bg-white rounded-xl p-3 border border-gray-200 shadow-sm text-left">
+              <div className="text-2xl mb-1" role="img" aria-label="Calendrier">📅</div>
+              <h3 className="text-gray-900 font-medium">Horaires flexibles</h3>
+              <p className="text-gray-500 text-xs mt-1">S'adapte à votre vie</p>
+            </div>
+            <div className="bg-white rounded-xl p-3 border border-gray-200 shadow-sm text-left">
+              <div className="text-2xl mb-1" role="img" aria-label="Plante">🌱</div>
+              <h3 className="text-gray-900 font-medium">Durable</h3>
+              <p className="text-gray-500 text-xs mt-1">Pas un régime, une routine</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="pt-8 w-full">
           <h2 className="text-xl font-semibold mb-4 text-gray-800">Articles récents</h2>
           <div className="grid grid-cols-2 gap-4">
             <Link
