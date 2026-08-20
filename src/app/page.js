@@ -27,48 +27,57 @@ export const metadata = {
 }
 
 export default function HomePage() {
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "FAQPage",
-        "mainEntity": [
-          {
-            "@type": "Question",
-            "name": "Est-ce qu’un demi citron dans un verre d’eau tiède est à proscrire le matin à la place du café ou d’un thé ?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Pas de souci pour le citron dans l'eau, un demi c'est parfait. Cela ne casse pas votre jeûne."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Les capsules de café sont-elles autorisées pour le café du matin (sans lait ni sucre) ?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Oui, c'est sans problème pour le jeûne. Il est souvent préférable de boire les cafés un peu plus allongés pendant le jeûne pour qu'ils soient moins agressifs sur l'estomac."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Le jeûne intermittent est-il efficace si on le pratique 5 jours par semaine ?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Oui cela fonctionne également, sachant que la perte de poids sera potentiellement plus lente qu'en le faisant tous les jours. C'est une excellente idée de commencer à votre rythme, le plus important est de vous y mettre."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Je prends un traitement médical tous les matins, est-ce que cela casse le jeûne ?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Si votre traitement est recommandé à jeun, cela devrait convenir. En règle générale, il n'y a pas de contre-indication avec le jeûne pour les médicaments sans sucre, mais n'hésitez pas à demander l'avis de votre médecin."
-            }
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Le Fasting",
+      "url": "https://clubfasting.com",
+      "logo": "https://app.clubfasting.com/club-fasting-logo.png",
+      "sameAs": [
+        "https://www.youtube.com/@lefasting",
+        "https://www.instagram.com/lefasting"
+      ]
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Peut-on boire un café pendant le jeûne ?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Oui, vous pouvez tout à fait boire du café noir, du thé ou des infusions sans sucre ni lait. Ces boissons ne rompent pas votre jeûne et peuvent même vous aider à patienter."
           }
-        ]
-      }
-    ]
-  };
+        },
+        {
+          "@type": "Question",
+          "name": "Faut-il jeûner 12h ou 16h ?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "La méthode 16/8 est idéale pour débuter. Elle consiste à jeûner pendant 16 heures et à concentrer vos repas sur une fenêtre de 8 heures (par exemple de 12h à 20h)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Peut-on faire du sport pendant le jeûne ?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Pour les sportifs, la question de l'entraînement à jeun se pose souvent. Beaucoup trouvent un regain d'énergie étonnant en faisant leur sport le matin, avant le premier repas."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Que peut-on boire pendant un jeûne intermittent sans le casser ?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Oui, l’hydratation est essentielle. Vous pouvez boire de l’eau, du café noir et du thé (sans sucre, ni lait, ni édulcorant) pendant vos heures de jeûne sans rompre votre jeûne."
+          }
+        }
+      ]
+    }
+  ];
 
   return (
     <div className="min-h-screen bg-[#faf6ec] text-gray-900 flex flex-col items-center justify-center px-4">

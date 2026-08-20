@@ -36,17 +36,6 @@ export default function RootLayout({ children }) {
   const jsonLd = [
     {
       "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "Le Fasting",
-      "url": "https://clubfasting.com",
-      "logo": "https://app.clubfasting.com/club-fasting-logo.png",
-      "founder": {
-        "@type": "Person",
-        "name": "JB Rives"
-      }
-    },
-    {
-      "@context": "https://schema.org",
       "@type": "WebSite",
       "name": "Le Fasting",
       "url": "https://clubfasting.com",
