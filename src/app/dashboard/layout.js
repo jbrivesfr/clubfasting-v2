@@ -2,10 +2,10 @@ import CanonicalPath from './CanonicalPath'
 import SkipLink from './SkipLink'
 
 export const metadata = {
-  title: 'Tableau de bord - Club Fasting',
+  title: 'Dashboard | Club Fasting',
   description: 'Votre espace personnel Club Fasting.',
   openGraph: {
-    title: 'Tableau de bord - Club Fasting',
+    title: 'Dashboard | Club Fasting',
     description: 'Votre espace personnel Club Fasting.',
     url: 'https://app.clubfasting.com/dashboard',
     siteName: 'Le Fasting',
@@ -18,7 +18,7 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Tableau de bord - Club Fasting',
+    title: 'Dashboard | Club Fasting',
     description: 'Votre espace personnel Club Fasting.',
     images: ['https://app.clubfasting.com/club-fasting-logo.png'],
   },
@@ -29,7 +29,10 @@ export default function DashboardLayout({ children }) {
     <>
       <SkipLink />
       <CanonicalPath />
-      {children}
+      <nav aria-label="Navigation principale" className="hidden"></nav>
+      <main id="main-content" tabIndex="-1">
+        {children}
+      </main>
     </>
   )
 }
