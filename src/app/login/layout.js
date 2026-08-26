@@ -1,12 +1,12 @@
 export const metadata = {
   title: 'Connexion - Club Fasting',
-  description: 'Connectez-vous à votre compte Club Fasting pour accéder à votre espace de jeûne intermittent.',
+  description: 'Accédez à votre compte Club Fasting pour retrouver votre espace de jeûne intermittent personnel et suivre votre incroyable progression au quotidien !!',
   alternates: {
     canonical: 'https://app.clubfasting.com/login',
   },
   openGraph: {
     title: 'Connexion - Club Fasting',
-    description: 'Connectez-vous à votre compte Club Fasting pour accéder à votre espace de jeûne intermittent.',
+    description: 'Accédez à votre compte Club Fasting pour retrouver votre espace de jeûne intermittent personnel et suivre votre incroyable progression au quotidien !!',
     url: 'https://app.clubfasting.com/login',
     siteName: 'Le Fasting',
     type: 'website',
@@ -19,7 +19,7 @@ export const metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Connexion - Club Fasting',
-    description: 'Connectez-vous à votre compte Club Fasting pour accéder à votre espace de jeûne intermittent.',
+    description: 'Accédez à votre compte Club Fasting pour retrouver votre espace de jeûne intermittent personnel et suivre votre incroyable progression au quotidien !!',
     images: ['https://app.clubfasting.com/club-fasting-logo.png'],
   },
 }
