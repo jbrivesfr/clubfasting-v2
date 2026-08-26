@@ -12,6 +12,7 @@ import { ThemeToggle } from '@/components/ThemeToggle'
 import { getGravatarUrl } from '@/components/newsfeed/utils'
 import OnboardingTooltip from '@/components/OnboardingTooltip'
 import FastingProgressRing from '@/components/dashboard/FastingProgressRing'
+import StreakMilestones from '@/components/dashboard/StreakMilestones'
 
 const TOOLS = [
   {
@@ -786,6 +787,11 @@ export default function DashboardPage() {
           </p>
         </section>
 
+
+        {/* Streak Milestones */}
+        <section className="animate-slide-up bg-white dark:bg-zinc-900/60 border border-[#e2d9c3] dark:border-white/[0.06] rounded-3xl p-6 shadow-sm">
+          <StreakMilestones user={user} />
+        </section>
 
         {/* Fasting Progress Ring */}
         <section className="animate-slide-up bg-white dark:bg-zinc-900/60 border border-[#e2d9c3] dark:border-white/[0.06] rounded-3xl p-6 shadow-sm">
