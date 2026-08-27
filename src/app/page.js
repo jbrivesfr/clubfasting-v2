@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Script from 'next/script'
 
 export const metadata = {
   title: 'Club Fasting',
@@ -76,12 +77,31 @@ export default function HomePage() {
           }
         }
       ]
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://clubfasting.com"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Club Fasting",
+          "item": "https://app.clubfasting.com/"
+        }
+      ]
     }
   ];
 
   return (
     <div className="min-h-screen bg-[#faf6ec] text-gray-900 flex flex-col items-center justify-center px-4">
-      <script
+      <Script
+        id="json-ld-schema"
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
