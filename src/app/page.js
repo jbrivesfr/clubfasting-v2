@@ -41,34 +41,50 @@ export default function HomePage() {
       "mainEntity": [
         {
           "@type": "Question",
-          "name": "Peut-on boire un café pendant le jeûne ?",
+          "name": "Le café noir casse-t-il le jeûne ?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Oui, vous pouvez tout à fait boire du café noir, du thé ou des infusions sans sucre ni lait. Ces boissons ne rompent pas votre jeûne et peuvent même vous aider à patienter."
+            "text": "Non, le café noir et le thé sans sucre ne cassent pas le jeûne."
           }
         },
         {
           "@type": "Question",
-          "name": "Faut-il jeûner 12h ou 16h ?",
+          "name": "Combien de temps faut-il jeûner pour voir des résultats ?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "La méthode 16/8 est idéale pour débuter. Elle consiste à jeûner pendant 16 heures et à concentrer vos repas sur une fenêtre de 8 heures (par exemple de 12h à 20h)."
+            "text": "Minimum 12h, idéalement 16h chaque jour, pas de volume maximal."
           }
         },
         {
           "@type": "Question",
-          "name": "Peut-on faire du sport pendant le jeûne ?",
+          "name": "Que manger pour rompre un jeûne de 16h ?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Pour les sportifs, la question de l'entraînement à jeun se pose souvent. Beaucoup trouvent un regain d'énergie étonnant en faisant leur sport le matin, avant le premier repas."
+            "text": "Un vrai repas avec protéines, éviter fruits/jus seuls qui fatiguent."
           }
         },
         {
           "@type": "Question",
-          "name": "Que peut-on boire pendant un jeûne intermittent sans le casser ?",
+          "name": "Le jeûne intermittent est-il dangereux ?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Oui, l’hydratation est essentielle. Vous pouvez boire de l’eau, du café noir et du thé (sans sucre, ni lait, ni édulcorant) pendant vos heures de jeûne sans rompre votre jeûne."
+            "text": "Pour une personne en bonne santé, non — observer son ressenti énergie/sommeil."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Comment traverser un plateau de poids ?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Routine simple et durable 1-2 semaines, ne pas tout révolutionner."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Faut-il faire du sport pendant le jeûne ?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Pas besoin de beaucoup, une routine équilibrée et efficace suffit."
           }
         }
       ]
