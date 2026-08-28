@@ -12,6 +12,20 @@ const nextConfig = {
       { protocol: 'https', hostname: 'clubfasting.com' }
     ]
   },
+  async redirects() {
+    return [
+      {
+        source: '/landing',
+        destination: '/methodes-jeune',
+        permanent: true,
+      },
+      {
+        source: '/landing.php',
+        destination: '/methodes-jeune',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;
