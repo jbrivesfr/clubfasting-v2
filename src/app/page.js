@@ -2,28 +2,23 @@ import Link from 'next/link'
 import Script from 'next/script'
 
 export const metadata = {
-  title: 'Club Fasting',
+  title: 'Le Fasting - Méthode simple pour se sentir mieux, perdre du poids, vivre plus longtemps',
   description: "Une nouvelle version pour mieux jeûner. Profitez de notre fenêtre de jeûne, du simulateur de glycémie et de l'analyse de repas par IA.",
   alternates: {
     canonical: 'https://app.clubfasting.com/',
   },
   openGraph: {
-    title: 'Club Fasting',
+    title: 'Le Fasting - Méthode simple pour se sentir mieux, perdre du poids, vivre plus longtemps',
     description: "Une nouvelle version pour mieux jeûner. Profitez de notre fenêtre de jeûne, du simulateur de glycémie et de l'analyse de repas par IA.",
     url: 'https://app.clubfasting.com/',
     siteName: 'Le Fasting',
     type: 'website',
-    images: [
-      {
-        url: 'https://app.clubfasting.com/club-fasting-logo.png',
-      },
-    ],
+    locale: 'fr_FR',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Club Fasting',
+    title: 'Le Fasting - Méthode simple pour se sentir mieux, perdre du poids, vivre plus longtemps',
     description: "Une nouvelle version pour mieux jeûner. Profitez de notre fenêtre de jeûne, du simulateur de glycémie et de l'analyse de repas par IA.",
-    images: ['https://app.clubfasting.com/club-fasting-logo.png'],
   },
 }
 
