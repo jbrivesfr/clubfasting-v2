@@ -40,6 +40,14 @@ export default function RootLayout({ children }) {
       "name": "Le Fasting",
       "url": "https://clubfasting.com",
       "inLanguage": "fr-FR"
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Club Fasting",
+      "url": "https://app.clubfasting.com",
+      "description": metadata.description,
+      "sameAs": []
     }
   ];
 
@@ -49,6 +57,7 @@ export default function RootLayout({ children }) {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <script
+          id="json-ld"
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
