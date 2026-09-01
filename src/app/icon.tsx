@@ -4,16 +4,14 @@ import { ImageResponse } from 'next/og'
 export const runtime = 'edge'
 
 // Image metadata
-export const alt = 'Le Fasting - Méthode pas à pas'
 export const size = {
-  width: 1200,
-  height: 630,
+  width: 32,
+  height: 32,
 }
-
 export const contentType = 'image/png'
 
 // Image generation
-export default async function Image() {
+export default async function Icon() {
   return new ImageResponse(
     (
       <div
@@ -22,27 +20,22 @@ export default async function Image() {
           width: '100%',
           height: '100%',
           display: 'flex',
-          flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
+          borderRadius: '4px',
         }}
       >
-        <img
-          src="https://app.clubfasting.com/club-fasting-logo.png"
-          alt="Club Fasting Logo"
-          style={{ width: '400px' }}
-        />
-        <p
+        <span
           style={{
-            fontSize: 48,
+            fontSize: 20,
             color: '#ffffff',
-            marginTop: 40,
-            fontWeight: 500,
-            textAlign: 'center',
+            fontWeight: 800,
+            lineHeight: 1,
+            marginTop: 2,
           }}
         >
-          Le Fasting — méthode pas à pas
-        </p>
+          F
+        </span>
       </div>
     ),
     {
