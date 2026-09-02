@@ -70,7 +70,10 @@ export default function RootLayout({ children }) {
           rel="stylesheet"
         />
       </head>
-      <body>{children}</body>
+      <body>
+        <a href="#main" className="skip-link">Aller au contenu principal</a>
+        <main id="main">{children}</main>
+      </body>
     </html>
   )
 }
