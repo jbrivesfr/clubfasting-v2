@@ -1,5 +1,7 @@
 import './globals.css'
 
+import PublicCanonicalPath from './PublicCanonicalPath'
+
 export const metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://club-fasting.com'),
   title: 'Club Fasting',
@@ -7,9 +9,10 @@ export const metadata = {
   openGraph: {
     title: 'Club Fasting',
     description: "Une nouvelle version pour mieux jeûner. Profitez de notre fenêtre de jeûne, du simulateur de glycémie et de l'analyse de repas par IA.",
-    url: 'https://app.clubfasting.com',
+    url: 'https://clubfasting.com',
     siteName: 'Club Fasting',
     type: 'website',
+    locale: 'fr_FR',
     images: [
       {
         url: '/og-image.jpg',
@@ -36,24 +39,34 @@ export default function RootLayout({ children }) {
   const jsonLd = [
     {
       "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "Le Fasting",
+      "@type": "Organization",
+      "name": "Club Fasting",
       "url": "https://clubfasting.com",
-      "inLanguage": "fr-FR"
+      "logo": "https://clubfasting.com/logo.png",
+      "description": metadata.description,
+      "sameAs": []
     },
     {
       "@context": "https://schema.org",
-      "@type": "Organization",
+      "@type": "WebSite",
       "name": "Club Fasting",
-      "url": "https://app.clubfasting.com",
-      "description": metadata.description,
-      "sameAs": []
+      "url": "https://clubfasting.com",
+      "inLanguage": "fr-FR",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://clubfasting.com/recherche?q={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
     }
   ];
 
   return (
     <html lang="fr">
       <head>
+        <PublicCanonicalPath />
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <script
