@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback, useEffect } from 'react'
 import Link from 'next/link'
+import BackLink from '@/components/BackLink'
 import ReactMarkdown from 'react-markdown'
 import { createClient } from '@/utils/supabase/client'
 import AnalysisHistory from '@/components/newsfeed/analysis/AnalysisHistory'
@@ -107,11 +108,11 @@ export default function MealAnalyzer() {
       {/* Header */}
       <div className="border-b border-[#e2d9c3] dark:border-zinc-800">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center gap-4">
-          <Link href="/dashboard" className="text-gray-500 hover:text-gray-900 dark:text-zinc-400 dark:hover:text-white transition-colors">
+          <BackLink className="text-gray-500 hover:text-gray-900 dark:text-zinc-400 dark:hover:text-white transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
             </svg>
-          </Link>
+          </BackLink>
           <div>
             <h1 className="text-lg font-bold font-display">Montrez-moi votre assiette</h1>
             <p className="text-xs text-gray-500 dark:text-zinc-500">L&apos;IA analyse votre repas et l&apos;optimise pour votre métabolisme</p>

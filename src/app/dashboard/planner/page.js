@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import BackLink from '@/components/BackLink'
 
 // Meal type from hour
 const MEAL_TYPE_FROM_HOUR = (h) => {
@@ -323,7 +324,7 @@ export default function PlannerPage() {
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white border-b border-gray-200">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/dashboard" className="text-sm text-gray-500 hover:text-gray-900 font-medium">← Dashboard</Link>
+          <BackLink className="text-sm text-gray-500 hover:text-gray-900 font-medium">← Dashboard</BackLink>
           <span className="text-sm text-gray-400">Fenêtre de jeûne</span>
         </div>
       </header>
@@ -407,10 +408,10 @@ export default function PlannerPage() {
                 className="flex-1 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-colors">
                 Modifier
               </button>
-              <Link href="/dashboard"
+              <BackLink
                 className="flex-1 py-3 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-xl transition-colors text-center">
                 Retour au dashboard
-              </Link>
+              </BackLink>
             </div>
           </section>
         ) : saving ? (

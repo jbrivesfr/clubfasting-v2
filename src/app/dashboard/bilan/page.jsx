@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import BackLink from '@/components/BackLink'
 
 const QUESTIONS = [
   { step: 1, key: 'prenom', question: "D'abord, quel est votre prénom ?", type: 'open' },
@@ -179,9 +180,9 @@ export default function BilanPage() {
     <div className="min-h-screen bg-[#faf6ec] text-gray-900 dark:bg-zinc-950 dark:text-white">
       <header className="border-b border-[#e2d9c3] dark:border-white/[0.06] backdrop-blur-xl bg-[#faf6ec]/70 dark:bg-zinc-950/40 sticky top-0 z-10">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/dashboard" className="text-sm text-gray-500 hover:text-gray-900 font-medium dark:text-zinc-500 dark:hover:text-white">
+          <BackLink className="text-sm text-gray-500 hover:text-gray-900 font-medium dark:text-zinc-500 dark:hover:text-white">
             ← Dashboard
-          </Link>
+          </BackLink>
           <span className="text-sm text-gray-500 dark:text-zinc-400">Bilan Métabolique</span>
         </div>
       </header>
