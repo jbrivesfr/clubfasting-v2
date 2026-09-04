@@ -1,35 +1,28 @@
 'use client'
 
-import { useMemo } from 'react'
-
 /**
- * Lien de retour intelligent :
- * - si l'utilisateur vient du site club (clubfasting.com), on y retourne
- * - sinon on revient en arrière (navigation interne)
- * - fallback : /dashboard
+ * Lien de retour intelligent pour les pages outils :
+ * 1. history.back() → retourne exactement d'où l'utilisateur vient (ex: /content)
+ * 2. sinon, referrer externe (clubfasting.com)
+ * 3. sinon, fallback (/dashboard)
  */
 export default function BackLink({ fallback = '/dashboard', className = '', children }) {
-  const externalReferrer = useMemo(() => {
-    if (typeof document === 'undefined') return false
-    try {
-      const ref = document.referrer
-      return Boolean(ref) && new URL(ref).host !== window.location.host
-    } catch {
-      return false
-    }
-  }, [])
-
   const handleClick = (e) => {
-    if (externalReferrer) {
-      e.preventDefault()
-      window.location.href = document.referrer
-      return
-    }
+    if (typeof window === 'undefined') return
     if (window.history.length > 1) {
       e.preventDefault()
       window.history.back()
+      return
     }
-    // sinon : laisser le href fallback (/dashboard) faire son travail
+    try {
+      const ref = document.referrer
+      if (ref && new URL(ref).host !== window.location.host) {
+        e.preventDefault()
+        window.location.href = ref
+      }
+    } catch {
+      // fallback : laisser le href par défaut
+    }
   }
 
   return (
