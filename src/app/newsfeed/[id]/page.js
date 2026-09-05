@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import Breadcrumb from '@/components/ui/Breadcrumb'
+import ArticleJsonLd from '@/components/json-ld/ArticleJsonLd'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -63,7 +64,7 @@ export async function generateMetadata({ params }) {
 export default async function PostRedirectPage({ params }) {
   const { id } = params
 
-  let jsonLd = null;
+  let jsonLdProps = null;
   const comment = await getComment(id)
 
   if (comment) {
@@ -92,17 +93,13 @@ export default async function PostRedirectPage({ params }) {
       ? itemImages[0]
       : `https://app.clubfasting.com/api/og/newsfeed?id=${id}`
 
-    jsonLd = {
-      "@context": "https://schema.org",
-      "@type": "Article",
-      "headline": headline,
-      "image": imageUrl,
-      "datePublished": comment.created_at,
-      "author": {
-        "@type": "Person",
-        "name": comment.author_name || 'Membre ClubFasting'
-      },
-      "description": description
+    jsonLdProps = {
+      url: `https://app.clubfasting.com/newsfeed/${id}`,
+      title: headline,
+      description: description,
+      datePublished: comment.created_at,
+      authorName: comment.author_name,
+      imageUrl: imageUrl
     }
   }
 
@@ -113,11 +110,8 @@ export default async function PostRedirectPage({ params }) {
 
   return (
     <div className="min-h-screen bg-[#faf6ec] text-zinc-900 dark:bg-zinc-950 dark:text-white flex items-center justify-center p-6 text-center">
-      {jsonLd && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
+      {jsonLdProps && (
+        <ArticleJsonLd {...jsonLdProps} />
       )}
 
       <div className="mb-8 hidden">

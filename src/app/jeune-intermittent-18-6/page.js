@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Breadcrumb from '@/components/ui/Breadcrumb';
+import ArticleJsonLd from '@/components/json-ld/ArticleJsonLd'
 
 export const metadata = {
   title: 'Jeûne intermittent 18/6 : le guide avancé 2026',
@@ -30,18 +31,6 @@ export const metadata = {
 };
 
 export default function JeuneIntermittent186Page() {
-
-  const articleJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    "headline": "Jeûne intermittent 18/6 : le guide avancé pour aller plus loin en 2026",
-    "author": {
-      "@type": "Person",
-      "name": "JB"
-    },
-    "datePublished": "2026-01-01T08:00:00+01:00",
-    "image": "https://app.clubfasting.com/og-image.jpg"
-  };
 
   const faqJsonLd = {
     "@context": "https://schema.org",
@@ -101,9 +90,12 @@ export default function JeuneIntermittent186Page() {
         ]}
       />
 
-            <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      <ArticleJsonLd
+        url="https://app.clubfasting.com/jeune-intermittent-18-6"
+        title="Jeûne intermittent 18/6 : le guide avancé pour aller plus loin en 2026"
+        authorName="JB"
+        datePublished="2026-01-01T08:00:00+01:00"
+        imageUrl="https://app.clubfasting.com/og-image.jpg"
       />
       <script
         type="application/ld+json"

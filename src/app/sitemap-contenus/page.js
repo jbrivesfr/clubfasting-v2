@@ -1,6 +1,7 @@
 import { createClient } from '@/utils/supabase/server'
 import Link from 'next/link'
 import Breadcrumb from '@/components/ui/Breadcrumb'
+import ArticleJsonLd from '@/components/json-ld/ArticleJsonLd'
 
 export const metadata = {
   title: 'Plan du site - Contenus',
@@ -71,6 +72,11 @@ export default async function SitemapContenusPage() {
 
   return (
     <div className="min-h-screen bg-[#faf6ec] text-gray-900 py-12 px-4">
+      <ArticleJsonLd
+        url="https://app.clubfasting.com/sitemap-contenus"
+        title="Plan du site - Contenus"
+        description="Liste de tous les contenus et articles du Club Fasting."
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
