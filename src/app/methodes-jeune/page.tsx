@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Breadcrumb from '@/components/ui/Breadcrumb';
 import Footer from '@/components/Footer';
 
 export const metadata = {
@@ -10,24 +11,6 @@ export const metadata = {
 };
 
 export default function MethodesJeune() {
-  const breadcrumbLd = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      {
-        '@type': 'ListItem',
-        position: 1,
-        name: 'Accueil',
-        item: 'https://app.clubfasting.com',
-      },
-      {
-        '@type': 'ListItem',
-        position: 2,
-        name: 'Méthodes de jeûne',
-        item: 'https://app.clubfasting.com/methodes-jeune',
-      },
-    ],
-  };
 
   const faqLd = {
     '@context': 'https://schema.org',
@@ -70,11 +53,7 @@ export default function MethodesJeune() {
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
-      />
-      <script
+            <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
       />
@@ -95,6 +74,13 @@ export default function MethodesJeune() {
       </div>
 
       <main className="max-w-4xl mx-auto px-4 py-8">
+        <Breadcrumb
+          items={[
+            { name: 'Accueil', item: 'https://app.clubfasting.com/' },
+            { name: 'Méthodes de jeûne', item: 'https://app.clubfasting.com/methodes-jeune' }
+          ]}
+        />
+
         <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8 text-center">
           Les méthodes de jeûne intermittent
         </h1>

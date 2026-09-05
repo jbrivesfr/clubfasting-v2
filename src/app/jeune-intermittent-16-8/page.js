@@ -1,5 +1,6 @@
 
 import Link from 'next/link';
+import Breadcrumb from '@/components/ui/Breadcrumb';
 import Footer from '@/components/Footer';
 
 export const metadata = {
@@ -34,30 +35,6 @@ export const metadata = {
 };
 
 export default function JeuneIntermittentPage() {
-  const breadcrumbJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      {
-        "@type": "ListItem",
-        "position": 1,
-        "name": "Accueil",
-        "item": "https://clubfasting.com"
-      },
-      {
-        "@type": "ListItem",
-        "position": 2,
-        "name": "Articles",
-        "item": "https://clubfasting.com/articles"
-      },
-      {
-        "@type": "ListItem",
-        "position": 3,
-        "name": "Jeûne intermittent 16/8 : le guide complet pour débuter en 2026",
-        "item": "https://app.clubfasting.com/jeune-intermittent-16-8"
-      }
-    ]
-  };
 
   const articleJsonLd = {
     "@context": "https://schema.org",
@@ -134,11 +111,16 @@ export default function JeuneIntermittentPage() {
 
   return (
     <main className="max-w-4xl mx-auto px-4 py-12 bg-white text-gray-900 leading-relaxed font-sans">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+
+      <Breadcrumb
+        items={[
+          { name: 'Accueil', item: 'https://app.clubfasting.com/' },
+          { name: 'Méthodes de jeûne', item: 'https://app.clubfasting.com/methodes-jeune' },
+          { name: '16/8', item: 'https://app.clubfasting.com/jeune-intermittent-16-8' }
+        ]}
       />
-      <script
+
+            <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
       />

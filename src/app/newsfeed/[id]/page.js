@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
+import Breadcrumb from '@/components/ui/Breadcrumb'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -118,6 +119,17 @@ export default async function PostRedirectPage({ params }) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       )}
+
+      <div className="mb-8 hidden">
+        {/* Invisible to human (since it's a redirect page), but present for crawler parsing if needed (the script is the real MVP) */}
+        <Breadcrumb
+          items={[
+            { name: 'Accueil', item: 'https://app.clubfasting.com/' },
+            { name: 'Communauté', item: 'https://app.clubfasting.com/newsfeed' },
+            { name: 'Post', item: `https://app.clubfasting.com/newsfeed/${params.id}` }
+          ]}
+        />
+      </div>
       <div>
         <div className="w-10 h-10 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
         <h1 className="text-xl font-bold font-display">Ouverture du message...</h1>
