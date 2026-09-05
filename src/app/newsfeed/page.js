@@ -8,33 +8,11 @@ import Link from 'next/link'
 import Footer from '@/components/Footer'
 
 export default function NewsfeedPage() {
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      {
-        "@type": "ListItem",
-        "position": 1,
-        "name": "Accueil",
-        "item": "https://app.clubfasting.com/"
-      },
-      {
-        "@type": "ListItem",
-        "position": 2,
-        "name": "Newsfeed",
-        "item": "https://app.clubfasting.com/newsfeed"
-      }
-    ]
-  };
 
   return (
     <NewsfeedProvider>
       <div className="min-h-screen bg-[#faf6ec] text-zinc-900 dark:bg-zinc-950 dark:text-white relative overflow-hidden">
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
-        {/* Ambient glows */}
+                {/* Ambient glows */}
         <div
           className="fixed inset-x-0 top-0 h-[700px] -z-0 pointer-events-none animate-pulse-glow"
           style={{
@@ -71,6 +49,14 @@ export default function NewsfeedPage() {
 
         <main className="relative z-10 max-w-6xl mx-auto px-5 sm:px-6 py-10 sm:py-14 space-y-14">
           <section className="animate-slide-up">
+
+          <Breadcrumb
+            items={[
+              { name: 'Accueil', item: 'https://app.clubfasting.com/' },
+              { name: 'Communauté', item: 'https://app.clubfasting.com/newsfeed' }
+            ]}
+          />
+
             <h2 className="text-2xl font-bold mb-6 font-display">Fil d&apos;actualités</h2>
             <JourneyTabs />
             <NewsfeedFeed />

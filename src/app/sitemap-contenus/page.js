@@ -1,5 +1,6 @@
 import { createClient } from '@/utils/supabase/server'
 import Link from 'next/link'
+import Breadcrumb from '@/components/ui/Breadcrumb'
 
 export const metadata = {
   title: 'Plan du site - Contenus',
@@ -76,6 +77,13 @@ export default async function SitemapContenusPage() {
       />
       <div className="max-w-4xl mx-auto space-y-8">
         <div>
+        <Breadcrumb
+          items={[
+            { name: 'Accueil', item: 'https://app.clubfasting.com/' },
+            { name: 'Plan du site', item: 'https://app.clubfasting.com/sitemap-contenus' }
+          ]}
+        />
+
           <Link href="/" className="inline-block mb-8">
             <img
               src="/club-fasting-logo.png"
