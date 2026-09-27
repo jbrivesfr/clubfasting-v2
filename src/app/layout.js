@@ -43,7 +43,6 @@ export default function RootLayout({ children }) {
       "name": "Club Fasting",
       "url": "https://clubfasting.com",
       "logo": "https://clubfasting.com/logo.png",
-      "description": metadata.description,
       "sameAs": []
     },
     {
