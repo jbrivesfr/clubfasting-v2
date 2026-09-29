@@ -2,12 +2,10 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
 
 const THIRTY_DAYS = 30 * 24 * 60 * 60
-const PUBLIC_PATHS = ['/login', '/register', '/auth/callback', '/auth/confirm', '/', '/favicon.ico', '/sitemap-contenus', '/sitemap.xml', '/jeune-intermittent-16-8', '/jeune-intermittent-18-6', '/newsfeed', '/api/healthcheck-pages', '/methodes-jeune']
+const PUBLIC_PATHS = ['/login', '/register', '/auth/callback', '/auth/confirm', '/', '/favicon.ico', '/sitemap-contenus', '/sitemap.xml', '/jeune-intermittent-16-8', '/jeune-intermittent-18-6', '/newsfeed', '/funnel/quiz', '/api/lead-quiz', '/api/healthcheck-pages', '/methodes-jeune']
 
 function isPublicPath(pathname) {
-  return PUBLIC_PATHS.some(
-    (p) => pathname === p || pathname.startsWith('/_next') || pathname.startsWith('/api/auth') || pathname.startsWith('/api/health') || pathname.startsWith('/newsfeed/') || pathname.startsWith('/api/og/newsfeed')
-  )
+  return PUBLIC_PATHS.some((p) => pathname === p || pathname.startsWith('/_next') || pathname.startsWith('/api/auth') || pathname.startsWith('/api/health') || pathname.startsWith('/newsfeed/') || pathname.startsWith('/api/og/newsfeed') || pathname.startsWith('/api/lead-quiz') || pathname.startsWith('/funnel/quiz'))
 }
 
 export async function middleware(request) {
