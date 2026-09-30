@@ -23,17 +23,45 @@ export const metadata = {
 }
 
 export default function HomePage() {
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://app.clubfasting.com';
+
+  const socialLinks = Object.keys(process.env)
+    .filter(key => key.includes('SOCIAL'))
+    .map(key => process.env[key])
+    .filter(Boolean);
+
+  const defaultSocialLinks = [
+    "https://www.youtube.com/@lefasting",
+    "https://www.instagram.com/lefasting"
+  ];
+
+  const sameAs = socialLinks.length > 0 ? socialLinks : defaultSocialLinks;
+
+
   const jsonLd = [
     {
       "@context": "https://schema.org",
       "@type": "Organization",
       "name": "Le Fasting",
-      "url": "https://clubfasting.com",
-      "logo": "https://app.clubfasting.com/club-fasting-logo.png",
-      "sameAs": [
-        "https://www.youtube.com/@lefasting",
-        "https://www.instagram.com/lefasting"
-      ]
+      "url": siteUrl,
+      "logo": `${siteUrl}/club-fasting-logo.png`,
+      "sameAs": sameAs
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Le Fasting",
+      "url": siteUrl,
+      ...(process.env.ENABLE_SEARCH_ACTION === 'true' ? {
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": `${siteUrl}/search?q={search_term_string}`
+          },
+          "query-input": "required name=search_term_string"
+        }
+      } : {})
     },
     {
       "@context": "https://schema.org",
