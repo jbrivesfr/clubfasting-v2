@@ -6,7 +6,7 @@ const PUBLIC_PATHS = ['/login', '/register', '/auth/callback', '/auth/confirm', 
 
 function isPublicPath(pathname) {
   return PUBLIC_PATHS.some(
-    (p) => pathname === p || pathname.startsWith('/_next') || pathname.startsWith('/api/auth') || pathname.startsWith('/api/health') || pathname.startsWith('/newsfeed/') || pathname.startsWith('/api/og/newsfeed')
+    (p) => pathname === p || pathname.startsWith('/_next') || pathname.startsWith('/api/auth') || pathname.startsWith('/api/health') || pathname.startsWith('/newsfeed/') || pathname.startsWith('/api/og/newsfeed') || pathname.startsWith('/api/blackboard/engagement')
   )
 }
 
