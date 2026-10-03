@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "audit:moderation": "node scripts/audit_moderation.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.5.0",
