@@ -41,6 +41,10 @@ html.dark ::-webkit-scrollbar-thumb:hover {
   background: #3f3f46;
 }
 
+.skip-link { position: absolute; left: -9999px; }
+.skip-link:focus { left: 1rem; top: 1rem; z-index: 1000; padding: .5rem 1rem; background: white; color: black; }
+:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+
 /* Card hover glow utility */
 .card-glow {
   position: relative;
