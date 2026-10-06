@@ -1,4 +1,5 @@
 'use client'
+import { pageMetadata } from '../../../lib/seo.js'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
@@ -715,6 +716,23 @@ export default function DashboardPage() {
 
   return (
     <NewsfeedProvider>
+      {(() => {
+        const meta = pageMetadata({
+          title: 'Dashboard | Club Fasting',
+          description: 'Bienvenue sur votre tableau de bord personnel Club Fasting !! Suivez tous vos progrès de jeûne, analysez vos repas et atteignez tous vos objectifs !!!',
+          path: '/dashboard'
+        });
+        return (
+          <>
+            <title>{meta.title}</title>
+            <meta name="description" content={meta.description} />
+            <meta property="og:title" content={meta.openGraph.title} />
+            <meta property="og:description" content={meta.openGraph.description} />
+            <meta property="og:url" content={meta.openGraph.url} />
+          </>
+        );
+      })()}
+
       <div className="min-h-screen bg-[#faf6ec] text-zinc-900 dark:bg-zinc-950 dark:text-white relative overflow-hidden">
       <script
         type="application/ld+json"
