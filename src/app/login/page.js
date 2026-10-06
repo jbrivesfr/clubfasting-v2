@@ -95,6 +95,7 @@ export default function LoginPage() {
               required
               className="w-full px-4 py-3 rounded-xl bg-[#faf6ec] border border-[#e2d9c3] text-gray-900 placeholder-gray-400 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all"
               placeholder="jean@example.com"
+              aria-label="Adresse email"
               aria-describedby={error ? "email-hint email-error" : "email-hint"}
               aria-invalid={!!error}
             />
@@ -113,6 +114,7 @@ export default function LoginPage() {
             type="submit"
             disabled={loading}
             aria-busy={loading}
+            aria-label="Envoyer le lien magique"
             className="w-full py-3.5 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-400 hover:to-red-400 text-white font-semibold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-orange-500/20 hover:shadow-orange-500/40 hover:-translate-y-0.5 disabled:hover:translate-y-0"
           >
             {loading ? 'Envoi...' : 'Envoyer le lien magique'}
