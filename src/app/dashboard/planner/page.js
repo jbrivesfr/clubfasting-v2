@@ -209,6 +209,7 @@ export default function PlannerPage() {
   const [routine, setRoutine] = useState(null)
   const [saving, setSaving] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [saveError, setSaveError] = useState(null)
 
   // Drag-to-adjust state
   const [draftStart, setDraftStart] = useState(null)
@@ -281,24 +282,31 @@ export default function PlannerPage() {
 
   const completePlanner = async (finalAnswers) => {
     setSaving(true)
+    setSaveError(null)
     const plan = generateMealPlan(finalAnswers)
-    const res = await fetch('/api/planner', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        meals: plan.meals,
-        drink: plan.drink,
-        wake_up_time: plan.wake_up_time,
-        bed_time: plan.bed_time,
-      }),
-    })
-    if (res.ok) {
-      const data = await res.json()
-      if (data.success) {
+    const newRoutine = {
+      meals: plan.meals,
+      drink: plan.drink,
+      wake_up_time: plan.wake_up_time,
+      bed_time: plan.bed_time,
+    }
+    try {
+      const res = await fetch('/api/planner', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newRoutine),
+      })
+      const data = res.ok ? await res.json() : null
+      if (data?.success) {
         setStep(QUESTIONS.length)
+        setRoutine(newRoutine)
+      } else {
+        console.error('Planner save failed:', res.status, data)
+        setSaveError("Impossible d'enregistrer votre fenêtre de jeûne. Vérifiez votre connexion puis réessayez.")
       }
-    } else {
-      console.error('Planner save failed:', await res.text())
+    } catch (err) {
+      console.error('Planner save failed:', err)
+      setSaveError("Impossible d'enregistrer votre fenêtre de jeûne. Vérifiez votre connexion puis réessayez.")
     }
     setSaving(false)
   }
@@ -308,6 +316,7 @@ export default function PlannerPage() {
     setRoutine(null)
     setStep(0)
     setAnswers({})
+    setSaveError(null)
   }
 
   if (loading) {
@@ -419,6 +428,25 @@ export default function PlannerPage() {
             <div className="animate-spin text-4xl mb-4">⏳</div>
             <p className="text-gray-500">Création de votre fenêtre...</p>
           </div>
+        ) : saveError || !currentQ ? (
+          <section className="text-center py-10 space-y-6">
+            <div className="text-4xl">⚠️</div>
+            <p role="alert" className="text-red-600 font-medium">
+              {saveError || 'Une erreur est survenue. Merci de recommencer.'}
+            </p>
+            <div className="flex gap-3">
+              <button onClick={reset}
+                className="flex-1 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-colors">
+                Recommencer
+              </button>
+              {saveError && (
+                <button onClick={() => completePlanner(answers)}
+                  className="flex-1 py-3 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-xl transition-colors">
+                  Réessayer
+                </button>
+              )}
+            </div>
+          </section>
         ) : (
           <section className="space-y-6">
             {/* Progress */}
