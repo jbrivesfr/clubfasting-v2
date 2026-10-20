@@ -26,6 +26,11 @@ export default function Footer() {
               jeûne 24h
             </Link>
           </li>
+          <li>
+            <Link href="/communaute" className="hover:underline">
+              Communauté
+            </Link>
+          </li>
         </ul>
       </div>
       <p>Club Fasting · v2.6</p>
