@@ -3,29 +3,21 @@ import './globals.css'
 import PublicCanonicalPath from './PublicCanonicalPath'
 
 export const metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://club-fasting.com'),
-  title: 'Club Fasting',
-  description: "Une nouvelle version pour mieux jeûner. Profitez de notre fenêtre de jeûne, du simulateur de glycémie et de l'analyse de repas par IA.",
+  metadataBase: new URL('https://app.clubfasting.com'),
+  title: {
+    template: '%s | Le Fasting',
+    default: 'Le Fasting — méthode simple pour jeûner 12-16h',
+  },
+  description: 'Rejoignez la communauté du fasting intermittent. Méthode pas à pas, soutien quotidien, programmes adaptés.',
   openGraph: {
-    title: 'Club Fasting',
-    description: "Une nouvelle version pour mieux jeûner. Profitez de notre fenêtre de jeûne, du simulateur de glycémie et de l'analyse de repas par IA.",
-    url: 'https://clubfasting.com',
-    siteName: 'Club Fasting',
     type: 'website',
+    siteName: 'Le Fasting',
     locale: 'fr_FR',
-    images: [
-      {
-        url: '/og-image.jpg',
-        width: 1200,
-        height: 630,
-      },
-    ],
+    url: 'https://app.clubfasting.com',
+    images: ['/og-default.png'],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Club Fasting',
-    description: "Une nouvelle version pour mieux jeûner. Profitez de notre fenêtre de jeûne, du simulateur de glycémie et de l'analyse de repas par IA.",
-    images: ['/og-image.jpg'],
   },
   other: {
     'Cache-Control': 'no-cache, no-store, must-revalidate',
