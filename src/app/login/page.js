@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useState } from 'react'
 
 export const dynamic = 'force-dynamic'
@@ -22,7 +23,7 @@ export default function LoginPage() {
         body: JSON.stringify({ email: email.trim().toLowerCase() }),
       })
 
-      const data = await res.json()
+      let data; try { data = await res.json() } catch(e) { data = { error: "Une erreur est survenue lors de la communication avec le serveur." } }
 
       if (!res.ok) {
         throw new Error(data.error || 'Une erreur est survenue.')
@@ -74,8 +75,8 @@ export default function LoginPage() {
       <div className="relative w-full max-w-md space-y-8 animate-slide-up">
         <div className="text-center">
           <h1 className="sr-only">Connexion au Club Fasting</h1>
-          <img
-            src="/club-fasting-logo.png"
+          <Image
+            src="/club-fasting-logo.png" width={256} height={256} priority
             alt="Logo Club Fasting, connectez-vous à votre espace de jeûne intermittent"
             className="mx-auto w-64 max-w-full h-auto mb-6"
           />
@@ -84,7 +85,7 @@ export default function LoginPage() {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5 bg-white p-8 rounded-2xl border border-[#e2d9c3] shadow-lg">
+        <form noValidate onSubmit={handleSubmit} className="space-y-5 bg-white p-8 rounded-2xl border border-[#e2d9c3] shadow-lg">
           <div>
             <label htmlFor="email" className="block text-sm text-gray-700 mb-2 font-medium">Votre email</label>
             <input
@@ -93,7 +94,7 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-3 rounded-xl bg-[#faf6ec] border border-[#e2d9c3] text-gray-900 placeholder-gray-400 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all"
+              className="w-full px-4 py-3 rounded-xl bg-[#faf6ec] border border-[#e2d9c3] text-gray-900 placeholder-gray-400 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all" autoComplete="email"
               placeholder="jean@example.com"
               aria-describedby={error ? "email-hint email-error" : "email-hint"}
               aria-invalid={!!error}
