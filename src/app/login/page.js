@@ -1,38 +1,69 @@
-'use client'
-
-import { useState } from 'react'
+import { pageMetadata } from '../../../lib/seo'
+import { redirect } from 'next/navigation'
+import { headers } from 'next/headers'
 
 export const dynamic = 'force-dynamic'
 
-export default function LoginPage() {
-  const [email, setEmail] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [sent, setSent] = useState(false)
-  const [error, setError] = useState(null)
+const baseMetadata = pageMetadata({
+  title: 'Connexion — Le Fasting',
+  description: 'Connectez-vous à votre espace Le Fasting pour suivre votre jeûne intermittent et accéder à la méthode pas à pas.',
+  path: '/login'
+})
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    setLoading(true)
-    setError(null)
+export const metadata = {
+  ...baseMetadata,
+  alternates: {
+    canonical: 'https://app.clubfasting.com/login'
+  },
+  openGraph: {
+    ...baseMetadata.openGraph,
+    url: 'https://app.clubfasting.com/login',
+    siteName: 'Le Fasting',
+    locale: 'fr_FR',
+    type: 'website'
+  },
+  twitter: {
+    ...baseMetadata.twitter,
+    card: 'summary_large_image'
+  }
+}
+
+export default async function LoginPage({ searchParams }) {
+  const sent = searchParams?.sent === 'true'
+  const email = searchParams?.email || ''
+  const error = searchParams?.error
+
+  async function handleSubmit(formData) {
+    'use server'
+    const emailInput = formData.get('email')
 
     try {
-      const res = await fetch('/api/auth/send-link', {
+      const host = headers().get('host')
+      const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https'
+      const apiUrl = `${protocol}://${host}/api/auth/send-link`
+
+      const res = await fetch(apiUrl, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email.trim().toLowerCase() }),
+
+        body: JSON.stringify({ email: emailInput.trim().toLowerCase() }),
+        headers: {
+          'Content-Type': 'application/json',
+          'cookie': headers().get('cookie') || '',
+          'x-forwarded-for': headers().get('x-forwarded-for') || headers().get('x-real-ip') || '127.0.0.1',
+          'user-agent': headers().get('user-agent') || ''
+        },
       })
 
       const data = await res.json()
 
       if (!res.ok) {
-        throw new Error(data.error || 'Une erreur est survenue.')
+        redirect(`/login?error=${encodeURIComponent(data.error || 'Une erreur est survenue.')}&email=${encodeURIComponent(emailInput)}`)
       }
 
-      setSent(true)
+      redirect(`/login?sent=true&email=${encodeURIComponent(emailInput)}`)
     } catch (err) {
-      setError(err.message)
-    } finally {
-      setLoading(false)
+      if (err.message === 'NEXT_REDIRECT') throw err;
+      redirect(`/login?error=${encodeURIComponent(err.message)}&email=${encodeURIComponent(emailInput)}`)
     }
   }
 
@@ -57,13 +88,13 @@ export default function LoginPage() {
           <p className="text-gray-500 text-sm">
             Cliquez sur le lien dans l&apos;email pour accéder au Club.
           </p>
-          <button
-            onClick={() => setSent(false)}
-            className="text-sm text-orange-500 hover:text-orange-600 font-medium transition-colors"
+          <a
+            href="/login"
+            className="inline-block text-sm text-orange-500 hover:text-orange-600 font-medium transition-colors"
             aria-label="Utiliser une autre adresse email"
           >
             ← Utiliser un autre email
-          </button>
+          </a>
         </div>
       </main>
     )
@@ -84,14 +115,14 @@ export default function LoginPage() {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5 bg-white p-8 rounded-2xl border border-[#e2d9c3] shadow-lg">
+        <form action={handleSubmit} className="space-y-5 bg-white p-8 rounded-2xl border border-[#e2d9c3] shadow-lg">
           <div>
             <label htmlFor="email" className="block text-sm text-gray-700 mb-2 font-medium">Votre email</label>
             <input
               id="email"
+              name="email"
               type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              defaultValue={email}
               required
               className="w-full px-4 py-3 rounded-xl bg-[#faf6ec] border border-[#e2d9c3] text-gray-900 placeholder-gray-400 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all"
               placeholder="jean@example.com"
@@ -111,11 +142,9 @@ export default function LoginPage() {
 
           <button
             type="submit"
-            disabled={loading}
-            aria-busy={loading}
-            className="w-full py-3.5 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-400 hover:to-red-400 text-white font-semibold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-orange-500/20 hover:shadow-orange-500/40 hover:-translate-y-0.5 disabled:hover:translate-y-0"
+            className="w-full py-3.5 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-400 hover:to-red-400 text-white font-semibold rounded-xl transition-all shadow-lg shadow-orange-500/20 hover:shadow-orange-500/40 hover:-translate-y-0.5"
           >
-            {loading ? 'Envoi...' : 'Envoyer le lien magique'}
+            Envoyer le lien magique
           </button>
         </form>
 
