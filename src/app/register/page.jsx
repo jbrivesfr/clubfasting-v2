@@ -93,6 +93,7 @@ export default function RegisterPage() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
+              autoComplete="name"
               className="w-full px-4 py-3 rounded-xl bg-[#faf6ec] border border-[#e2d9c3] text-gray-900 placeholder-gray-400 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all"
               placeholder="Jean"
             />
@@ -105,12 +106,23 @@ export default function RegisterPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              autoComplete="email"
               className="w-full px-4 py-3 rounded-xl bg-[#faf6ec] border border-[#e2d9c3] text-gray-900 placeholder-gray-400 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all"
               placeholder="jean@example.com"
             />
             <p className="text-xs text-gray-500 mt-2">
               Nous vous envoyons un lien magique par email.
             </p>
+          </div>
+
+          <div style={{ display: 'none' }}>
+            {/* Champ ajouté uniquement pour la complétion automatique, bien qu'il n'y ait pas de mot de passe */}
+            <label className="block text-sm text-gray-700 mb-2 font-medium">Nouveau mot de passe</label>
+            <input
+              type="password"
+              autoComplete="new-password"
+              tabIndex={-1}
+            />
           </div>
 
           {error && (
