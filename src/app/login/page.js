@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 export const dynamic = 'force-dynamic'
 
@@ -9,6 +9,15 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [sent, setSent] = useState(false)
   const [error, setError] = useState(null)
+
+  const [cooldown, setCooldown] = useState(0)
+
+  useEffect(() => {
+    if (cooldown > 0) {
+      const timer = setTimeout(() => setCooldown(cooldown - 1), 1000)
+      return () => clearTimeout(timer)
+    }
+  }, [cooldown])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -29,6 +38,7 @@ export default function LoginPage() {
       }
 
       setSent(true)
+      setCooldown(60)
     } catch (err) {
       setError(err.message)
     } finally {
@@ -52,17 +62,33 @@ export default function LoginPage() {
           </div>
           <h1 className="text-3xl font-bold font-display">Vérifiez vos emails</h1>
           <p className="text-gray-600">
-            Un lien de connexion a été envoyé à <strong className="text-gray-900">{email}</strong>.
+            Lien envoyé à <strong className="text-gray-900">{email}</strong>.
           </p>
           <p className="text-gray-500 text-sm">
             Cliquez sur le lien dans l&apos;email pour accéder au Club.
           </p>
+
+          <div className="pt-2">
+            <button
+              onClick={handleSubmit}
+              disabled={cooldown > 0 || loading}
+              className="w-full py-3.5 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-400 hover:to-red-400 text-white font-semibold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-orange-500/20 hover:shadow-orange-500/40 hover:-translate-y-0.5 disabled:hover:translate-y-0"
+            >
+              {loading ? 'Envoi...' : cooldown > 0 ? `Renvoyer le lien (${cooldown}s)` : 'Renvoyer le lien'}
+            </button>
+            <div aria-live="polite" className="sr-only">
+              {cooldown === 0 && !loading ? 'Vous pouvez maintenant renvoyer le lien.' : ''}
+            </div>
+          </div>
+
           <button
-            onClick={() => setSent(false)}
-            className="text-sm text-orange-500 hover:text-orange-600 font-medium transition-colors"
-            aria-label="Utiliser une autre adresse email"
+            onClick={() => {
+              setSent(false)
+              setCooldown(0)
+            }}
+            className="text-sm text-orange-500 hover:text-orange-600 font-medium transition-colors mt-6 block mx-auto"
           >
-            ← Utiliser un autre email
+            Utiliser une autre adresse
           </button>
         </div>
       </main>
