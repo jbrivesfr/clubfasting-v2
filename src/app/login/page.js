@@ -1,19 +1,49 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
+import { createClient } from '@/utils/supabase/client'
 
 export const dynamic = 'force-dynamic'
 
 export default function LoginPage() {
+  const supabase = createClient()
+  const silenceExpectedAuthRef = useRef(true)
+
+  useEffect(() => {
+    // Keep it silent for the first 2 seconds to filter expected missing session error
+    const timer = setTimeout(() => {
+      silenceExpectedAuthRef.current = false
+    }, 2000)
+
+    const checkSession = async () => {
+      try {
+        await supabase.auth.getSession()
+      } catch (err) {
+        if (silenceExpectedAuthRef.current && err?.message?.includes('Auth session missing!')) {
+          // Expected behavior when unauthenticated, do nothing
+        } else {
+          console.error(err)
+        }
+      }
+    }
+
+    checkSession()
+
+    return () => clearTimeout(timer)
+  }, [supabase.auth])
+
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [sent, setSent] = useState(false)
   const [error, setError] = useState(null)
+  const [toastMessage, setToastMessage] = useState(null)
+  const [toastType, setToastType] = useState(null) // 'success' | 'error'
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
     setError(null)
+    setToastMessage(null)
 
     try {
       const res = await fetch('/api/auth/send-link', {
@@ -25,20 +55,32 @@ export default function LoginPage() {
       const data = await res.json()
 
       if (!res.ok) {
-        throw new Error(data.error || 'Une erreur est survenue.')
+        throw new Error(data.error || 'Une erreur est survenue, réessayez dans quelques instants.')
       }
 
       setSent(true)
+      setToastMessage('Lien envoyé à votre adresse, consultez votre boîte mail.')
+      setToastType('success')
     } catch (err) {
       setError(err.message)
+      setToastMessage('Une erreur est survenue, réessayez dans quelques instants.')
+      setToastType('error')
     } finally {
       setLoading(false)
+      setTimeout(() => setToastMessage(null), 5000)
     }
   }
 
   if (sent) {
     return (
       <main className="min-h-screen bg-[#faf6ec] text-gray-900 flex items-center justify-center px-4 relative overflow-hidden">
+        {toastMessage && (
+          <div className={`fixed top-4 right-4 z-50 p-4 rounded-xl shadow-lg border text-sm font-medium transition-all ${
+            toastType === 'success' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'
+          }`} role="alert">
+            {toastMessage}
+          </div>
+        )}
         <div
           className="relative max-w-md text-center space-y-6 animate-slide-up"
           role="status"
@@ -71,6 +113,13 @@ export default function LoginPage() {
 
   return (
     <main className="min-h-screen bg-[#faf6ec] text-gray-900 flex items-center justify-center px-4 relative overflow-hidden">
+      {toastMessage && (
+        <div className={`fixed top-4 right-4 z-50 p-4 rounded-xl shadow-lg border text-sm font-medium transition-all ${
+          toastType === 'success' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'
+        }`} role="alert">
+          {toastMessage}
+        </div>
+      )}
       <div className="relative w-full max-w-md space-y-8 animate-slide-up">
         <div className="text-center">
           <h1 className="sr-only">Connexion au Club Fasting</h1>
