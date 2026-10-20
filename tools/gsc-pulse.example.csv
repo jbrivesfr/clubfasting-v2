@@ -1,0 +1,7 @@
+# Example output from gsc-pulse.py (columns: page,query,impressions,clicks,ctr,position)
+page,query,impressions,clicks,ctr,position
+https://fasting.fr/jeune-intermittent/,jeune intermittent,15023,1245,0.08287,3.4
+https://fasting.fr/perdre-du-poids/,perdre du poids rapidement,8432,512,0.06072,5.1
+https://fasting.fr/bienfaits-du-jeune/,bienfaits du jeune,5120,890,0.17382,1.2
+https://fasting.fr/jeune-intermittent/,comment jeuner,4321,210,0.04860,8.7
+https://fasting.fr/café-pendant-le-jeune/,café jeune intermittent,3210,405,0.12616,2.3
