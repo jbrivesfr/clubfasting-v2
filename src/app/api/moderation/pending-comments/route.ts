@@ -3,8 +3,11 @@ import { createClient } from '@/utils/supabase/server'
 
 export const dynamic = 'force-dynamic'
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const { searchParams } = new URL(request.url)
+    const isOverdueOnly = searchParams.get('overdue_only') === 'true'
+
     const supabase = createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
@@ -12,16 +15,20 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
-
-    const { data: comments, error } = await supabase
+    let query = supabase
       .from('comments')
       .select('id, page_url, author_id, author_name, content, created_at')
       .is('parent_id', null)
       .is('deleted_at', null)
-      .lt('created_at', twentyFourHoursAgo)
       .order('created_at', { ascending: true })
       .limit(1000)
+
+    if (isOverdueOnly) {
+      const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+      query = query.lt('created_at', twentyFourHoursAgo)
+    }
+
+    const { data: comments, error } = await query
 
     if (error) {
       console.error('Error fetching pending comments:', error)
