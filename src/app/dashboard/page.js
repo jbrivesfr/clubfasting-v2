@@ -603,15 +603,49 @@ export default function DashboardPage() {
       }
       setAvatarUrl(avatar || getGravatarUrl(effectiveEmail, 80))
 
+      const recapsData = []
+
       // Load routine via API
       try {
         const plannerRes = await fetch('/api/planner')
         if (plannerRes.ok) {
           const routineData = await plannerRes.json()
-          if (routineData) setRoutine(routineData)
+          if (routineData) {
+            setRoutine(routineData)
+            recapsData.push({
+              toolId: 'fasting-planner',
+              title: 'Fenêtre',
+              icon: '⏱️',
+              value: routineData.meals === 1 ? 'OMAD' : `${routineData.meals} repas`,
+              date: new Date(routineData.updated_at || Date.now()).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }),
+              url: '/dashboard/planner',
+              accent: 'from-orange-500/20 to-red-500/10',
+            })
+          }
         }
       } catch (e) {
         console.warn('Routine load failed:', e)
+      }
+
+      // Load macros recap via API
+      try {
+        const macrosRes = await fetch('/api/macro-target')
+        if (macrosRes.ok) {
+          const macrosData = await macrosRes.json()
+          if (macrosData && macrosData.calories) {
+            recapsData.push({
+              toolId: 'macros',
+              title: 'Objectif',
+              icon: '🔥',
+              value: `${macrosData.calories} kcal`,
+              date: new Date(macrosData.updated_at || Date.now()).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }),
+              url: '/dashboard/macros',
+              accent: 'from-orange-500/20 to-rose-500/10',
+            })
+          }
+        }
+      } catch (e) {
+        console.warn('Macros load failed:', e)
       }
 
       // Load weight recap via API
@@ -619,7 +653,6 @@ export default function DashboardPage() {
         const weightRes = await fetch('/api/weight')
         if (weightRes.ok) {
           const weightData = await weightRes.json()
-          const recapsData = []
           if (weightData && weightData.length > 0) {
             const lastWeight = weightData[weightData.length - 1]
             recapsData.push({
@@ -632,11 +665,12 @@ export default function DashboardPage() {
               accent: 'from-amber-500/20 to-orange-500/10',
             })
           }
-          setRecaps(recapsData)
         }
       } catch (e) {
         console.warn('Weight load failed:', e)
       }
+
+      setRecaps(recapsData)
 
 
       try {
