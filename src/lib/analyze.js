@@ -40,47 +40,73 @@ const CART_PROMPT = `Analyse ce caddie de courses.
 
 ${JSON_SCHEMA_INSTRUCTION}`
 
-export async function analyzeImage(imageBase64, type = 'meal') {
-  const apiKey = process.env.MINIMAX_API_KEY
-  if (!apiKey) throw new Error('MiniMax non configuré')
+// Vision providers, tried in order (JB 2026-11-08: the MiniMax Token Plan ran out — 402 — so Gemini goes first,
+// MiniMax stays as a last resort if its credit comes back). Gemini uses its OpenAI-compatible endpoint, so the
+// request is the same chat/completions shape. Override the Gemini chain with GEMINI_MODELS="m1,m2".
+const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/openai'
+const GEMINI_MODELS = (process.env.GEMINI_MODELS || 'gemini-3.5-flash,gemini-3.5-flash-lite').split(',').map(s => s.trim()).filter(Boolean)
 
-  const promptText = type === 'cart' ? CART_PROMPT : MEAL_PROMPT
-  const imageUrl = `data:image/jpeg;base64,${imageBase64}`
-  const baseUrl = process.env.MINIMAX_BASE_URL || 'https://api.minimax.io/v1'
+function providers() {
+  const list = []
+  if (process.env.GEMINI_API_KEY) {
+    for (const model of GEMINI_MODELS) {
+      list.push({ name: model, url: GEMINI_URL, key: process.env.GEMINI_API_KEY, model, extra: { reasoning_effort: 'low' } })
+    }
+  }
+  if (process.env.MINIMAX_API_KEY) {
+    list.push({ name: 'MiniMax-M3', url: process.env.MINIMAX_BASE_URL || 'https://api.minimax.io/v1', key: process.env.MINIMAX_API_KEY,
+                model: 'MiniMax-M3', extra: { top_p: 0.9, max_tokens: 4096 } })
+  }
+  return list
+}
 
-  const res = await fetch(`${baseUrl}/chat/completions`, {
+async function callProvider(p, promptText, imageUrl) {
+  const res = await fetch(`${p.url}/chat/completions`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${p.key}` },
     body: JSON.stringify({
-      model: 'MiniMax-M3',
+      model: p.model,
       messages: [
         { role: 'system', content: SYSTEM_INSTRUCTION },
         { role: 'user', content: [{ type: 'text', text: promptText }, { type: 'image_url', image_url: { url: imageUrl } }] },
       ],
-      temperature: 0.6, top_p: 0.9, max_tokens: 4096,
+      temperature: 0.6,
       response_format: { type: 'json_object' },
+      ...p.extra,
     }),
   })
-
-  if (res.status === 529) {
-    throw new Error('MiniMax est momentanément indisponible (surcharge). Réessaie dans quelques secondes.')
-  }
   if (!res.ok) {
     const err = await res.text()
-    console.error('MiniMax error:', res.status, err)
-    throw new Error(`Erreur MiniMax (${res.status})`)
+    throw new Error(`${p.name} ${res.status}: ${err.slice(0, 300)}`)
   }
-
   const text = (await res.json()).choices?.[0]?.message?.content
-  if (!text) throw new Error('Réponse MiniMax vide')
+  if (!text) throw new Error(`${p.name}: réponse vide`)
+  return parseResult(text)
+}
 
-  const result = parseResult(text)
-  saveAnalysis(result, imageBase64, type)
-  return result
+export async function analyzeImage(imageBase64, type = 'meal') {
+  const list = providers()
+  if (!list.length) throw new Error('Aucun modèle d\'analyse configuré')
+
+  const promptText = type === 'cart' ? CART_PROMPT : MEAL_PROMPT
+  const imageUrl = `data:image/jpeg;base64,${imageBase64}`
+
+  let lastError
+  for (const p of list) {
+    try {
+      const result = await callProvider(p, promptText, imageUrl)
+      saveAnalysis(result, imageBase64, type)
+      return result
+    } catch (e) {
+      lastError = e
+      console.error('Analyze provider failed:', e.message)
+    }
+  }
+  throw new Error('L\'analyse est momentanément indisponible. Réessayez dans quelques instants.')
 }
 
 function parseResult(text) {
-  // MiniMax-M3 is a reasoning model: it can wrap the JSON in <think>...</think>
+  // Reasoning models (MiniMax-M3, sometimes Gemini) can wrap the JSON in <think>...</think>
   // and/or a ```json fence even when response_format=json_object is set.
   const cleaned = text.replace(/<think>[\s\S]*?<\/think>/g, '').trim()
 
